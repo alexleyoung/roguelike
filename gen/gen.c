@@ -1,29 +1,18 @@
 #include <stdlib.h>
 #include <time.h>
+#include "gen.h"
 
-typedef struct {
-    char sprite;
-    int hardness;
-} tile;
-
-typedef struct {
-    int tl;
-    int br;
-} room;
-
-tile* generate_dungeon() {
+int generate_dungeon(dungeon *dungeon, int num_rooms) {
     srand(time(NULL)); // seed RNG
 
-    room *rooms = generate_rooms(6);
-    tile dungeon[80][21];
+    dungeon->rooms = malloc(sizeof (*dungeon->rooms) * num_rooms);
+    generate_rooms(dungeon, num_rooms);
 
-    return dungeon;
+    return 0;
 }
 
-room* generate_rooms(int size) {
+int generate_rooms(dungeon *dungeon, int num_rooms) {
     srand(time(NULL)); // seed RNG
 
-    room rooms[size];
-
-    return rooms;
+    return 0;
 }
