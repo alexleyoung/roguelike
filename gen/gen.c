@@ -10,6 +10,7 @@ int place_room(dungeon *dungeon, room *room);
 int init_dungeon(dungeon *dungeon);
 int generate_hardness(dungeon *dungeon);
 void propagate_hardness(dungeon *dungeon, int hitmap[DUNGEON_HEIGHT][DUNGEON_WIDTH], queue *q, seed *s);
+void smooth_hardness(dungeon *dungeon);
 
 /*
 Generate a dungeon with num_rooms number of rooms.
@@ -97,6 +98,9 @@ int generate_hardness(dungeon *dungeon) {
     }
 
     queue_destroy(&q);
+    
+    smooth_hardness(dungeon);
+
     return 0;
 }
 
@@ -133,9 +137,43 @@ void propagate_hardness(dungeon *dungeon, int hitmap[DUNGEON_HEIGHT][DUNGEON_WID
     }
 }
 
-int generate_rooms(dungeon *dungeon, int num_rooms) {
-    srand(time(NULL)); // seed RNG
+void smooth_hardness(dungeon *dungeon) {
+    // kernel for guassian blur
+    int kernel[3][3] = {
+        {1, 2, 1},
+        {2, 4, 2},
+        {1, 2, 1}
+    };
+    int kernel_size = 3;
+    int kernel_sum = 16;
 
+    // hardness map copy
+    int blurred_hardness[DUNGEON_HEIGHT][DUNGEON_WIDTH];
+
+    for (int r = 1; r < DUNGEON_HEIGHT - 1; r++) {
+        for (int c = 1; c < DUNGEON_WIDTH - 1; c++) {
+            int new_hardness = 0;
+            for (int kr = 0; kr < kernel_size; kr++) {
+                for (int kc = 0; kc < kernel_size; kc++) {
+                    int nr = r + kr - 1; // Neighbor row index
+                    int nc = c + kc - 1; // Neighbor column index
+                    new_hardness += dungeon->tiles[nr][nc].hardness * kernel[kr][kc];
+                }
+            }
+            // Averaging with kernel sum
+            blurred_hardness[r][c] = new_hardness / kernel_sum;
+        }
+    }
+
+    // Transfer computed hardness back to the dungeon tiles
+    for (int r = 1; r < DUNGEON_HEIGHT - 1; r++) {
+        for (int c = 1; c < DUNGEON_WIDTH - 1; c++) {
+            dungeon->tiles[r][c].hardness = blurred_hardness[r][c];
+        }
+    }
+}
+
+int generate_rooms(dungeon *dungeon, int num_rooms) {
     int i, r, c, err;
 
     for (i = 0; i < num_rooms; i++) {
@@ -169,7 +207,7 @@ int generate_rooms(dungeon *dungeon, int num_rooms) {
                 tries++;
                 invalid = 0;
                 continue;
-            } else {
+            } else { // room must be valid or tries exceeded, stop trying
                 break;
             }
         }
@@ -193,8 +231,8 @@ int generate_rooms(dungeon *dungeon, int num_rooms) {
 }
 
 int place_room(dungeon *dungeon, room *room) {
-    int i, r, c;
-    int err;
+    int r, c;
+    int err; // shouldn't ever error, here just in case
 
     // place room
     for (r = 0; r < room->size.r; r++) {
