@@ -9,8 +9,16 @@ int generate_rooms(dungeon *dungeon, int num_rooms);
 int place_room(dungeon *dungeon, room *room);
 int init_dungeon(dungeon *dungeon);
 int generate_hardness(dungeon *dungeon);
-void propogate_hardness(dungeon *dungeon, queue *q, seed *s);
+void propagate_hardness(dungeon *dungeon, int hitmap[DUNGEON_HEIGHT][DUNGEON_WIDTH], queue *q, seed *s);
 
+/*
+Generate a dungeon with num_rooms number of rooms.
+
+Randomly places rectangular rooms, then creates a smooth hardness gradient
+for corridor placement.abort
+
+Returns 0 on success, non-zero on failure.
+*/
 int generate_dungeon(dungeon *dungeon, int num_rooms) {
     srand(time(NULL)); // seed RNG
 
@@ -23,6 +31,8 @@ int generate_dungeon(dungeon *dungeon, int num_rooms) {
         return err;
     }; 
 
+    generate_hardness(dungeon);
+
     return 0;
 }
 
@@ -30,8 +40,8 @@ int init_dungeon(dungeon *dungeon) {
     int r, c;
 
     // fill map with rock and default hardness
-    for (r = 1; r < DUNGEON_HEIGHT-1; r++) {
-        for (c = 1; c < DUNGEON_WIDTH-1; c++) {
+    for (r = 0; r < DUNGEON_HEIGHT; r++) {
+        for (c = 0; c < DUNGEON_WIDTH; c++) {
             dungeon->tiles[r][c].sprite = ' ';
             dungeon->tiles[r][c].hardness = DEFAULT_HARDNESS;
         }
@@ -47,38 +57,42 @@ int init_dungeon(dungeon *dungeon) {
         dungeon->tiles[DUNGEON_HEIGHT-1][c].sprite = '-';
     }
 
-    generate_hardness(dungeon);
-
     return 0;
 }
 
 int generate_hardness(dungeon *dungeon) {
-    int i, r, c, x, y;
+    int i; 
     queue q;
     queue_init(&q);
-    int num_seeds, hardness;
+    int num_seeds;
     seed *s;
+    int hitmap[DUNGEON_HEIGHT][DUNGEON_WIDTH];
 
     num_seeds = rand() % 4 + 5;
 
+    // place hardness seeds, add to queue for bfs
     for (i = 0; i < num_seeds; i++) {
         s = malloc(sizeof (*s));
-        s->p.r = rand() % DUNGEON_HEIGHT;
-        s->p.c = rand() % DUNGEON_WIDTH;
-        s->hardness = (rand() % 7 + 1) * 20;
 
-        dungeon->tiles[s->p.r][s->p.c].hardness = s->hardness;
+        // pick a random empty tile
+        do {
+            s->p.r = rand() % DUNGEON_HEIGHT;
+            s->p.c = rand() % DUNGEON_WIDTH;
+        } while (dungeon->tiles[s->p.r][s->p.c].sprite != ' ');
+
+        s->hardness = (rand() % 7 + 1) * 20;
 
         queue_enqueue(&q, s);
     }
 
+    // propagate hardness outward
     while (!queue_is_empty(&q)) {
         void *data;
         if (queue_dequeue(&q, &data) == 0) {
             s = (seed *)data;
         }
         dungeon->tiles[s->p.r][s->p.c].hardness = s->hardness;
-        propogate_hardness(dungeon, &q, s);
+        propagate_hardness(dungeon, hitmap, &q, s);
         free(s);
     }
 
@@ -86,25 +100,35 @@ int generate_hardness(dungeon *dungeon) {
     return 0;
 }
 
-void propagate_hardness(dungeon *dungeon, queue *q, seed *s) {
+/*
+BFS helper to propagate hardness from seeds
+*/
+void propagate_hardness(dungeon *dungeon, int hitmap[DUNGEON_HEIGHT][DUNGEON_WIDTH], queue *q, seed *s) {
     int r, c;
     seed *child;
 
+    // add neighbors to queue
     for (r = s->p.r - 1; r <= s->p.r + 1; r++) {
         for (c = s->p.c - 1; c <= s->p.c + 1; c++) {
-            if (r < 1 || r > DUNGEON_HEIGHT - 2 || c < 1 || c > DUNGEON_WIDTH - 2) {
-                continue;
-            }
-            if (dungeon->tiles[r][c].hardness != DEFAULT_HARDNESS) {
-                continue;
-            }
+            // check bounds
+            if (r < 0 || r > DUNGEON_HEIGHT || c < 0 || c > DUNGEON_WIDTH) { continue; }
+            // check if neighbor's hardness is unmodified
+            if (dungeon->tiles[r][c].hardness != DEFAULT_HARDNESS) { continue; }
+            // check if neighbor is already visited
+            if (hitmap[r][c] == 1) { continue; }
+
+            // update hardness
+            dungeon->tiles[s->p.r][s->p.c].hardness = s->hardness;
+
             // add to queue
             child = malloc(sizeof (*child));
             child->p.r = r;
             child->p.c = c;
             child->hardness = s->hardness;
-
             queue_enqueue(q, child);
+
+            // mark as visited
+            hitmap[r][c] = 1;
         }
     }
 }
