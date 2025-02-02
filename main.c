@@ -17,10 +17,30 @@ void print_dungeon(dungeon *dungeon) {
     }
 }
 
+void print_hardness(dungeon *dungeon) {
+    int r, c;
+    for (r = 0; r < DUNGEON_HEIGHT; r++) {
+        for (c = 0; c < DUNGEON_WIDTH; c++) {
+            if (r == 0 || r == DUNGEON_HEIGHT-1 || c == 0 || c == DUNGEON_WIDTH-1) {
+                printf("%c", dungeon->tiles[r][c].sprite);
+            } else if (dungeon->tiles[r][c].hardness != 0) {
+                printf("%3d", dungeon->tiles[r][c].hardness);
+            } else {
+                printf("   ");
+            }
+        }
+        printf("\n");
+    }
+}
+
 int main(int argc, char **argv) {
     // create a dungeon
     dungeon *dungeon = malloc(sizeof (*dungeon));
-    generate_dungeon(dungeon, 1);
+
+    generate_dungeon(dungeon, 6);
+
     print_dungeon(dungeon);
+    print_hardness(dungeon);
+
     return 0;
 }

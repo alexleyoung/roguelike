@@ -9,14 +9,19 @@
 #define ROOM_MAX_WIDTH 20
 #define ROOM_MAX_HEIGHT 9
 
+typedef struct point {
+    int r;
+    int c;
+} point;
+
 typedef struct tile {
     char sprite;
     int hardness;
 } tile;
 
 typedef struct room {
-    int corner[2];
-    int size[2];
+    point corner;
+    point size;
 } room;
 
 typedef struct dungeon {
