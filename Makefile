@@ -1,7 +1,7 @@
 default: game
 
-game: main.c gen/gen.c
-	gcc -o game main.c gen/gen.c
+game: main.c $(wildcard gen/*.c) $(wildcard dsa/*.c)
+	gcc main.c gen/*.c dsa/*.c -I gen -I dsa -o game
 
 clean:
-	rm game
+	rm -f game

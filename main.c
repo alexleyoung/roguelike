@@ -23,7 +23,7 @@ void print_hardness(dungeon *dungeon) {
         for (c = 0; c < DUNGEON_WIDTH; c++) {
             if (r == 0 || r == DUNGEON_HEIGHT-1 || c == 0 || c == DUNGEON_WIDTH-1) {
                 printf("%c", dungeon->tiles[r][c].sprite);
-            } else if (dungeon->tiles[r][c].hardness != 0) {
+            } else if (dungeon->tiles[r][c].hardness != DEFAULT_HARDNESS) {
                 printf("%3d", dungeon->tiles[r][c].hardness);
             } else {
                 printf("   ");

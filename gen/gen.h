@@ -4,6 +4,8 @@
 #define DUNGEON_WIDTH 80
 #define DUNGEON_HEIGHT 21
 
+#define DEFAULT_HARDNESS -1
+
 #define ROOM_MIN_WIDTH 3
 #define ROOM_MIN_HEIGHT 2
 #define ROOM_MAX_WIDTH 20
@@ -18,6 +20,11 @@ typedef struct tile {
     char sprite;
     int hardness;
 } tile;
+
+typedef struct seed {
+    point p;
+    int hardness;
+} seed;
 
 typedef struct room {
     point corner;

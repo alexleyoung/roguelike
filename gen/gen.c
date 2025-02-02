@@ -3,12 +3,13 @@
 #include <time.h>
 
 #include "gen.h"
+#include "../dsa/queue.h"
 
 int generate_rooms(dungeon *dungeon, int num_rooms);
 int place_room(dungeon *dungeon, room *room);
 int init_dungeon(dungeon *dungeon);
 int generate_hardness(dungeon *dungeon);
-void propogate_hardness(dungeon *dungeon, point seed, int hardness);
+void propogate_hardness(dungeon *dungeon, queue *q, seed *s);
 
 int generate_dungeon(dungeon *dungeon, int num_rooms) {
     srand(time(NULL)); // seed RNG
@@ -28,11 +29,11 @@ int generate_dungeon(dungeon *dungeon, int num_rooms) {
 int init_dungeon(dungeon *dungeon) {
     int r, c;
 
-    // fill map with rock and hardness 0
+    // fill map with rock and default hardness
     for (r = 1; r < DUNGEON_HEIGHT-1; r++) {
         for (c = 1; c < DUNGEON_WIDTH-1; c++) {
             dungeon->tiles[r][c].sprite = ' ';
-            dungeon->tiles[r][c].hardness = 0;
+            dungeon->tiles[r][c].hardness = DEFAULT_HARDNESS;
         }
     }
 
@@ -52,52 +53,58 @@ int init_dungeon(dungeon *dungeon) {
 }
 
 int generate_hardness(dungeon *dungeon) {
-    int i, r, c;
+    int i, r, c, x, y;
+    queue q;
+    queue_init(&q);
     int num_seeds, hardness;
-    point *seeds, seed;
-    int *hardnesses;
+    seed *s;
 
     num_seeds = rand() % 4 + 5;
-    seeds = malloc(sizeof (*seeds) * num_seeds);
-    hardnesses = malloc(sizeof (*hardnesses) * num_seeds);
 
     for (i = 0; i < num_seeds; i++) {
-        seed.r = rand() % DUNGEON_HEIGHT;
-        seed.c = rand() % DUNGEON_WIDTH;
-        hardness = (rand() % 7 + 1) * 20;
-        
-        dungeon->tiles[seed.r][seed.c].hardness = hardness;
+        s = malloc(sizeof (*s));
+        s->p.r = rand() % DUNGEON_HEIGHT;
+        s->p.c = rand() % DUNGEON_WIDTH;
+        s->hardness = (rand() % 7 + 1) * 20;
 
-        seeds[i] = seed;
-        hardnesses[i] = hardness;
+        dungeon->tiles[s->p.r][s->p.c].hardness = s->hardness;
+
+        queue_enqueue(&q, s);
     }
 
-    for (i = 0; i < num_seeds; i++) {
-        propogate_hardness(dungeon, seeds[i], hardnesses[i]);
+    while (!queue_is_empty(&q)) {
+        void *data;
+        if (queue_dequeue(&q, &data) == 0) {
+            s = (seed *)data;
+        }
+        dungeon->tiles[s->p.r][s->p.c].hardness = s->hardness;
+        propogate_hardness(dungeon, &q, s);
+        free(s);
     }
 
-    free(seeds);
-    free(hardnesses);
-
+    queue_destroy(&q);
     return 0;
 }
 
-void propogate_hardness(dungeon *dungeon, point seed, int hardness) {
+void propagate_hardness(dungeon *dungeon, queue *q, seed *s) {
     int r, c;
-    point p;
+    seed *child;
 
-    for (r = seed.r - 1; r <= seed.r + 1; r++) {
-        for (c = seed.c - 1; c <= seed.c + 1; c++) {
+    for (r = s->p.r - 1; r <= s->p.r + 1; r++) {
+        for (c = s->p.c - 1; c <= s->p.c + 1; c++) {
             if (r < 1 || r > DUNGEON_HEIGHT - 2 || c < 1 || c > DUNGEON_WIDTH - 2) {
                 continue;
             }
-            if (dungeon->tiles[r][c].hardness != 0) {
+            if (dungeon->tiles[r][c].hardness != DEFAULT_HARDNESS) {
                 continue;
             }
-            dungeon->tiles[r][c].hardness = hardness;
-            p.r = r;
-            p.c = c;
-            propogate_hardness(dungeon, p, hardness);
+            // add to queue
+            child = malloc(sizeof (*child));
+            child->p.r = r;
+            child->p.c = c;
+            child->hardness = s->hardness;
+
+            queue_enqueue(q, child);
         }
     }
 }
@@ -169,6 +176,7 @@ int place_room(dungeon *dungeon, room *room) {
     for (r = 0; r < room->size.r; r++) {
         for (c = 0; c < room->size.c; c++) {
             dungeon->tiles[room->corner.r+r][room->corner.c+c].sprite = '.';
+            dungeon->tiles[room->corner.r+r][room->corner.c+c].hardness = 0;
         }
     }
 
