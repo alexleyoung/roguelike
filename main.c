@@ -38,7 +38,9 @@ int main(int argc, char **argv) {
     // create a dungeon
     dungeon *dungeon = malloc(sizeof (*dungeon));
 
-    generate_dungeon(dungeon, 6);
+    int num_rooms = 6 + (rand() % 6);
+
+    generate_dungeon(dungeon, num_rooms);
 
     print_dungeon(dungeon);
     // print_hardness(dungeon);

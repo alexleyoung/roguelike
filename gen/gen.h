@@ -6,10 +6,10 @@
 
 #define DEFAULT_HARDNESS -1
 
-#define ROOM_MIN_WIDTH 3
-#define ROOM_MIN_HEIGHT 2
+#define ROOM_MIN_WIDTH 4
+#define ROOM_MIN_HEIGHT 3
 #define ROOM_MAX_WIDTH 13
-#define ROOM_MAX_HEIGHT 6
+#define ROOM_MAX_HEIGHT 7
 
 #include "types.h"
 

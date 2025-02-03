@@ -15,6 +15,7 @@ int generate_hardness(dungeon *dungeon);
 void propagate_hardness(dungeon *dungeon, int propagated[DUNGEON_HEIGHT][DUNGEON_WIDTH], queue *q, seed *s);
 void smooth_hardness(dungeon *dungeon);
 int generate_corridors(dungeon *dungeon, room *rooms, int num_rooms);
+int place_stairs(dungeon *dungeon);
 
 /*
 Generate a dungeon with num_rooms number of rooms.
@@ -39,6 +40,10 @@ int generate_dungeon(dungeon *dungeon, int num_rooms) {
     generate_hardness(dungeon);
 
     generate_corridors(dungeon, dungeon->rooms, num_rooms);
+
+
+
+    place_stairs(dungeon);
 
     return 0;
 }
@@ -75,7 +80,7 @@ int generate_hardness(dungeon *dungeon) {
     seed *s;
     int propagated[DUNGEON_HEIGHT][DUNGEON_WIDTH];
 
-    num_seeds = rand() % 4 + 5;
+    num_seeds = rand() % 10 + 20;
 
     // place hardness seeds, add to queue for bfs
     for (i = 0; i < num_seeds; i++) {
@@ -87,7 +92,7 @@ int generate_hardness(dungeon *dungeon) {
             s->p.c = rand() % DUNGEON_WIDTH;
         } while (dungeon->tiles[s->p.r][s->p.c].sprite != ' ');
 
-        s->hardness = (rand() % 7 + 1) * 20;
+        s->hardness = (rand() % 40 + 1);
 
         queue_enqueue(&q, s);
     }
@@ -114,32 +119,35 @@ int generate_hardness(dungeon *dungeon) {
 BFS helper to propagate hardness from seeds
 */
 void propagate_hardness(dungeon *dungeon, int propagated[DUNGEON_HEIGHT][DUNGEON_WIDTH], queue *q, seed *s) {
-    int r, c;
+    int i, r, c;
     seed *child;
 
     // add neighbors to queue
-    for (r = s->p.r - 1; r <= s->p.r + 1; r++) {
-        for (c = s->p.c - 1; c <= s->p.c + 1; c++) {
-            // check bounds
-            if (r < 0 || r > DUNGEON_HEIGHT || c < 0 || c > DUNGEON_WIDTH) { continue; }
-            // check if neighbor's hardness is unmodified
-            if (dungeon->tiles[r][c].hardness != DEFAULT_HARDNESS) { continue; }
-            // check if neighbor is already visited
-            if (propagated[r][c] == 1) { continue; }
+    int dirs = 4;
+    int dr[] = {-1, 1, 0, 0};
+    int dc[] = {0, 0, -1, 1};
+    for (i = 0; i < dirs; i++) {
+        r = s->p.r + dr[i];
+        c = s->p.c + dc[i];
+        // check bounds
+        if (r < 0 || r > DUNGEON_HEIGHT || c < 0 || c > DUNGEON_WIDTH) { continue; }
+        // check if neighbor's hardness is unmodified
+        if (dungeon->tiles[r][c].hardness != DEFAULT_HARDNESS) { continue; }
+        // check if neighbor is already visited
+        if (propagated[r][c] == 1) { continue; }
 
-            // update hardness
-            dungeon->tiles[s->p.r][s->p.c].hardness = s->hardness;
+        // update hardness
+        dungeon->tiles[s->p.r][s->p.c].hardness = s->hardness;
 
-            // add to queue
-            child = malloc(sizeof (*child));
-            child->p.r = r;
-            child->p.c = c;
-            child->hardness = s->hardness;
-            queue_enqueue(q, child);
+        // add to queue
+        child = malloc(sizeof (*child));
+        child->p.r = r;
+        child->p.c = c;
+        child->hardness = s->hardness;
+        queue_enqueue(q, child);
 
-            // mark as visited
-            propagated[r][c] = 1;
-        }
+        // mark as visited
+        propagated[r][c] = 1;
     }
 }
 
@@ -147,24 +155,24 @@ void smooth_hardness(dungeon *dungeon) {
     int r, c, i, j;
 
     // kernel for guassian blur
-    int kernel[5][5] = {
-        {1, 2, 3, 2, 1},
-        {2, 4, 6, 4, 2},
-        {3, 6, 9, 6, 3},
-        {2, 4, 6, 4, 2},
-        {1, 2, 3, 2, 1}
-    };
-    int kernel_size = 5;
-    int kernal_offset = 2;
-    int kernel_sum = 273;
-    // int kernel[3][3] = {
-    //     {1, 2, 1},
-    //     {2, 4, 2},
-    //     {1, 2, 1}
+    // int kernel[5][5] = {
+    //     {1, 2, 3, 2, 1},
+    //     {2, 4, 6, 4, 2},
+    //     {3, 6, 9, 6, 3},
+    //     {2, 4, 6, 4, 2},
+    //     {1, 2, 3, 2, 1}
     // };
-    // int kernel_size = 3;
-    // int kernal_offset = 1;
-    // int kernel_sum = 16;
+    // int kernel_size = 5;
+    // int kernal_offset = 2;
+    // int kernel_sum = 273;
+    int kernel[3][3] = {
+        {1, 2, 1},
+        {2, 4, 2},
+        {1, 2, 1}
+    };
+    int kernel_size = 3;
+    int kernal_offset = 1;
+    int kernel_sum = 16;
 
     // hardness map copy
     int blurred_hardness[DUNGEON_HEIGHT][DUNGEON_WIDTH];
@@ -325,7 +333,7 @@ int generate_corridors(dungeon *dungeon, room *rooms, int num_rooms) {
                     continue;
                 }
 
-                int dist = w + dungeon->tiles[nr][nc].hardness  + (rand() % 25); // add randomness
+                int dist = w + dungeon->tiles[nr][nc].hardness + (rand() % 5); // add randomness
                 if (dist < distances[nr][nc]) {
                     distances[nr][nc] = dist;
                     predecessors[nr][nc] = u;
@@ -336,10 +344,11 @@ int generate_corridors(dungeon *dungeon, room *rooms, int num_rooms) {
 
         // draw corridor
         point current = target;
+        int hardened = (rand() % 30) + 3; // add randomness to hallway hardness for 
         while (current.r != source.r || current.c != source.c) {
             if (dungeon->tiles[current.r][current.c].sprite == ' ') {
                 dungeon->tiles[current.r][current.c].sprite = '#';
-                dungeon->tiles[current.r][current.c].hardness = 0;
+                dungeon->tiles[current.r][current.c].hardness = hardened + rand() % 6 - 3;
             }
             current = predecessors[current.r][current.c];
         }
@@ -349,4 +358,35 @@ int generate_corridors(dungeon *dungeon, room *rooms, int num_rooms) {
     
     free(centers);
     return 0;
+}
+
+int place_stairs(dungeon *dungeon) {
+    int i, r, c, n;
+
+    char stairs[2] = {'<', '>'};
+
+    // place at least one of each stair
+    for (i = 0; i < 2; i++) {
+        do {
+            r = rand() % DUNGEON_HEIGHT;
+            c = rand() % DUNGEON_WIDTH;
+        } while (dungeon->tiles[r][c].sprite != '.' && dungeon->tiles[r][c].sprite != '#');
+        dungeon->tiles[r][c].sprite = stairs[i];
+    }
+
+    n = rand() % 3;
+    for (i = 0; i < n; i++) {
+        // pick random room or corridor tile
+        do {
+            r = rand() % DUNGEON_HEIGHT;
+            c = rand() % DUNGEON_WIDTH;
+        } while (dungeon->tiles[r][c].sprite != '.' && dungeon->tiles[r][c].sprite != '#');
+
+        // 50/50 up or down stair
+        if (rand() % 2 == 0) {
+            dungeon->tiles[r][c].sprite = '<';
+        } else {
+            dungeon->tiles[r][c].sprite = '>';
+        }
+    }
 }
