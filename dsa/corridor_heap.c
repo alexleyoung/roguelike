@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 
 #include "corridor_heap.h"
 
@@ -29,6 +30,24 @@ void percolate_down(heap *h, int parent) {
         }
         parent = child;
         child = 2 * parent + 1;
+    }
+}
+
+void percolate_up(heap *h, int child) {
+    int parent = (child - 1) / 2;
+    if (!child) {
+        return;
+    }
+    while (parent >= 0 && h->weights[parent] > h->weights[child]) {
+        // swap
+        point tmp_p = h->points[parent];
+        int tmp_w = h->weights[parent];
+        h->points[parent] = h->points[child];
+        h->weights[parent] = h->weights[child];
+        h->points[child] = tmp_p;
+        h->weights[child] = tmp_w;
+        child = parent;
+        parent = (child - 1) / 2;
     }
 }
 
@@ -69,7 +88,7 @@ int heap_push(heap *h, point p, int weight) {
     h->weights[h->size] = weight;
     h->size++;
 
-    percolate_down(h, h->size);
+    percolate_up(h, h->size - 1);
 
     return 0;
 }

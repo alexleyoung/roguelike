@@ -2,6 +2,7 @@
 #include <stdio.h>
 
 #include "gen/gen.h"
+#include "dsa/corridor_heap.h"
 
 void print_dungeon(dungeon *dungeon) {
     int r, c;
@@ -35,12 +36,26 @@ void print_hardness(dungeon *dungeon) {
 
 int main(int argc, char **argv) {
     // create a dungeon
-    dungeon *dungeon = malloc(sizeof (*dungeon));
+    // dungeon *dungeon = malloc(sizeof (*dungeon));
 
-    generate_dungeon(dungeon, 6);
+    // generate_dungeon(dungeon, 6);
 
-    print_dungeon(dungeon);
-    print_hardness(dungeon);
+    // print_dungeon(dungeon);
+    // print_hardness(dungeon);
+
+    // heap h;
+    // heap_init(&h);
+    // heap_push(&h, (point){0, 0}, 3);
+    // heap_push(&h, (point){1, 1}, 2);
+    // heap_push(&h, (point){2, 2}, 1);
+    // heap_push(&h, (point){3, 3}, 0);
+
+    // point p;
+    // int w;
+    // while (!heap_is_empty(&h)) {
+    //     heap_pop(&h, &p, &w);
+    //     printf("%d\n", w);
+    // }
 
     return 0;
 }
