@@ -5,12 +5,15 @@
 #include "gen.h"
 #include "../dsa/queue.h"
 
+#define INF 2147483647
+
 int generate_rooms(dungeon *dungeon, int num_rooms);
 int place_room(dungeon *dungeon, room *room);
 int init_dungeon(dungeon *dungeon);
 int generate_hardness(dungeon *dungeon);
-void propagate_hardness(dungeon *dungeon, int hitmap[DUNGEON_HEIGHT][DUNGEON_WIDTH], queue *q, seed *s);
+void propagate_hardness(dungeon *dungeon, int propagated[DUNGEON_HEIGHT][DUNGEON_WIDTH], queue *q, seed *s);
 void smooth_hardness(dungeon *dungeon);
+int generate_corridors(dungeon *dungeon, room *rooms, int num_rooms);
 
 /*
 Generate a dungeon with num_rooms number of rooms.
@@ -33,6 +36,8 @@ int generate_dungeon(dungeon *dungeon, int num_rooms) {
     }; 
 
     generate_hardness(dungeon);
+
+    generate_corridors(dungeon, dungeon->rooms, num_rooms);
 
     return 0;
 }
@@ -67,7 +72,7 @@ int generate_hardness(dungeon *dungeon) {
     queue_init(&q);
     int num_seeds;
     seed *s;
-    int hitmap[DUNGEON_HEIGHT][DUNGEON_WIDTH];
+    int propagated[DUNGEON_HEIGHT][DUNGEON_WIDTH];
 
     num_seeds = rand() % 4 + 5;
 
@@ -93,12 +98,12 @@ int generate_hardness(dungeon *dungeon) {
             s = (seed *)data;
         }
         dungeon->tiles[s->p.r][s->p.c].hardness = s->hardness;
-        propagate_hardness(dungeon, hitmap, &q, s);
+        propagate_hardness(dungeon, propagated, &q, s);
         free(s);
     }
 
     queue_destroy(&q);
-    
+
     smooth_hardness(dungeon);
 
     return 0;
@@ -107,7 +112,7 @@ int generate_hardness(dungeon *dungeon) {
 /*
 BFS helper to propagate hardness from seeds
 */
-void propagate_hardness(dungeon *dungeon, int hitmap[DUNGEON_HEIGHT][DUNGEON_WIDTH], queue *q, seed *s) {
+void propagate_hardness(dungeon *dungeon, int propagated[DUNGEON_HEIGHT][DUNGEON_WIDTH], queue *q, seed *s) {
     int r, c;
     seed *child;
 
@@ -119,7 +124,7 @@ void propagate_hardness(dungeon *dungeon, int hitmap[DUNGEON_HEIGHT][DUNGEON_WID
             // check if neighbor's hardness is unmodified
             if (dungeon->tiles[r][c].hardness != DEFAULT_HARDNESS) { continue; }
             // check if neighbor is already visited
-            if (hitmap[r][c] == 1) { continue; }
+            if (propagated[r][c] == 1) { continue; }
 
             // update hardness
             dungeon->tiles[s->p.r][s->p.c].hardness = s->hardness;
@@ -132,40 +137,60 @@ void propagate_hardness(dungeon *dungeon, int hitmap[DUNGEON_HEIGHT][DUNGEON_WID
             queue_enqueue(q, child);
 
             // mark as visited
-            hitmap[r][c] = 1;
+            propagated[r][c] = 1;
         }
     }
 }
 
 void smooth_hardness(dungeon *dungeon) {
+    int r, c, i, j;
+
     // kernel for guassian blur
-    int kernel[3][3] = {
-        {1, 2, 1},
-        {2, 4, 2},
-        {1, 2, 1}
+    int kernel[5][5] = {
+        {1, 2, 3, 2, 1},
+        {2, 4, 6, 4, 2},
+        {3, 6, 9, 6, 3},
+        {2, 4, 6, 4, 2},
+        {1, 2, 3, 2, 1}
     };
-    int kernel_size = 3;
-    int kernel_sum = 16;
+    int kernel_size = 5;
+    int kernal_offset = 2;
+    int kernel_sum = 273;
+    // int kernel[3][3] = {
+    //     {1, 2, 1},
+    //     {2, 4, 2},
+    //     {1, 2, 1}
+    // };
+    // int kernel_size = 3;
+    // int kernal_offset = 1;
+    // int kernel_sum = 16;
 
     // hardness map copy
     int blurred_hardness[DUNGEON_HEIGHT][DUNGEON_WIDTH];
 
-    for (int r = 1; r < DUNGEON_HEIGHT - 1; r++) {
-        for (int c = 1; c < DUNGEON_WIDTH - 1; c++) {
+    for (r = 1; r < DUNGEON_HEIGHT - 1; r++) {
+        for (c = 1; c < DUNGEON_WIDTH - 1; c++) {
+            if (dungeon->tiles[r][c].hardness == 0) {
+                continue;
+            }
             int new_hardness = 0;
-            for (int kr = 0; kr < kernel_size; kr++) {
-                for (int kc = 0; kc < kernel_size; kc++) {
-                    int nr = r + kr - 1; // Neighbor row index
-                    int nc = c + kc - 1; // Neighbor column index
-                    new_hardness += dungeon->tiles[nr][nc].hardness * kernel[kr][kc];
+            for (i = 0; i < kernel_size; i++) {
+                for (int j = 0; j < kernel_size; j++) {
+                    int nr = r + i - kernal_offset; // neighbor row
+                    int nc = c + j - kernal_offset; // neighbor column
+                    new_hardness += dungeon->tiles[nr][nc].hardness * kernel[i][j];
                 }
             }
-            // Averaging with kernel sum
-            blurred_hardness[r][c] = new_hardness / kernel_sum;
+            // average with kernel sum
+            if (new_hardness / kernel_sum > 200) {
+                blurred_hardness[r][c] = 200;
+            } else {
+                blurred_hardness[r][c] = new_hardness / kernel_sum;
+            }
         }
     }
 
-    // Transfer computed hardness back to the dungeon tiles
+    // transfer calculated hardness back to the dungeon tiles
     for (int r = 1; r < DUNGEON_HEIGHT - 1; r++) {
         for (int c = 1; c < DUNGEON_WIDTH - 1; c++) {
             dungeon->tiles[r][c].hardness = blurred_hardness[r][c];
@@ -245,8 +270,36 @@ int place_room(dungeon *dungeon, room *room) {
     return 0;
 }
 
+/*
+use dijkstra to generate corridors by lowest hardness
+*/
 int generate_corridors(dungeon *dungeon, room *rooms, int num_rooms) {
     int i, r, c, err;
+
+    // find centers of rooms
+    point *centers = malloc(sizeof (*centers) * num_rooms);
+    for (i = 0; i < num_rooms; i++) {
+        centers[i] = (point){rooms[i].corner.r + rooms[i].size.r / 2,
+                             rooms[i].corner.c + rooms[i].size.c / 2};
+    }
+
+    int distances[DUNGEON_HEIGHT][DUNGEON_WIDTH];
+    point predecessors[DUNGEON_HEIGHT][DUNGEON_WIDTH];
+    point source, target;
+
+    // dijkstra to connect each room
+    for (i = 0; i < num_rooms - 1; i++) {
+        // init dijkstra
+        for (r = 0; r < DUNGEON_HEIGHT; r++) {
+            for (c = 0; c < DUNGEON_WIDTH; c++) {
+                distances[r][c] = INF;
+                predecessors[r][c] = (point){-1, -1};
+            }
+        }
+
+        source = centers[i];
+        target = centers[i+1];
+    }
 
     return 0;
 }
