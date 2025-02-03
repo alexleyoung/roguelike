@@ -1,12 +1,12 @@
 #ifndef HEAP_H
 #define HEAP_H
 
-#include "gen.h"
+#include "types.h"
 
 #define DEFAULT_HEAP_CAPACITY 100
 
 typedef struct heap {
-    point *points;
+    point*points;
     int *weights;
     int size;
     int capacity;

@@ -36,11 +36,11 @@ void print_hardness(dungeon *dungeon) {
 
 int main(int argc, char **argv) {
     // create a dungeon
-    // dungeon *dungeon = malloc(sizeof (*dungeon));
+    dungeon *dungeon = malloc(sizeof (*dungeon));
 
-    // generate_dungeon(dungeon, 6);
+    generate_dungeon(dungeon, 6);
 
-    // print_dungeon(dungeon);
+    print_dungeon(dungeon);
     // print_hardness(dungeon);
 
     // heap h;

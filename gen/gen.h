@@ -8,13 +8,10 @@
 
 #define ROOM_MIN_WIDTH 3
 #define ROOM_MIN_HEIGHT 2
-#define ROOM_MAX_WIDTH 20
-#define ROOM_MAX_HEIGHT 9
+#define ROOM_MAX_WIDTH 13
+#define ROOM_MAX_HEIGHT 6
 
-typedef struct point {
-    int r;
-    int c;
-} point;
+#include "types.h"
 
 typedef struct tile {
     char sprite;

@@ -4,6 +4,7 @@
 
 #include "gen.h"
 #include "../dsa/queue.h"
+#include "../dsa/corridor_heap.h"
 
 #define INF 2147483647
 
@@ -274,7 +275,7 @@ int place_room(dungeon *dungeon, room *room) {
 use dijkstra to generate corridors by lowest hardness
 */
 int generate_corridors(dungeon *dungeon, room *rooms, int num_rooms) {
-    int i, r, c, err;
+    int i, r, c,err;
 
     // find centers of rooms
     point *centers = malloc(sizeof (*centers) * num_rooms);
@@ -288,7 +289,7 @@ int generate_corridors(dungeon *dungeon, room *rooms, int num_rooms) {
     point source, target;
 
     // dijkstra to connect each room
-    for (i = 0; i < num_rooms - 1; i++) {
+    for (i = 0; i < num_rooms; i++) {
         // init dijkstra
         for (r = 0; r < DUNGEON_HEIGHT; r++) {
             for (c = 0; c < DUNGEON_WIDTH; c++) {
@@ -298,9 +299,54 @@ int generate_corridors(dungeon *dungeon, room *rooms, int num_rooms) {
         }
 
         source = centers[i];
-        target = centers[i+1];
-    }
+        if (i == num_rooms - 1) {
+            target = centers[0];
+        } else {
+            target = centers[i+1];
+        }
+        heap h;
+        heap_init(&h);
+        heap_push(&h, source, 0);
+        distances[source.r][source.c] = 0;
 
+        while (!heap_is_empty(&h)) {
+            point u;
+            int w;
+            heap_pop(&h, &u, &w);
+            
+            // process neighbors (up, down, left, right)
+            int dr[] = {-1, 1, 0, 0};
+            int dc[] = {0, 0, -1, 1};
+            for (int dir = 0; dir < 4; dir++) {
+                int nr = u.r + dr[dir];
+                int nc = u.c + dc[dir];
+
+                if (nr < 1 || nr >= DUNGEON_HEIGHT - 1 || nc < 1 || nc >= DUNGEON_WIDTH - 1) {
+                    continue;
+                }
+
+                int dist = w + dungeon->tiles[nr][nc].hardness  + (rand() % 25); // add randomness
+                if (dist < distances[nr][nc]) {
+                    distances[nr][nc] = dist;
+                    predecessors[nr][nc] = u;
+                    heap_push(&h, (point){nr, nc}, dist);
+                }
+            }
+        }
+
+        // draw corridor
+        point current = target;
+        while (current.r != source.r || current.c != source.c) {
+            if (dungeon->tiles[current.r][current.c].sprite == ' ') {
+                dungeon->tiles[current.r][current.c].sprite = '#';
+                dungeon->tiles[current.r][current.c].hardness = 0;
+            }
+            current = predecessors[current.r][current.c];
+        }
+
+        heap_destroy(&h);
+    }
+    
+    free(centers);
     return 0;
 }
-
