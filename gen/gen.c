@@ -18,10 +18,10 @@ int generate_corridors(dungeon *dungeon, room *rooms, int num_rooms);
 int place_stairs(dungeon *dungeon);
 
 /*
-Generate a dungeon with num_rooms number of rooms.
+Generate a dungeon with num_rooms number of rooms and at least 2 stairs.
 
 Randomly places rectangular rooms, then creates a smooth hardness gradient
-for corridor placement.abort
+for corridor placement.
 
 Returns 0 on success, non-zero on failure.
 */
@@ -72,6 +72,11 @@ int init_dungeon(dungeon *dungeon) {
     return 0;
 }
 
+/*
+Generates a smooth hardness map over the dungeon
+
+Returns 0 on success, non-zero otherwise
+*/
 int generate_hardness(dungeon *dungeon) {
     int i; 
     queue q;
@@ -151,6 +156,9 @@ void propagate_hardness(dungeon *dungeon, int propagated[DUNGEON_HEIGHT][DUNGEON
     }
 }
 
+/*
+Apply gaussian blur to hardness map for smoothing
+*/
 void smooth_hardness(dungeon *dungeon) {
     int r, c, i, j;
 
@@ -207,6 +215,11 @@ void smooth_hardness(dungeon *dungeon) {
     }
 }
 
+/*
+Randomly generates num_rooms rectangular rooms in the dungeon to be placed
+
+Returns 0 on success, non-zero on failure.
+*/
 int generate_rooms(dungeon *dungeon, int num_rooms) {
     int i, r, c, err;
 
@@ -264,6 +277,9 @@ int generate_rooms(dungeon *dungeon, int num_rooms) {
     return 0;
 }
 
+/*
+Places a rectangular room in the dungeon
+*/
 int place_room(dungeon *dungeon, room *room) {
     int r, c;
     int err; // shouldn't ever error, here just in case
@@ -280,7 +296,12 @@ int place_room(dungeon *dungeon, room *room) {
 }
 
 /*
-use dijkstra to generate corridors by lowest hardness
+Generates corridors between rooms
+
+Function uses dijkstra to find the shortest path between rooms, with slight randomization
+to add randomness to hallways.
+
+Returns 0 on success, non-zero on failure.
 */
 int generate_corridors(dungeon *dungeon, room *rooms, int num_rooms) {
     int i, r, c,err;
@@ -360,6 +381,11 @@ int generate_corridors(dungeon *dungeon, room *rooms, int num_rooms) {
     return 0;
 }
 
+/*
+Places at least 2 stairs in any room or corridor tile
+
+Returns 0 on success, non-zero otherwise.
+*/
 int place_stairs(dungeon *dungeon) {
     int i, r, c, n;
 
