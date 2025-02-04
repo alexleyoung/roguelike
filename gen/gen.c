@@ -392,7 +392,7 @@ int find_path(dungeon *dungeon, point source, point target, int longest) {
         }
     }
 
-    // draw corridor
+    // draw corridor by backtracking through predecessors
     point current = target;
     int hardened = (rand() % 10) + 4; // add randomness to hallway hardness for 
     while (current.r != source.r || current.c != source.c) {

@@ -4,6 +4,24 @@
 #include "gen/gen.h"
 #include "dsa/corridor_heap.h"
 
+void print_dungeon(dungeon *dungeon);
+void print_hardness(dungeon *dungeon);
+void test_heap();
+
+int main(int argc, char **argv) {
+    // create a dungeon
+    dungeon *dungeon = malloc(sizeof (*dungeon));
+
+    // at least 6 rooms
+    int num_rooms = 6 + (rand() % 6);
+
+    generate_dungeon(dungeon, num_rooms);
+
+    print_dungeon(dungeon);
+
+    return 0;
+}
+
 void print_dungeon(dungeon *dungeon) {
     int r, c;
     for (r = 0; r < DUNGEON_HEIGHT; r++) {
@@ -34,30 +52,18 @@ void print_hardness(dungeon *dungeon) {
     }
 }
 
-int main(int argc, char **argv) {
-    // create a dungeon
-    dungeon *dungeon = malloc(sizeof (*dungeon));
+void test_heap() {
+    heap h;
+    heap_init(&h);
+    heap_push(&h, (point){0, 0}, -3);
+    heap_push(&h, (point){1, 1}, -2);
+    heap_push(&h, (point){2, 2}, -1);
+    heap_push(&h, (point){3, 3}, 0);
 
-    int num_rooms = 6 + (rand() % 6);
-
-    generate_dungeon(dungeon, num_rooms);
-
-    print_dungeon(dungeon);
-    print_hardness(dungeon);
-
-    // heap h;
-    // heap_init(&h);
-    // heap_push(&h, (point){0, 0}, -3);
-    // heap_push(&h, (point){1, 1}, -2);
-    // heap_push(&h, (point){2, 2}, -1);
-    // heap_push(&h, (point){3, 3}, 0);
-
-    // point p;
-    // int w;
-    // while (!heap_is_empty(&h)) {
-    //     heap_pop(&h, &p, &w);
-    //     printf("%d\n", w);
-    // }
-
-    return 0;
+    point p;
+    int w;
+    while (!heap_is_empty(&h)) {
+        heap_pop(&h, &p, &w);
+        printf("%d\n", w);
+    }
 }

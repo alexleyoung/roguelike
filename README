@@ -1,1 +1,19 @@
-# roguelike
+Alex Young's coms 3270 roguelike project. Makefile included with comments; TLDR run make to compile to game executable.
+
+Assignment 1.01 Features (gen.c):
+
+- random room size + placement
+- hardness map
+  - place random hardness seeds
+  - propagate hardness outward with bfs
+  - smooth hardness map with gaussian blur
+- corridor generation
+  - dijkstra to connect rooms
+  - create cycle with inverted dijkstra (invert weights such that previous lowest weight = highest)
+- place stairs
+
+Data Structures / Algorithms (dsa/):
+
+- queue for bfs (implemented in class)
+- min-heap for dijkstra (custom implementation for my dungeon structure)
+- types (for common structs like point)
