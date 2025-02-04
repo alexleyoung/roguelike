@@ -15,6 +15,7 @@ int generate_hardness(dungeon *dungeon);
 void propagate_hardness(dungeon *dungeon, int propagated[DUNGEON_HEIGHT][DUNGEON_WIDTH], queue *q, seed *s);
 void smooth_hardness(dungeon *dungeon);
 int generate_corridors(dungeon *dungeon, room *rooms, int num_rooms);
+int find_path(dungeon *dungeon, point source, point target, int longest);
 int place_stairs(dungeon *dungeon);
 
 /*
@@ -97,7 +98,7 @@ int generate_hardness(dungeon *dungeon) {
             s->p.c = rand() % DUNGEON_WIDTH;
         } while (dungeon->tiles[s->p.r][s->p.c].sprite != ' ');
 
-        s->hardness = (rand() % 40 + 1);
+        s->hardness = (rand() % 20 + 1);
 
         queue_enqueue(&q, s);
     }
@@ -163,24 +164,29 @@ void smooth_hardness(dungeon *dungeon) {
     int r, c, i, j;
 
     // kernel for guassian blur
-    // int kernel[5][5] = {
-    //     {1, 2, 3, 2, 1},
-    //     {2, 4, 6, 4, 2},
-    //     {3, 6, 9, 6, 3},
-    //     {2, 4, 6, 4, 2},
-    //     {1, 2, 3, 2, 1}
-    // };
-    // int kernel_size = 5;
+    int kernel[5][5] = {
+        {1, 2, 3, 2, 1},
+        {2, 4, 6, 4, 2},
+        {3, 6, 9, 6, 3},
+        {2, 4, 6, 4, 2},
+        {1, 2, 3, 2, 1}
+    };
+    int kernel_size = 5;
     // int kernal_offset = 2;
     // int kernel_sum = 273;
-    int kernel[3][3] = {
-        {1, 2, 1},
-        {2, 4, 2},
-        {1, 2, 1}
-    };
-    int kernel_size = 3;
-    int kernal_offset = 1;
-    int kernel_sum = 16;
+    // int kernel[3][3] = {
+    //     {1, 2, 1},
+    //     {2, 4, 2},
+    //     {1, 2, 1}
+    // };
+    // int kernel_size = 3;
+    int kernal_offset = kernel_size / 2;
+    int kernel_sum = 0;
+    for (int i = 0; i < kernel_size; i++) {
+        for (int j = 0; j < kernel_size; j++) {
+            kernel_sum += kernel[i][j];
+        }
+    }
 
     // hardness map copy
     int blurred_hardness[DUNGEON_HEIGHT][DUNGEON_WIDTH];
@@ -304,7 +310,7 @@ to add randomness to hallways.
 Returns 0 on success, non-zero on failure.
 */
 int generate_corridors(dungeon *dungeon, room *rooms, int num_rooms) {
-    int i, r, c,err;
+    int i, err;
 
     // find centers of rooms
     point *centers = malloc(sizeof (*centers) * num_rooms);
@@ -313,71 +319,91 @@ int generate_corridors(dungeon *dungeon, room *rooms, int num_rooms) {
                              rooms[i].corner.c + rooms[i].size.c / 2};
     }
 
-    int distances[DUNGEON_HEIGHT][DUNGEON_WIDTH];
-    point predecessors[DUNGEON_HEIGHT][DUNGEON_WIDTH];
-    point source, target;
 
     // dijkstra to connect each room
-    for (i = 0; i < num_rooms; i++) {
-        // init dijkstra
-        for (r = 0; r < DUNGEON_HEIGHT; r++) {
-            for (c = 0; c < DUNGEON_WIDTH; c++) {
-                distances[r][c] = INF;
-                predecessors[r][c] = (point){-1, -1};
-            }
-        }
-
-        source = centers[i];
-        if (i == num_rooms - 1) {
-            target = centers[0];
-        } else {
-            target = centers[i+1];
-        }
-        heap h;
-        heap_init(&h);
-        heap_push(&h, source, 0);
-        distances[source.r][source.c] = 0;
-
-        while (!heap_is_empty(&h)) {
-            point u;
-            int w;
-            heap_pop(&h, &u, &w);
-            
-            // process neighbors (up, down, left, right)
-            int dr[] = {-1, 1, 0, 0};
-            int dc[] = {0, 0, -1, 1};
-            for (int dir = 0; dir < 4; dir++) {
-                int nr = u.r + dr[dir];
-                int nc = u.c + dc[dir];
-
-                if (nr < 1 || nr >= DUNGEON_HEIGHT - 1 || nc < 1 || nc >= DUNGEON_WIDTH - 1) {
-                    continue;
-                }
-
-                int dist = w + dungeon->tiles[nr][nc].hardness + (rand() % 5); // add randomness
-                if (dist < distances[nr][nc]) {
-                    distances[nr][nc] = dist;
-                    predecessors[nr][nc] = u;
-                    heap_push(&h, (point){nr, nc}, dist);
-                }
-            }
-        }
-
-        // draw corridor
-        point current = target;
-        int hardened = (rand() % 30) + 3; // add randomness to hallway hardness for 
-        while (current.r != source.r || current.c != source.c) {
-            if (dungeon->tiles[current.r][current.c].sprite == ' ') {
-                dungeon->tiles[current.r][current.c].sprite = '#';
-                dungeon->tiles[current.r][current.c].hardness = hardened + rand() % 6 - 3;
-            }
-            current = predecessors[current.r][current.c];
-        }
-
-        heap_destroy(&h);
+    for (i = 0; i < num_rooms - 1; i++) {
+        find_path(dungeon, centers[i], centers[(i+1)], 0);
     }
+
+    // create cycle
+    int r1, r2;
+    r1 = 0;
+    r2 = num_rooms - 1;
+    find_path(dungeon, centers[r1], centers[r2], 1);
+
+    do {
+        r1 = rand() % num_rooms;
+        r2 = rand() % num_rooms;
+    } while (r1 == r2);
+    find_path(dungeon, centers[r1], centers[r2], 1);
     
     free(centers);
+    return 0;
+}
+
+/*
+Helper method to find the shortest path between two rooms.
+longest is flag to invert dijkstra for longest path.
+
+Returns 0 on success, non-zero on failure.
+*/
+int find_path(dungeon *dungeon, point source, point target, int longest) {
+    int r, c, err;
+    int distances[DUNGEON_HEIGHT][DUNGEON_WIDTH];
+    point predecessors[DUNGEON_HEIGHT][DUNGEON_WIDTH];
+
+    // init dijkstra
+    for (r = 0; r < DUNGEON_HEIGHT; r++) {
+        for (c = 0; c < DUNGEON_WIDTH; c++) {
+            distances[r][c] = INF;
+            predecessors[r][c] = (point){-1, -1};
+        }
+    }
+
+    heap h;
+    heap_init(&h);
+    heap_push(&h, source, 0);
+    distances[source.r][source.c] = 0;
+
+    while (!heap_is_empty(&h)) {
+        point u;
+        int w;
+        heap_pop(&h, &u, &w);
+        
+        // process neighbors (up, down, left, right)
+        int dr[] = {-1, 1, 0, 0};
+        int dc[] = {0, 0, -1, 1};
+        for (int dir = 0; dir < 4; dir++) {
+            int nr = u.r + dr[dir];
+            int nc = u.c + dc[dir];
+
+            if (nr < 1 || nr >= DUNGEON_HEIGHT - 1 || nc < 1 || nc >= DUNGEON_WIDTH - 1) {
+                continue;
+            }
+
+            int new_dist;
+            if (longest) { new_dist = w + 241 - dungeon->tiles[nr][nc].hardness + (rand() % 15); }
+            else { new_dist = w + dungeon->tiles[nr][nc].hardness + (rand() % 15); }
+            if (new_dist < distances[nr][nc]) {
+                distances[nr][nc] = new_dist;
+                predecessors[nr][nc] = u;
+                heap_push(&h, (point){nr, nc}, new_dist);
+            }
+        }
+    }
+
+    // draw corridor
+    point current = target;
+    int hardened = (rand() % 10) + 4; // add randomness to hallway hardness for 
+    while (current.r != source.r || current.c != source.c) {
+        if (dungeon->tiles[current.r][current.c].sprite == ' ') {
+            dungeon->tiles[current.r][current.c].sprite = '#';
+            dungeon->tiles[current.r][current.c].hardness = (hardened + rand() % 12);
+        }
+        current = predecessors[current.r][current.c];
+    }
+
+    heap_destroy(&h);
     return 0;
 }
 
@@ -400,7 +426,7 @@ int place_stairs(dungeon *dungeon) {
         dungeon->tiles[r][c].sprite = stairs[i];
     }
 
-    n = rand() % 3;
+    n = rand() % 3 * 0; // n = additional stairs to place
     for (i = 0; i < n; i++) {
         // pick random room or corridor tile
         do {
@@ -415,4 +441,6 @@ int place_stairs(dungeon *dungeon) {
             dungeon->tiles[r][c].sprite = '>';
         }
     }
+
+    return 0;
 }

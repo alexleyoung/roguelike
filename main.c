@@ -43,13 +43,13 @@ int main(int argc, char **argv) {
     generate_dungeon(dungeon, num_rooms);
 
     print_dungeon(dungeon);
-    // print_hardness(dungeon);
+    print_hardness(dungeon);
 
     // heap h;
     // heap_init(&h);
-    // heap_push(&h, (point){0, 0}, 3);
-    // heap_push(&h, (point){1, 1}, 2);
-    // heap_push(&h, (point){2, 2}, 1);
+    // heap_push(&h, (point){0, 0}, -3);
+    // heap_push(&h, (point){1, 1}, -2);
+    // heap_push(&h, (point){2, 2}, -1);
     // heap_push(&h, (point){3, 3}, 0);
 
     // point p;
