@@ -10,14 +10,18 @@
 
 #define MAX_ROOM_TRIES 5000
 
+int init_dungeon(dungeon *dungeon);
+
 int generate_rooms(dungeon *dungeon, int num_rooms);
 int place_room(dungeon *dungeon, room *room);
-int init_dungeon(dungeon *dungeon);
+
 int generate_hardness(dungeon *dungeon);
 void propagate_hardness(dungeon *dungeon, int propagated[DUNGEON_HEIGHT][DUNGEON_WIDTH], queue *q, seed *s);
 void smooth_hardness(dungeon *dungeon);
+
 int generate_corridors(dungeon *dungeon, room *rooms, int num_rooms);
 int find_path(dungeon *dungeon, point source, point target, int longest);
+
 int place_stairs(dungeon *dungeon, int num_stairs);
 
 /*
@@ -31,26 +35,22 @@ Returns 0 on success, non-zero on failure.
 int generate_dungeon(dungeon *dungeon, int num_rooms) {
     srand(time(NULL)); // seed RNG
 
-    init_dungeon(dungeon);
+    int err = 0;
 
-    int i, err;
+    err = init_dungeon(dungeon);
+    err = generate_rooms(dungeon, num_rooms);
+    err = generate_hardness(dungeon);
+    err = generate_corridors(dungeon, dungeon->rooms, num_rooms);
+    err = place_stairs(dungeon, 2);
 
-    dungeon->rooms = malloc(sizeof (*dungeon->rooms) * num_rooms);
-    if ((err = generate_rooms(dungeon, num_rooms))) {
-        return err;
-    }; 
-
-    generate_hardness(dungeon);
-
-    generate_corridors(dungeon, dungeon->rooms, num_rooms);
-
-
-
-    place_stairs(dungeon);
-
-    return 0;
+    return err;
 }
 
+/*
+initialize dungeon with rock and default hardness and draw border
+
+returns 0 on success, non-zero on failure
+*/
 int init_dungeon(dungeon *dungeon) {
     int r, c;
 
@@ -241,6 +241,8 @@ Randomly generates num_rooms rectangular rooms in the dungeon to be placed
 Returns 0 on success, non-zero on failure.
 */
 int generate_rooms(dungeon *dungeon, int num_rooms) {
+    dungeon->rooms = malloc(sizeof (*dungeon->rooms) * num_rooms);
+
     int i, r, c, err;
 
     for (i = 0; i < num_rooms; i++) {
@@ -438,17 +440,18 @@ int place_stairs(dungeon *dungeon, int num_stairs) {
     char stairs[2] = {'<', '>'};
 
     // place at least one of each stair
-    for (i = 0; i < 2; i++) {
+    i = 0;
+    while (i < 2) {
         do {
             r = rand() % DUNGEON_HEIGHT;
             c = rand() % DUNGEON_WIDTH;
         } while (dungeon->tiles[r][c].sprite != '.' && dungeon->tiles[r][c].sprite != '#');
-        
         dungeon->tiles[r][c].sprite = stairs[i];
+        i++;
     }
 
     // place additional stairs
-    for (i = 0; i < num_stairs; i++) {
+    while (i < num_stairs) {
         int stair = rand() % 2;
 
         // pick random room or corridor tile
