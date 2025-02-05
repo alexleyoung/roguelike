@@ -18,7 +18,7 @@ int main(int argc, char **argv) {
     generate_dungeon(dungeon, num_rooms);
 
     print_dungeon(dungeon);
-    // print_hardness(dungeon);
+    print_hardness(dungeon);
 
     return 0;
 }
