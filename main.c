@@ -19,7 +19,8 @@ int main(int argc, char **argv) {
     generate_dungeon(dungeon, num_rooms);
 
     print_dungeon(dungeon);
-    print_hardness(dungeon);
+    printf("rooms: %d\nstairs: %d\n", dungeon->num_rooms, dungeon->num_stairs);
+    // print_hardness(dungeon);
 
     // printf("home dir: %s\n", getenv("HOME"));
     save_dungeon(dungeon);

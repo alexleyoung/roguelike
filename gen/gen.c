@@ -12,14 +12,14 @@
 
 int init_dungeon(dungeon *dungeon);
 
-int generate_rooms(dungeon *dungeon, int num_rooms);
+int generate_rooms(dungeon *dungeon);
 int place_room(dungeon *dungeon, room *room);
 
 int generate_hardness(dungeon *dungeon);
 void propagate_hardness(dungeon *dungeon, int propagated[DUNGEON_HEIGHT][DUNGEON_WIDTH], queue *q, seed *s);
 void smooth_hardness(dungeon *dungeon);
 
-int generate_corridors(dungeon *dungeon, room *rooms, int num_rooms);
+int generate_corridors(dungeon *dungeon, room *rooms);
 int find_path(dungeon *dungeon, point source, point target, int longest);
 
 int place_stairs(dungeon *dungeon, int num_stairs);
@@ -35,12 +35,14 @@ Returns 0 on success, non-zero on failure.
 int generate_dungeon(dungeon *dungeon, int num_rooms) {
     srand(time(NULL)); // seed RNG
 
+    dungeon->num_rooms = num_rooms;
+
     int err = 0;
 
     err = init_dungeon(dungeon);
-    err = generate_rooms(dungeon, num_rooms);
+    err = generate_rooms(dungeon);
     err = generate_hardness(dungeon);
-    err = generate_corridors(dungeon, dungeon->rooms, num_rooms);
+    err = generate_corridors(dungeon, dungeon->rooms);
     err = place_stairs(dungeon, 2);
 
     return err;
@@ -240,12 +242,12 @@ Randomly generates num_rooms rectangular rooms in the dungeon to be placed
 
 Returns 0 on success, non-zero on failure.
 */
-int generate_rooms(dungeon *dungeon, int num_rooms) {
-    dungeon->rooms = malloc(sizeof (*dungeon->rooms) * num_rooms);
+int generate_rooms(dungeon *dungeon) {
+    dungeon->rooms = malloc(sizeof (*dungeon->rooms) * dungeon->num_rooms);
 
     int i, r, c, err;
 
-    for (i = 0; i < num_rooms; i++) {
+    for (i = 0; i < dungeon->num_rooms; i++) {
         room *room = &dungeon->rooms[i];
         point corner, size; // for room validation
 
@@ -325,18 +327,18 @@ to add randomness to hallways.
 
 Returns 0 on success, non-zero on failure.
 */
-int generate_corridors(dungeon *dungeon, room *rooms, int num_rooms) {
+int generate_corridors(dungeon *dungeon, room *rooms) {
     int i, err;
 
     // find centers of rooms for pathfinding - could potentially change to random points
-    point *centers = malloc(sizeof (*centers) * num_rooms);
-    for (i = 0; i < num_rooms; i++) {
+    point *centers = malloc(sizeof (*centers) * dungeon->num_rooms);
+    for (i = 0; i < dungeon->num_rooms; i++) {
         centers[i] = (point){rooms[i].corner.r + rooms[i].size.r / 2,
                              rooms[i].corner.c + rooms[i].size.c / 2};
     }
 
     // dijkstra to connect each room
-    for (i = 0; i < num_rooms - 1; i++) {
+    for (i = 0; i < dungeon->num_rooms - 1; i++) {
         find_path(dungeon, centers[i], centers[(i+1)], 0);
     }
 
@@ -345,8 +347,8 @@ int generate_corridors(dungeon *dungeon, room *rooms, int num_rooms) {
     cycles = rand() % 3 + 1; // completely arbitrary - mostly for fun
     for (i = 0; i < cycles; i++) {
         do {
-            r1 = rand() % num_rooms;
-            r2 = rand() % num_rooms;
+            r1 = rand() % dungeon->num_rooms;
+            r2 = rand() % dungeon->num_rooms;
         } while (r1 == r2);
         find_path(dungeon, centers[r1], centers[r2], 1);
     }
@@ -437,6 +439,10 @@ Returns 0 on success, non-zero otherwise.
 int place_stairs(dungeon *dungeon, int num_stairs) {
     int i, r, c;
 
+    if (num_stairs < 2) { return 1; }
+
+    dungeon->stairs = malloc(sizeof (*dungeon->stairs) * dungeon->num_stairs);
+
     char stairs[2] = {'<', '>'};
 
     // place at least one of each stair
@@ -447,12 +453,15 @@ int place_stairs(dungeon *dungeon, int num_stairs) {
             c = rand() % DUNGEON_WIDTH;
         } while (dungeon->tiles[r][c].sprite != '.' && dungeon->tiles[r][c].sprite != '#');
         dungeon->tiles[r][c].sprite = stairs[i];
+        stair s = {.p = {r, c}, .type = i};
+        dungeon->stairs[i] = s;
+        dungeon->num_stairs++;
         i++;
     }
 
     // place additional stairs
     while (i < num_stairs) {
-        int stair = rand() % 2;
+        int type = rand() % 2;
 
         // pick random room or corridor tile
         do {
@@ -460,7 +469,11 @@ int place_stairs(dungeon *dungeon, int num_stairs) {
             c = rand() % DUNGEON_WIDTH;
         } while (dungeon->tiles[r][c].sprite != '.' && dungeon->tiles[r][c].sprite != '#');
 
-        dungeon->tiles[r][c].sprite = stairs[stair];
+        stair s = {.p = {r, c}, .type = type};
+        dungeon->stairs[i] = s;
+
+        dungeon->tiles[r][c].sprite = stairs[type];
+        dungeon->num_stairs++;
     }
 
     return 0;

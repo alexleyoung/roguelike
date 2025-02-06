@@ -5,13 +5,18 @@
 #define DUNGEON_HEIGHT 21
 
 typedef struct point {
-    int r, c;
+    uint16_t r, c;
 } point;
 
 typedef struct tile {
     char sprite;
     int hardness;
 } tile;
+
+typedef struct stair {
+    point p;
+    int type;
+} stair;
 
 typedef struct room {
     point corner;
@@ -21,6 +26,9 @@ typedef struct room {
 typedef struct dungeon {
     tile tiles[DUNGEON_HEIGHT][DUNGEON_WIDTH];
     room *rooms;
+    uint16_t num_rooms;
+    stair *stairs;
+    uint16_t num_stairs;
 } dungeon;
 
 #endif
