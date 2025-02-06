@@ -215,7 +215,7 @@ void smooth_hardness(dungeon *dungeon) {
                 for (int j = 0; j < kernel_size; j++) {
                     int nr = r + i - kernal_offset; // neighbor row
                     int nc = c + j - kernal_offset; // neighbor column
-                    // careful not to include border because of negative hardness
+                    // careful not to include border 
                     if (nr < 1 || nr > DUNGEON_HEIGHT - 2 || nc < 1 || nc > DUNGEON_WIDTH - 2) {
                         continue;
                     }

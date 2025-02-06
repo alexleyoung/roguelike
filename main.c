@@ -3,6 +3,7 @@
 
 #include "gen/gen.h"
 #include "dsa/corridor_heap.h"
+#include "saves/saves.h"
 
 void print_dungeon(dungeon *dungeon);
 void print_hardness(dungeon *dungeon);
@@ -19,6 +20,9 @@ int main(int argc, char **argv) {
 
     print_dungeon(dungeon);
     print_hardness(dungeon);
+
+    // printf("home dir: %s\n", getenv("HOME"));
+    save_dungeon(dungeon);
 
     return 0;
 }
