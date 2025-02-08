@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include <assert.h>
 
 #include "gen/gen.h"
@@ -13,17 +14,32 @@ int compare_dungeons(dungeon *d1, dungeon *d2);
 void test_save_load();
 
 int main(int argc, char **argv) {
-    // // create a dungeon
     dungeon *dungeon = malloc(sizeof (*dungeon));
 
-    // int num_rooms = 6 + (rand() % 6);
-    // generate_dungeon(dungeon, num_rooms);
+    switch (argc) {
+        case 2: // load dungeon from file
+            // check arg
+            if (strcmp(argv[1], "--save") == 0) {
+                generate_dungeon(dungeon, 6 + (rand() % 6));
+                save_dungeon(dungeon, "dungeon"); // default name for assignment
+            } else if (strcmp(argv[1], "--load") == 0) {
+                load_dungeon(dungeon, "dungeon");
+            }
+            break;
+        case 3: // load and save dungeon to file
+            if ((strcmp(argv[1], "--load") == 0 && strcmp(argv[2], "--save") == 0) ||
+                (strcmp(argv[1], "--save") == 0 && strcmp(argv[2], "--load") == 0)) {
+                load_dungeon(dungeon, "dungeon");
+                print_dungeon(dungeon);
+                save_dungeon(dungeon, "dungeon");
+            }
+            break;
+        default: // no args (1 arg, case not strictly necessary)
+            generate_dungeon(dungeon, 6 + (rand() % 6));
+            break;
+    }
 
-    // print_dungeon(dungeon);
-    // print_hardness(dungeon);
-
-    test_save_load();
-
+    print_dungeon(dungeon);
     return 0;
 }
 
@@ -70,7 +86,11 @@ int compare_dungeons(dungeon *d1, dungeon *d2) {
     if (d1->num_rooms != d2->num_rooms) return 0;
     for (int i = 0; i < DUNGEON_HEIGHT; i++) {
         for (int j = 0; j < DUNGEON_WIDTH; j++) {
-            if (d1->tiles[i][j].hardness != d2->tiles[i][j].hardness) return 1;
+            if (d1->tiles[i][j].hardness != d2->tiles[i][j].hardness) {
+                printf("%d ", d1->tiles[i][j].hardness);
+                printf("%d ", d2->tiles[i][j].hardness);
+                return 1;
+            };
         }
     }
     return 0;
@@ -80,12 +100,13 @@ void test_save_load() {
     dungeon dungeon1, dungeon2;
     generate_dungeon(&dungeon1, 6);
     print_dungeon(&dungeon1);
-    print_hardness(&dungeon1);
     
-    const char *test_file = "test_dungeon.rlg";
+    const char *test_file = "dungeon";
     save_dungeon(&dungeon1, test_file);
-    load_dungeon(&dungeon2, test_file);
-    print_dungeon(&dungeon2);
+    int load_success = load_dungeon(&dungeon2, test_file);
+    assert(load_success == 0);
+    assert(compare_dungeons(&dungeon1, &dungeon2) == 0);
     
+    print_dungeon(&dungeon2);
     printf("Test passed: Dungeon saved and loaded successfully!\n");
 }

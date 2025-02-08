@@ -7,6 +7,10 @@
 
 /*
 Returns home dir appended with /.rlg327
+
+Name arg is the name of the file to save/load
+
+Returns path to file
 */
 char *get_save_path(const char *name) {
     char *home = getenv("HOME");
@@ -21,8 +25,7 @@ char *get_save_path(const char *name) {
         return NULL;
     }
 
-    // sprintf(path, "%s/.rlg327/%s", home, name);
-    return name;
+    sprintf(path, "%s/.rlg327/%s", home, name);
     return path;
 }
 
@@ -36,9 +39,10 @@ int save_dungeon(dungeon *dungeon, const char *name) {
     char *dir = get_save_path(name);
     FILE *f = fopen(dir, "wb");
     if (f == NULL) {
-        printf("Error: Could save file %s\n", dir);
+        printf("Error: Could not save file %s\n", dir);
         return 1;
     }
+    printf("Saved to %s\n", dir);
 
     char *marker = "RLG327-S2025";  // 12 bytes
     for (int i = 0; i < 12; i += 1) {
@@ -148,6 +152,13 @@ int save_dungeon(dungeon *dungeon, const char *name) {
     return 0;
 }
 
+/*
+Loads dungeon from binary file with format from assignment specification.
+Creates dungeon struct (according to types.h), fills it with data from file,
+then draws the appropriate sprites.
+
+Returns 0 on success, non-zero on failure.
+*/
 int load_dungeon(dungeon *dungeon, const char *name) {
     char marker[13];
     uint32_t version, file_size;
@@ -161,6 +172,7 @@ int load_dungeon(dungeon *dungeon, const char *name) {
         printf("Error: Could not open file to load: %s\n", dir);
         return 1;
     }
+    printf("Loaded from %s\n", dir);
 
     // get size of file
     fseek(f, 0, SEEK_END);

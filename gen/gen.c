@@ -463,7 +463,7 @@ int place_stairs(dungeon *dungeon, int num_stairs) {
     }
 
     // place additional stairs
-    for (i; i < num_stairs; i++) {
+    for (; i < num_stairs; i++) {
         int type = rand() % 2;
 
         // pick random room or corridor tile
