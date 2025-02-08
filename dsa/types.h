@@ -29,6 +29,7 @@ typedef struct dungeon {
     uint16_t num_rooms;
     stair *stairs;
     uint16_t num_stairs;
+    point player;
 } dungeon;
 
 #endif

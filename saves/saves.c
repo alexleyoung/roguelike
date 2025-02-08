@@ -42,7 +42,6 @@ int save_dungeon(dungeon *dungeon, const char *name) {
         printf("Error: Could not save file %s\n", dir);
         return 1;
     }
-    printf("Saved to %s\n", dir);
 
     char *marker = "RLG327-S2025";  // 12 bytes
     for (int i = 0; i < 12; i += 1) {
@@ -77,10 +76,10 @@ int save_dungeon(dungeon *dungeon, const char *name) {
     fwrite(&size, sizeof(size), 1, f);
 
     // write location of player (2B)
-    uint8_t player_x = dungeon->rooms[0].corner.c;
-    uint8_t player_y = dungeon->rooms[0].corner.r;
-    fwrite(&player_x, sizeof(player_x), 1, f);
-    fwrite(&player_y, sizeof(player_y), 1, f);
+    dungeon->player.c = dungeon->rooms[0].corner.c;
+    dungeon->player.r = dungeon->rooms[0].corner.r;
+    fwrite(&dungeon->player.c, sizeof(dungeon->player.c), 1, f);
+    fwrite(&dungeon->player.r, sizeof(dungeon->player.r), 1, f);
 
     // write tiles array
     for (int r = 0; r < DUNGEON_HEIGHT; r++) {
@@ -172,7 +171,6 @@ int load_dungeon(dungeon *dungeon, const char *name) {
         printf("Error: Could not open file to load: %s\n", dir);
         return 1;
     }
-    printf("Loaded from %s\n", dir);
 
     // get size of file
     fseek(f, 0, SEEK_END);
@@ -200,8 +198,8 @@ int load_dungeon(dungeon *dungeon, const char *name) {
     file_size = be32toh(file_size);
 
     // read location of player
-    fread(&player_x, sizeof(player_x), 1, f);
-    fread(&player_y, sizeof(player_y), 1, f);
+    fread(&dungeon->player.c, sizeof(dungeon->player.c), 1, f);
+    fread(&dungeon->player.r, sizeof(dungeon->player.r), 1, f);
 
     // read tiles array
     for (int r = 0; r < DUNGEON_HEIGHT; r++) {
@@ -275,6 +273,8 @@ int load_dungeon(dungeon *dungeon, const char *name) {
     for (int i = 0; i < d; i++) {
         dungeon->tiles[dungeon->stairs[u+i].p.r][dungeon->stairs[u+i].p.c].sprite = '>';
     }
+    // place player sprite
+    dungeon->tiles[dungeon->player.r][dungeon->player.c].sprite = '@';
 
     fclose(f);
     return 0;

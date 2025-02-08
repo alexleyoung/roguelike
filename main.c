@@ -31,6 +31,9 @@ int main(int argc, char **argv) {
                 (strcmp(argv[1], "--save") == 0 && strcmp(argv[2], "--load") == 0)) {
                 load_dungeon(dungeon, "dungeon");
                 save_dungeon(dungeon, "dungeon");
+            } else if (strcmp(argv[1], "--load") == 0) {
+                // load custom save
+                load_dungeon(dungeon, argv[2]);
             }
             break;
         default: // no args (1 arg, case not strictly necessary)
