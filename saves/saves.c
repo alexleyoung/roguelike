@@ -41,11 +41,9 @@ int save_dungeon(dungeon *dungeon, const char *name) {
     }
 
     char *marker = "RLG327-S2025";  // 12 bytes
-    for (int i = 0; i < 12; i += 2) {
-        uint16_t bytes;
-        bytes = (marker[i] << 8) | marker[i + 1];  // Pack two chars
-        bytes = htobe16(bytes);
-        fwrite(&bytes, sizeof(uint16_t), 1, f);
+    for (int i = 0; i < 12; i += 1) {
+        uint8_t letter = marker[i];
+        fwrite(&letter, sizeof(letter), 1, f);
     }
 
     // write version marker (4B)
@@ -91,14 +89,21 @@ int save_dungeon(dungeon *dungeon, const char *name) {
 
     // write num_rooms (2B)
     uint16_t r = dungeon->num_rooms;
+    r = htobe16(r);
     fwrite(&r, sizeof(r), 1, f);
+    r = be16toh(r);
 
     // write positions of rooms (r * 4B)
     for (int i = 0; i < r; i++) {
-        fwrite(&dungeon->rooms[i].corner.c, sizeof(dungeon->rooms[i].corner.c), 1, f);
-        fwrite(&dungeon->rooms[i].corner.r, sizeof(dungeon->rooms[i].corner.r), 1, f);
-        fwrite(&dungeon->rooms[i].size.c, sizeof(dungeon->rooms[i].size.c), 1, f);
-        fwrite(&dungeon->rooms[i].size.r, sizeof(dungeon->rooms[i].size.r), 1, f);
+        uint8_t corner_c = dungeon->rooms[i].corner.c;
+        uint8_t corner_r = dungeon->rooms[i].corner.r;
+        fwrite(&corner_c, sizeof(corner_c), 1, f);
+        fwrite(&corner_r, sizeof(corner_r), 1, f);
+
+        uint8_t size_c = dungeon->rooms[i].size.c;
+        uint8_t size_r = dungeon->rooms[i].size.r;
+        fwrite(&size_c, sizeof(size_c), 1, f);
+        fwrite(&size_r, sizeof(size_r), 1, f);
     }
 
     // count stairs
@@ -110,24 +115,32 @@ int save_dungeon(dungeon *dungeon, const char *name) {
     }
 
     // write # up stairs (2B)
+    u = htobe16(u);
     fwrite(&u, sizeof(u), 1, f);
+    u = be16toh(u); // undo to make sure loop is correct
 
     // write positions of up stairs (u * 2B)
     for (int i = 0; i < u + d; i++) {
         if (dungeon->stairs[i].type == 0) {
-            fwrite(&dungeon->stairs[i].p.c, sizeof(dungeon->stairs[i].p.c), 1, f);
-            fwrite(&dungeon->stairs[i].p.r, sizeof(dungeon->stairs[i].p.r), 1, f);
+            uint8_t c = dungeon->stairs[i].p.c;
+            uint8_t r = dungeon->stairs[i].p.r;
+            fwrite(&c, sizeof(c), 1, f);
+            fwrite(&r, sizeof(r), 1, f);
         }
     }
 
     // write # down stairs (2B)
+    d = htobe16(d);
     fwrite(&d, sizeof(d), 1, f);
+    d = be16toh(d); // undo for loop
 
     // write positions of down stairs (d * 2B)
     for (int i = 0; i < u + d; i++) {
         if (dungeon->stairs[i].type == 1) {
-            fwrite(&dungeon->stairs[i].p.c, sizeof(dungeon->stairs[i].p.c), 1, f);
-            fwrite(&dungeon->stairs[i].p.r, sizeof(dungeon->stairs[i].p.r), 1, f);
+            uint8_t c = dungeon->stairs[i].p.c;
+            uint8_t r = dungeon->stairs[i].p.r;
+            fwrite(&c, sizeof(c), 1, f);
+            fwrite(&r, sizeof(r), 1, f);
         }
     }
 
@@ -154,10 +167,13 @@ int load_dungeon(dungeon *dungeon, const char *name) {
     file_size = ftell(f);
     fseek(f, 0, SEEK_SET);
 
-    // read semantic marker
-    fread(marker, sizeof(char), 12, f);
+    // read semantic marker byte by byte converting to h endinaness
+    for (int i = 0; i < 12; i++) {
+        uint8_t letter;
+        fread(&letter, sizeof(letter), 1, f);
+        marker[i] = letter;
+    }
     marker[13] = '\0';
-    printf("marker: %s\n", marker);
     // check if file is valid
     if (strcmp(marker, "RLG327-S2025") != 0) {
         printf("Error: Invalid marker %s\n", marker);
@@ -166,14 +182,10 @@ int load_dungeon(dungeon *dungeon, const char *name) {
 
     // read version marker
     fread(&version, sizeof(version), 1, f);
-    // if (version != 0) {
-    //     printf("Error: Invalid version %s\n", dir);
-    //     return 1;
-    // }
-    printf("version: %d\n", version);
 
     // read size of file
     fread(&file_size, sizeof(file_size), 1, f);
+    file_size = be32toh(file_size);
 
     // read location of player
     fread(&player_x, sizeof(player_x), 1, f);
@@ -202,6 +214,7 @@ int load_dungeon(dungeon *dungeon, const char *name) {
 
     // read num_rooms   
     fread(&r, sizeof(r), 1, f);
+    r = be16toh(r);
     dungeon->num_rooms = r;
     dungeon->rooms = malloc(sizeof (*dungeon->rooms) * r);
 
@@ -214,6 +227,7 @@ int load_dungeon(dungeon *dungeon, const char *name) {
 
     // read up stair count
     fread(&u, sizeof(u), 1, f);
+    u = be16toh(u);
     dungeon->stairs = malloc(sizeof (*dungeon->stairs) * u);
 
     for (int i = 0; i < u; i++) {
@@ -224,12 +238,39 @@ int load_dungeon(dungeon *dungeon, const char *name) {
 
     // read down stair count
     fread(&d, sizeof(d), 1, f);
+    d = be16toh(d);
     dungeon->stairs = realloc(dungeon->stairs, sizeof (*dungeon->stairs) * u + sizeof (*dungeon->stairs) * d);
 
     for (int i = 0; i < d; i++) {
         fread(&dungeon->stairs[u+i].p.c, sizeof(dungeon->stairs[u+i].p.c), 1, f);
         fread(&dungeon->stairs[u+i].p.r, sizeof(dungeon->stairs[u+i].p.r), 1, f);
         dungeon->stairs[u+i].type = 1;
+    }
+
+    // place room sprites
+    for (int i = 0; i < r; i++) {
+        for (int j = 0; j < dungeon->rooms[i].size.r; j++) {
+            for (int k = 0; k < dungeon->rooms[i].size.c; k++) {
+                dungeon->tiles[dungeon->rooms[i].corner.r+j][dungeon->rooms[i].corner.c+k].sprite = '.';
+            }
+        }
+    }
+    // place stair sprites
+    int stair_count = 0;
+    for (int i = 0; i < u; i++) {
+        dungeon->tiles[dungeon->stairs[i].p.r][dungeon->stairs[i].p.c].sprite = '<';
+    }
+    for (int i = 0; i < d; i++) {
+        dungeon->tiles[dungeon->stairs[u+i].p.r][dungeon->stairs[u+i].p.c].sprite = '>';
+    }
+    for (int r = 0; r < DUNGEON_HEIGHT; r++) {
+        for (int c = 0; c < DUNGEON_WIDTH; c++) {
+            if (!dungeon->tiles[r][c].sprite) {
+                printf(" ");
+                continue; }
+            printf("%c", dungeon->tiles[r][c].sprite);
+        }
+        printf("\n");
     }
 
     fclose(f);

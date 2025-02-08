@@ -135,6 +135,9 @@ int generate_hardness(dungeon *dungeon) {
                     sum += dungeon->tiles[nr][nc].hardness;
                 }
                 dungeon->tiles[r][c].hardness = sum / dirs;
+                if (dungeon->tiles[r][c].hardness == 0) {
+                    dungeon->tiles[r][c].hardness = 1;
+                }
             }
         }
     }
@@ -224,6 +227,9 @@ void smooth_hardness(dungeon *dungeon) {
             }
             // average with kernel sum
             blurred_hardness[r][c] = new_hardness / kernel_sum;
+            if (blurred_hardness[r][c] == 0) {
+                blurred_hardness[r][c] = 1;
+            }
         }
     }
 
