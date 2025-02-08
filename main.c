@@ -79,6 +79,7 @@ int compare_dungeons(dungeon *d1, dungeon *d2) {
 void test_save_load() {
     dungeon dungeon1, dungeon2;
     generate_dungeon(&dungeon1, 6);
+    print_dungeon(&dungeon1);
     print_hardness(&dungeon1);
     
     const char *test_file = "test_dungeon.rlg";

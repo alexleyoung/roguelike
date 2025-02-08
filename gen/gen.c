@@ -119,8 +119,8 @@ int generate_hardness(dungeon *dungeon) {
     }
 
     // set missed spots to average of sum of neighbors
-    for (int r = 0; r < DUNGEON_HEIGHT; r++) {
-        for (int c = 0; c < DUNGEON_WIDTH; c++) {
+    for (int r = 1; r < DUNGEON_HEIGHT - 1; r++) {
+        for (int c = 1; c < DUNGEON_WIDTH - 1; c++) {
             if (dungeon->tiles[r][c].hardness == DEFAULT_HARDNESS) {
                 int sum = 0;
                 int dirs = 8;
@@ -163,8 +163,6 @@ void propagate_hardness(dungeon *dungeon, int propagated[DUNGEON_HEIGHT][DUNGEON
         c = s->p.c + dc[i];
         // check bounds
         if (r < 1 || r > DUNGEON_HEIGHT - 2 || c < 1 || c > DUNGEON_WIDTH - 2) { continue; }
-        // check if neighbor's hardness is unmodified
-        if (dungeon->tiles[r][c].hardness != DEFAULT_HARDNESS) { continue; }
         // check if neighbor is already visited
         if (propagated[r][c] == 1) { continue; }
 
