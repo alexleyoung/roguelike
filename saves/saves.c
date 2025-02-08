@@ -173,7 +173,7 @@ int load_dungeon(dungeon *dungeon, const char *name) {
         fread(&letter, sizeof(letter), 1, f);
         marker[i] = letter;
     }
-    marker[13] = '\0';
+    marker[12] = '\0';
     // check if file is valid
     if (strcmp(marker, "RLG327-S2025") != 0) {
         printf("Error: Invalid marker %s\n", marker);
@@ -196,18 +196,18 @@ int load_dungeon(dungeon *dungeon, const char *name) {
         for (int c = 0; c < DUNGEON_WIDTH; c++) {
             fread(&hardness, sizeof(hardness), 1, f);
             dungeon->tiles[r][c].hardness = hardness;
+            if (hardness == 0) {
+                dungeon->tiles[r][c].sprite = '#';
+            } else {
+                dungeon->tiles[r][c].sprite = ' ';
+            }
+
             // check if border
             if (c == 0 || c == DUNGEON_WIDTH-1) {
                 dungeon->tiles[r][c].sprite = '|';
             }
             if (r == 0 || r == DUNGEON_HEIGHT-1) {
                 dungeon->tiles[r][c].sprite = '-';
-            }
-
-            if (hardness == 0) {
-                dungeon->tiles[r][c].sprite = '#';
-            } else {
-                dungeon->tiles[r][c].sprite = ' ';
             }
         }
     }
@@ -239,7 +239,7 @@ int load_dungeon(dungeon *dungeon, const char *name) {
     // read down stair count
     fread(&d, sizeof(d), 1, f);
     d = be16toh(d);
-    dungeon->stairs = realloc(dungeon->stairs, sizeof (*dungeon->stairs) * u + sizeof (*dungeon->stairs) * d);
+    dungeon->stairs = realloc(dungeon->stairs, sizeof(*dungeon->stairs) * (u + d));
 
     for (int i = 0; i < d; i++) {
         fread(&dungeon->stairs[u+i].p.c, sizeof(dungeon->stairs[u+i].p.c), 1, f);
@@ -262,15 +262,6 @@ int load_dungeon(dungeon *dungeon, const char *name) {
     }
     for (int i = 0; i < d; i++) {
         dungeon->tiles[dungeon->stairs[u+i].p.r][dungeon->stairs[u+i].p.c].sprite = '>';
-    }
-    for (int r = 0; r < DUNGEON_HEIGHT; r++) {
-        for (int c = 0; c < DUNGEON_WIDTH; c++) {
-            if (!dungeon->tiles[r][c].sprite) {
-                printf(" ");
-                continue; }
-            printf("%c", dungeon->tiles[r][c].sprite);
-        }
-        printf("\n");
     }
 
     fclose(f);
