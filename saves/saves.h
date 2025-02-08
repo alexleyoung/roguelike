@@ -3,7 +3,7 @@
 
 #include "../dsa/types.h"
 
-int save_dungeon(dungeon *dungeon);
-int load_dungeon(dungeon *dungeon);
+int save_dungeon(dungeon *dungeon, const char *name);
+int load_dungeon(dungeon *dungeon, const char *name);
 
 #endif

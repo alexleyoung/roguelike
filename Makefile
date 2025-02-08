@@ -1,7 +1,7 @@
 default: game
 
 game: main.c $(wildcard gen/*.c) $(wildcard dsa/*.c) $(wildcard saves/*.c) # compile source files to game
-	gcc main.c gen/*.c dsa/*.c saves/*.c -I gen -I dsa -o game
+	gcc main.c gen/*.c dsa/*.c saves/*.c -I gen -I dsa -I saves -o game
 
 copy: clean # create copy of project to be turned into tarball
 	cp -R . ./copy

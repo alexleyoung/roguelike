@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <assert.h>
 
 #include "gen/gen.h"
 #include "dsa/corridor_heap.h"
@@ -8,22 +9,20 @@
 void print_dungeon(dungeon *dungeon);
 void print_hardness(dungeon *dungeon);
 void test_heap();
+int compare_dungeons(dungeon *d1, dungeon *d2);
+void test_save_load();
 
 int main(int argc, char **argv) {
-    // create a dungeon
+    // // create a dungeon
     dungeon *dungeon = malloc(sizeof (*dungeon));
 
-    // at least 6 rooms
-    int num_rooms = 6 + (rand() % 6);
+    // int num_rooms = 6 + (rand() % 6);
+    // generate_dungeon(dungeon, num_rooms);
 
-    generate_dungeon(dungeon, num_rooms);
-
-    print_dungeon(dungeon);
-    printf("rooms: %d\nstairs: %d\n", dungeon->num_rooms, dungeon->num_stairs);
+    // print_dungeon(dungeon);
     // print_hardness(dungeon);
 
-    // printf("home dir: %s\n", getenv("HOME"));
-    save_dungeon(dungeon);
+    test_save_load();
 
     return 0;
 }
@@ -34,8 +33,7 @@ void print_dungeon(dungeon *dungeon) {
         for (c = 0; c < DUNGEON_WIDTH; c++) {
             if (!dungeon->tiles[r][c].sprite) {
                 printf(" ");
-                continue;
-            }
+                continue; }
             printf("%c", dungeon->tiles[r][c].sprite);
         }
         printf("\n");
@@ -46,13 +44,7 @@ void print_hardness(dungeon *dungeon) {
     int r, c;
     for (r = 0; r < DUNGEON_HEIGHT; r++) {
         for (c = 0; c < DUNGEON_WIDTH; c++) {
-            if (r == 0 || r == DUNGEON_HEIGHT-1 || c == 0 || c == DUNGEON_WIDTH-1) {
-                printf("%c", dungeon->tiles[r][c].sprite);
-            } else if (dungeon->tiles[r][c].hardness != DEFAULT_HARDNESS) {
-                printf("%3d", dungeon->tiles[r][c].hardness);
-            } else {
-                printf("   ");
-            }
+            printf("%3d", dungeon->tiles[r][c].hardness);
         }
         printf("\n");
     }
@@ -72,4 +64,29 @@ void test_heap() {
         heap_pop(&h, &p, &w);
         printf("%d\n", w);
     }
+}
+
+int compare_dungeons(dungeon *d1, dungeon *d2) {
+    if (d1->num_rooms != d2->num_rooms) return 0;
+    for (int i = 0; i < DUNGEON_HEIGHT; i++) {
+        for (int j = 0; j < DUNGEON_WIDTH; j++) {
+            if (d1->tiles[i][j].hardness != d2->tiles[i][j].hardness) return 1;
+        }
+    }
+    return 0;
+}
+
+void test_save_load() {
+    dungeon dungeon1, dungeon2;
+    generate_dungeon(&dungeon1, 6);
+    print_hardness(&dungeon1);
+    
+    const char *test_file = "test_dungeon.rlg";
+    save_dungeon(&dungeon1, test_file);
+    
+    int load_success = load_dungeon(&dungeon2, test_file);
+    assert(load_success == 0);
+    
+    assert(compare_dungeons(&dungeon1, &dungeon2));
+    printf("Test passed: Dungeon saved and loaded successfully!\n");
 }

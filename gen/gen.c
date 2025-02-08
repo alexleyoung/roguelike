@@ -40,8 +40,8 @@ int generate_dungeon(dungeon *dungeon, int num_rooms) {
     int err = 0;
 
     err = init_dungeon(dungeon);
-    err = generate_rooms(dungeon);
     err = generate_hardness(dungeon);
+    err = generate_rooms(dungeon);
     err = generate_corridors(dungeon, dungeon->rooms);
     err = place_stairs(dungeon, 2);
 
@@ -100,7 +100,7 @@ int generate_hardness(dungeon *dungeon) {
         do {
             s->p.r = rand() % DUNGEON_HEIGHT;
             s->p.c = rand() % DUNGEON_WIDTH;
-        } while (dungeon->tiles[s->p.r][s->p.c].sprite != ' ');
+        } while (s->p.r == 0 || s->p.r == DUNGEON_HEIGHT-1 || s->p.c == 0 || s->p.c == DUNGEON_WIDTH-1);
 
         s->hardness = (rand() % 20) + 1;
 
@@ -422,7 +422,8 @@ int find_path(dungeon *dungeon, point source, point target, int longest) {
         if (dungeon->tiles[current.r][current.c].sprite == ' ') {
             dungeon->tiles[current.r][current.c].sprite = '#';
             // add randomness to hallway path variety
-            dungeon->tiles[current.r][current.c].hardness = (rand() % 21) + 4;
+            // dungeon->tiles[current.r][current.c].hardness = (rand() % 21) + 4;
+            dungeon->tiles[current.r][current.c].hardness = 0; // for loader
         }
         current = predecessors[current.r][current.c];
     }
@@ -446,21 +447,19 @@ int place_stairs(dungeon *dungeon, int num_stairs) {
     char stairs[2] = {'<', '>'};
 
     // place at least one of each stair
-    i = 0;
-    while (i < 2) {
+    for (i = 0; i < 2; i++) {
         do {
             r = rand() % DUNGEON_HEIGHT;
             c = rand() % DUNGEON_WIDTH;
         } while (dungeon->tiles[r][c].sprite != '.' && dungeon->tiles[r][c].sprite != '#');
+
         dungeon->tiles[r][c].sprite = stairs[i];
         stair s = {.p = {r, c}, .type = i};
         dungeon->stairs[i] = s;
-        dungeon->num_stairs++;
-        i++;
     }
 
     // place additional stairs
-    while (i < num_stairs) {
+    for (i; i < num_stairs; i++) {
         int type = rand() % 2;
 
         // pick random room or corridor tile
@@ -473,8 +472,8 @@ int place_stairs(dungeon *dungeon, int num_stairs) {
         dungeon->stairs[i] = s;
 
         dungeon->tiles[r][c].sprite = stairs[type];
-        dungeon->num_stairs++;
     }
 
+    dungeon->num_stairs = i;
     return 0;
 }

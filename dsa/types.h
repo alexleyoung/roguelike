@@ -5,7 +5,7 @@
 #define DUNGEON_HEIGHT 21
 
 typedef struct point {
-    uint16_t r, c;
+    uint8_t r, c;
 } point;
 
 typedef struct tile {
