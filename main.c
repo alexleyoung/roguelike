@@ -30,7 +30,6 @@ int main(int argc, char **argv) {
             if ((strcmp(argv[1], "--load") == 0 && strcmp(argv[2], "--save") == 0) ||
                 (strcmp(argv[1], "--save") == 0 && strcmp(argv[2], "--load") == 0)) {
                 load_dungeon(dungeon, "dungeon");
-                print_dungeon(dungeon);
                 save_dungeon(dungeon, "dungeon");
             }
             break;
