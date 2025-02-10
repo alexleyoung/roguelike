@@ -1,6 +1,8 @@
 #ifndef TYPES_H
 #define TYPES_H
 
+#include <stdint.h>
+
 #define DUNGEON_WIDTH 80
 #define DUNGEON_HEIGHT 21
 
@@ -25,11 +27,14 @@ typedef struct room {
 
 typedef struct dungeon {
     tile tiles[DUNGEON_HEIGHT][DUNGEON_WIDTH];
+
     room *rooms;
     uint16_t num_rooms;
     stair *stairs;
     uint16_t num_stairs;
+
     point player;
+
 } dungeon;
 
 #endif

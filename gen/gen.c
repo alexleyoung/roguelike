@@ -24,6 +24,8 @@ int find_path(dungeon *dungeon, point source, point target, int longest);
 
 int place_stairs(dungeon *dungeon, int num_stairs);
 
+int spawn_player(dungeon *dungeon);
+
 /*
 Generate a dungeon with num_rooms number of rooms and at least 2 stairs.
 
@@ -44,6 +46,7 @@ int generate_dungeon(dungeon *dungeon, int num_rooms) {
     err = generate_rooms(dungeon);
     err = generate_corridors(dungeon, dungeon->rooms);
     err = place_stairs(dungeon, 2);
+    err = spawn_player(dungeon);
 
     return err;
 }
@@ -479,5 +482,21 @@ int place_stairs(dungeon *dungeon, int num_stairs) {
     }
 
     dungeon->num_stairs = i;
+    return 0;
+}
+
+int spawn_player(dungeon *dungeon) {
+    int r, c;
+
+    // pick random room
+    do {
+        r = rand() % DUNGEON_HEIGHT;
+        c = rand() % DUNGEON_WIDTH;
+    } while (dungeon->tiles[r][c].sprite != '.');
+
+    dungeon->player.r = r;
+    dungeon->player.c = c;
+    dungeon->tiles[r][c].sprite = '@';
+
     return 0;
 }

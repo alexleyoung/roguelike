@@ -1,6 +1,12 @@
 Alex Young's coms 3270 roguelike project. Makefile included with comments.
 
-Assignment 1.01 Features (gen.c):
+Assignment 1.02 Features (saves/):
+
+- save dungeon to binary file according to assignment specification
+- load dungeon from binary file
+- updated main function to support --save and --load flags, including --load <filename> for testing
+
+Assignment 1.01 Features (gen/):
 
 - random room size + placement
 - hardness map

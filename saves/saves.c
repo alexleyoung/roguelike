@@ -3,7 +3,12 @@
 #include <string.h>
 
 #include "saves.h"
-#include"../dsa/endian.h"
+
+#if defined(__APPLE__)
+#include "../dsa/portable_endian.h"
+#else
+#include <endian.h>
+#endif
 
 /*
 Returns home dir appended with /.rlg327
