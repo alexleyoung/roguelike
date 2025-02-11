@@ -1,8 +1,8 @@
-#ifdef ALGS_H
+#ifndef ALGS_H
 #define ALGS_H
 
 #include "types.h"
 
-void djikstra()
+int min(int a, int b);
 
 #endif

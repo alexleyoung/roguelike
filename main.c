@@ -21,14 +21,14 @@ int main(int argc, char **argv) {
         case 2: // load dungeon from file
             // check arg
             if (strcmp(argv[1], "--save") == 0) {
-                if (err = generate_dungeon(dungeon, 6 + (rand() % 6))) {
+                if ((err = generate_dungeon(dungeon, 6 + (rand() % 6)))) {
                     printf("Error: Failed to generate dungeon\n");
                 }; 
-                if (err = save_dungeon(dungeon, "dungeon")) {
+                if ((err = save_dungeon(dungeon, "dungeon"))) {
                     printf("Error: Failed to save dungeon\n");
                 }; // default name for assignment 
             } else if (strcmp(argv[1], "--load") == 0) {
-                if (err = load_dungeon(dungeon, "dungeon")) {
+                if ((err = load_dungeon(dungeon, "dungeon"))) {
                     printf("Error: Failed to load dungeon\n");
                 }
             }
@@ -36,21 +36,21 @@ int main(int argc, char **argv) {
         case 3: // load and save dungeon to file
             if ((strcmp(argv[1], "--load") == 0 && strcmp(argv[2], "--save") == 0) ||
                 (strcmp(argv[1], "--save") == 0 && strcmp(argv[2], "--load") == 0)) {
-                if (err = load_dungeon(dungeon, "dungeon")) {
+                if ((err = load_dungeon(dungeon, "dungeon"))) {
                     printf("Error: Failed to load dungeon\n");
                 };
-                if (err = save_dungeon(dungeon, "dungeon")) {
+                if ((err = save_dungeon(dungeon, "dungeon"))) {
                     printf("Error: Failed to save dungeon\n");
                 }; 
             } else if (strcmp(argv[1], "--load") == 0) {
                 // load custom save
-                if (err = load_dungeon(dungeon, argv[2])) {
+                if ((err = load_dungeon(dungeon, argv[2]))) {
                     printf("Error: Failed to load dungeon\n");
                 };
             }
             break;
         default: // no args (1 arg, case not strictly necessary)
-            if (err = generate_dungeon(dungeon, 6 + (rand() % 6))) {
+            if ((err = generate_dungeon(dungeon, 6 + (rand() % 6)))) {
                 printf("Error: Failed to generate dungeon\n");
             }; 
             break;

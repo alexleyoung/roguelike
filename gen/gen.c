@@ -119,7 +119,7 @@ int generate_hardness(dungeon *dungeon) {
         dungeon->tiles[s->p.r][s->p.c].hardness = s->hardness;
         propagate_hardness(dungeon, propagated, &q, s);
         free(s);
-    }
+  }
 
     // set missed spots to average of sum of neighbors
     for (int r = 1; r < DUNGEON_HEIGHT - 1; r++) {

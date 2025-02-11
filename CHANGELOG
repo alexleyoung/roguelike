@@ -1,4 +1,10 @@
-commit 35efc1f82f80c0be45ed31eb677afd4d4a436f51 (HEAD -> main, origin/main)
+commit 515dd81233af7ec1e6976577626e8c7ab54a176f (HEAD -> main, origin/main)
+Author: Alex Young <alexyoung0119@gmail.com>
+Date: Mon Feb 10 15:42:17 2025 -0600
+
+    add conditional check for apple on endian import; add better error handling/output in main
+
+commit 35efc1f82f80c0be45ed31eb677afd4d4a436f51
 Author: Alex Young <alexyoung0119@gmail.com>
 Date: Sat Feb 8 00:24:20 2025 -0600
 

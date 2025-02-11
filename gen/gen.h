@@ -1,7 +1,7 @@
 #ifndef GEN_H
 #define GEN_H
 
-#include "types.h"
+#include "../dsa/types.h"
 
 #define DEFAULT_HARDNESS 255
 

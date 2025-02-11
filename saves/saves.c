@@ -24,7 +24,7 @@ char *get_save_path(const char *name) {
         return NULL;
     }
 
-    char *path = malloc(strlen(home) + strlen(name) + 10);  // Extra space for "/.rlg327"
+    char *path = malloc(strlen(home) + strlen("/.rlg327/") + strlen(name));  // Extra space for "/.rlg327"
     if (!path) {
         printf("Error: Memory allocation failed\n");
         return NULL;
