@@ -3,12 +3,15 @@
 #include <string.h>
 #include <assert.h>
 
+#include "dsa/types.h"
 #include "gen/gen.h"
 #include "dsa/corridor_heap.h"
 #include "saves/saves.h"
+#include "monsters/pathfinding.h"
 
 void print_dungeon(dungeon *dungeon);
 void print_hardness(dungeon *dungeon);
+void print_dists(dungeon *dungeon, int dists[DUNGEON_HEIGHT][DUNGEON_WIDTH]);
 void test_heap();
 int compare_dungeons(dungeon *d1, dungeon *d2);
 void test_save_load();
@@ -58,6 +61,15 @@ int main(int argc, char **argv) {
 
     if (err) { return err; }
     print_dungeon(dungeon);
+
+    printf("Distances:\n");
+    calc_dists(dungeon, dungeon->dists, dungeon->player, 0);
+    print_dists(dungeon, dungeon->dists);
+
+    printf("Distances with Tunnels:\n");
+    calc_dists(dungeon, dungeon->tunnel_dists, dungeon->player, 1);
+    print_dists(dungeon, dungeon->tunnel_dists);
+
     return 0;
 }
 
@@ -79,6 +91,19 @@ void print_hardness(dungeon *dungeon) {
     for (r = 0; r < DUNGEON_HEIGHT; r++) {
         for (c = 0; c < DUNGEON_WIDTH; c++) {
             printf("%3d", dungeon->tiles[r][c].hardness);
+        }
+        printf("\n");
+    }
+}
+
+void print_dists(dungeon *dungeon, int dists[DUNGEON_HEIGHT][DUNGEON_WIDTH]) {
+    for (int r = 0; r < DUNGEON_HEIGHT; r++) {
+        for (int c = 0; c < DUNGEON_WIDTH; c++) {
+            if (dists[r][c] > 255) {
+                printf(" ");
+                continue;
+            }
+            printf("%d", dungeon->dists[r][c] % 10);
         }
         printf("\n");
     }

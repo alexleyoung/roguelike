@@ -105,7 +105,7 @@ int generate_hardness(dungeon *dungeon) {
             s->p.c = rand() % DUNGEON_WIDTH;
         } while (s->p.r == 0 || s->p.r == DUNGEON_HEIGHT-1 || s->p.c == 0 || s->p.c == DUNGEON_WIDTH-1);
 
-        s->hardness = (rand() % 20) + 1;
+        s->hardness = ((rand() % 20) + 1) * 11;
 
         queue_enqueue(&q, s);
     }
@@ -411,7 +411,7 @@ int find_path(dungeon *dungeon, point source, point target, int longest) {
             // 100 kind of magic number; should technically be max hardness to invert the values
             // i.e previous hardest now becomes the lightest if we want longer path
             // randomness on weights for more variety in paths
-            if (longest) { new_dist = w + 100 - dungeon->tiles[nr][nc].hardness + (rand() % 15); }
+            if (longest) { new_dist = w + 270 - dungeon->tiles[nr][nc].hardness + (rand() % 15); }
             else { new_dist = w + dungeon->tiles[nr][nc].hardness + (rand() % 15); }
 
             // update if new distance is "better"
