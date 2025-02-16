@@ -3,15 +3,17 @@
 #include <string.h>
 #include <assert.h>
 
-#include "dsa/types.h"
-#include "gen/gen.h"
+#include "dsa/heap.h"
 #include "dsa/corridor_heap.h"
+#include "types/dungeon.h"
+#include "gen/gen.h"
 #include "saves/saves.h"
 #include "monsters/pathfinding.h"
 
 void print_dungeon(dungeon *dungeon);
 void print_hardness(dungeon *dungeon);
 void print_dists(dungeon *dungeon, int dists[DUNGEON_HEIGHT][DUNGEON_WIDTH]);
+void test_corridor_heap();
 void test_heap();
 int compare_dungeons(dungeon *d1, dungeon *d2);
 void test_save_load();
@@ -70,6 +72,9 @@ int main(int argc, char **argv) {
     calc_dists(dungeon, dungeon->tunnel_dists, dungeon->player, 1);
     print_dists(dungeon, dungeon->tunnel_dists);
 
+    printf("hardness:\n");
+    print_hardness(dungeon);
+
     return 0;
 }
 
@@ -88,9 +93,17 @@ void print_dungeon(dungeon *dungeon) {
 
 void print_hardness(dungeon *dungeon) {
     int r, c;
-    for (r = 0; r < DUNGEON_HEIGHT; r++) {
-        for (c = 0; c < DUNGEON_WIDTH; c++) {
-            printf("%3d", dungeon->tiles[r][c].hardness);
+    for (r = 0; r < DUNGEON_HEIGHT + 1; r++) {
+        for (c = 0; c < DUNGEON_WIDTH + 1; c++) {
+            if (r == 0 && c == 0) {
+                printf("   ");
+            } else if (r == 0) {
+                printf("%2d", c - 1);
+            } else if (c == 0) {
+                printf("%2d ", r - 1);
+            } else {
+                printf("%2x", dungeon->tiles[r - 1][c - 1].hardness);
+            }
         }
         printf("\n");
     }
@@ -102,26 +115,45 @@ void print_dists(dungeon *dungeon, int dists[DUNGEON_HEIGHT][DUNGEON_WIDTH]) {
             if (dists[r][c] > 255) {
                 printf(" ");
                 continue;
+            } else if (r == dungeon->player.r && c == dungeon->player.c) {
+                printf("@");
+            } else {
+                printf("%d", dists[r][c] % 10);
             }
-            printf("%d", dungeon->dists[r][c] % 10);
         }
         printf("\n");
+    }
+}
+
+void test_corridor_heap() {
+    corridor_heap h;
+    corridor_heap_init(&h);
+    corridor_heap_push(&h, (point){0, 0}, -3);
+    corridor_heap_push(&h, (point){1, 1}, -2);
+    corridor_heap_push(&h, (point){2, 2}, -1);
+    corridor_heap_push(&h, (point){3, 3}, 0);
+
+    point p;
+    int w;
+    while (!corridor_heap_is_empty(&h)) {
+        corridor_heap_pop(&h, &p, &w);
+        printf("%d\n", w);
     }
 }
 
 void test_heap() {
     heap h;
     heap_init(&h);
-    heap_push(&h, (point){0, 0}, -3);
-    heap_push(&h, (point){1, 1}, -2);
-    heap_push(&h, (point){2, 2}, -1);
-    heap_push(&h, (point){3, 3}, 0);
+    heap_push(&h, 5);
+    heap_push(&h, 4);
+    heap_push(&h, 3);
+    heap_push(&h, 2);
+    heap_push(&h, 1);
 
-    point p;
-    int w;
+    int v;
     while (!heap_is_empty(&h)) {
-        heap_pop(&h, &p, &w);
-        printf("%d\n", w);
+        heap_pop(&h, &v);
+        printf("%d\n", v);
     }
 }
 

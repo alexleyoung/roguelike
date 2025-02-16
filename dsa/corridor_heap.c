@@ -4,17 +4,17 @@
 #include "corridor_heap.h"
 
 /*
-Custom min-heap implementation which holds points and weights.
+Custom min-corridor_heap implementation which holds points and weights.
 Needed for dijkstra's in generate_corridors.
 */
 
 /*
 helper method to percolate down
 */
-void percolate_down(heap *h, int parent) {
+void corridor_percolate_down(corridor_heap *h, int parent) {
     int child = 2 * parent + 1;
     while (child < h->size) {
-            if (child + 1 < h->size && h->weights[child] > h->weights[child+1]) {
+        if (child + 1 < h->size && h->weights[child] > h->weights[child+1]) {
             child++;
         }
         if (h->weights[parent] > h->weights[child]) {
@@ -33,11 +33,11 @@ void percolate_down(heap *h, int parent) {
     }
 }
 
-void percolate_up(heap *h, int child) {
-    int parent = (child - 1) / 2;
+void corridor_percolate_up(corridor_heap *h, int child) {
     if (!child) {
         return;
     }
+    int parent = (child - 1) / 2;
     while (parent >= 0 && h->weights[parent] > h->weights[child]) {
         // swap
         point tmp_p = h->points[parent];
@@ -52,9 +52,9 @@ void percolate_up(heap *h, int child) {
 }
 
 /*
-init empty heap
+init empty corridor_heap
 */
-int heap_init(heap *h) {
+int corridor_heap_init(corridor_heap *h) {
     h->points = malloc(sizeof (*h->points) * DEFAULT_HEAP_CAPACITY);
     h->weights = malloc(sizeof (*h->weights) * DEFAULT_HEAP_CAPACITY);
     h->size = 0;
@@ -64,9 +64,9 @@ int heap_init(heap *h) {
 }
 
 /*
-destroy and free memory used by heap
+destroy and free memory used by corridor_heap
 */
-int heap_destroy(heap *h) {
+int corridor_heap_destroy(corridor_heap *h) {
     free(h->points);
     free(h->weights);
 
@@ -74,9 +74,9 @@ int heap_destroy(heap *h) {
 }
 
 /*
-push point and weight to heap
+push point and weight to corridor_heap
 */
-int heap_push(heap *h, point p, int weight) {
+int corridor_heap_push(corridor_heap *h, point p, int weight) {
     // dynamically expand adhoc
     if (h->size == h->capacity) {
         h->capacity *= 2;
@@ -88,17 +88,17 @@ int heap_push(heap *h, point p, int weight) {
     h->weights[h->size] = weight;
     h->size++;
 
-    percolate_up(h, h->size - 1);
+    corridor_percolate_up(h, h->size - 1);
 
     return 0;
 }
 
 /*
-pop point and weight from heap
+pop point and weight from corridor_heap
 */
-int heap_pop(heap *h, point *p, int *weight) {
+int corridor_heap_pop(corridor_heap *h, point *p, int *weight) {
     if (h->size == 0) {
-        return -1; // heap is empty
+        return -1; // corridor_heap is empty
     }
 
     // get min values
@@ -109,15 +109,15 @@ int heap_pop(heap *h, point *p, int *weight) {
     h->points[0] = h->points[h->size - 1];
     h->weights[0] = h->weights[h->size - 1];
     h->size--;
-    percolate_down(h, 0);
+    corridor_percolate_down(h, 0);
 
     return 0;
 }
 
 /*
-get min value and weight from heap
+get min value and weight from corridor_heap
 */
-int heap_peek(heap *h, point *p, int *weight) {
+int corridor_heap_peek(corridor_heap *h, point *p, int *weight) {
     if (h->size == 0) {
         return -1;
     }
@@ -131,6 +131,6 @@ int heap_peek(heap *h, point *p, int *weight) {
 /*
 returns 1 if empty, 0 if not
 */
-int heap_is_empty(heap *h) {
+int corridor_heap_is_empty(corridor_heap *h) {
     return (!h->size);
 }

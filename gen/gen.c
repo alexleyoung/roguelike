@@ -93,7 +93,7 @@ int generate_hardness(dungeon *dungeon) {
     seed *s;
     int propagated[DUNGEON_HEIGHT][DUNGEON_WIDTH];
 
-    num_seeds = (rand() % 10) + 20;
+    num_seeds = (rand() % 5) + 1;
 
     // place hardness seeds, add to queue for bfs
     for (i = 0; i < num_seeds; i++) {
@@ -194,15 +194,20 @@ void smooth_hardness(dungeon *dungeon) {
     int r, c, i, j;
 
     // kernel for guassian blur
-    // 5x5 kernel for smaller range of numbers. always adjustable
-    int kernel[5][5] = {
-        {1, 2, 3, 2, 1},
-        {2, 4, 6, 4, 2},
-        {3, 6, 9, 6, 3},
-        {2, 4, 6, 4, 2},
-        {1, 2, 3, 2, 1}
-    };
-    int kernel_size = 5;
+    // int kernel[5][5] = {
+    //  {1, 2, 3, 2, 1},
+    //  {2, 4, 6, 4, 2},
+    //  {3, 6, 9, 6, 3},
+    //  {2, 4, 6, 4, 2},
+    //  {1, 2, 3, 2, 1}
+    // };
+    // int kernel_size = 5;
+    int kernel[3][3] = {
+            {1, 2, 1},
+            {2, 4, 2},
+            {1, 2, 1}
+        };
+    int kernel_size = 3;
     int kernal_offset = kernel_size / 2;
     int kernel_sum = 0;
     for (int i = 0; i < kernel_size; i++) {
@@ -383,15 +388,15 @@ int find_path(dungeon *dungeon, point source, point target, int longest) {
         }
     }
 
-    heap h;
-    heap_init(&h);
-    heap_push(&h, source, 0);
+    corridor_heap h;
+    corridor_heap_init(&h);
+    corridor_heap_push(&h, source, 0);
     distances[source.r][source.c] = 0;
 
-    while (!heap_is_empty(&h)) {
+    while (!corridor_heap_is_empty(&h)) {
         point u;
         int w;
-        heap_pop(&h, &u, &w);
+        corridor_heap_pop(&h, &u, &w);
         
         // process neighbors (up, down, left, right)
         int dr[] = {-1, 1, 0, 0};
@@ -408,7 +413,7 @@ int find_path(dungeon *dungeon, point source, point target, int longest) {
             // calculate new distance
             int new_dist;
 
-            // 100 kind of magic number; should technically be max hardness to invert the values
+            // 270 kind of magic number; should technically be max hardness to invert the values
             // i.e previous hardest now becomes the lightest if we want longer path
             // randomness on weights for more variety in paths
             if (longest) { new_dist = w + 270 - dungeon->tiles[nr][nc].hardness + (rand() % 15); }
@@ -418,7 +423,7 @@ int find_path(dungeon *dungeon, point source, point target, int longest) {
             if (new_dist < distances[nr][nc]) {
                 distances[nr][nc] = new_dist;
                 predecessors[nr][nc] = u;
-                heap_push(&h, (point){nr, nc}, new_dist);
+                corridor_heap_push(&h, (point){nr, nc}, new_dist);
             }
         }
     }
@@ -435,7 +440,7 @@ int find_path(dungeon *dungeon, point source, point target, int longest) {
         current = predecessors[current.r][current.c];
     }
 
-    heap_destroy(&h);
+    corridor_heap_destroy(&h);
     return 0;
 }
 

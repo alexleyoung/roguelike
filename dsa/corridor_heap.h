@@ -1,22 +1,22 @@
-#ifndef HEAP_H
-#define HEAP_H
+#ifndef CORRIDOR_HEAP_H
+#define CORRIDOR_HEAP_H
 
-#include "types.h"
+#include "../types/dungeon.h"
 
-#define DEFAULT_HEAP_CAPACITY 100
+#define DEFAULT_HEAP_CAPACITY 10
 
-typedef struct heap {
+typedef struct corridor_heap {
     point*points;
     int *weights;
     int size;
     int capacity;
-} heap;
+} corridor_heap;
 
-int heap_init(heap *h);
-int heap_destroy(heap *h);
-int heap_push(heap *h, point p, int weight);
-int heap_pop(heap *h, point *p, int *weight);
-int heap_peek(heap *h, point *p, int *weight);
-int heap_is_empty(heap *h);
+int corridor_heap_init(corridor_heap *h);
+int corridor_heap_destroy(corridor_heap *h);
+int corridor_heap_push(corridor_heap *h, point p, int weight);
+int corridor_heap_pop(corridor_heap *h, point *p, int *weight);
+int corridor_heap_peek(corridor_heap *h, point *p, int *weight);
+int corridor_heap_is_empty(corridor_heap *h);
 
 #endif

@@ -2,11 +2,9 @@
 #include <stdio.h>
 
 #include "pathfinding.h"
-#include "../dsa/algs.h"
-#include "../dsa/queue.h"
 #include "../dsa/corridor_heap.h"
 
-#define INF 21448364//7
+#define INF 2147483647
 
 int calc_dists(dungeon *dungeon, int map[DUNGEON_HEIGHT][DUNGEON_WIDTH], point source, int enable_tunnels) {
     for (int r = 0; r < DUNGEON_HEIGHT; r++) {
@@ -15,14 +13,14 @@ int calc_dists(dungeon *dungeon, int map[DUNGEON_HEIGHT][DUNGEON_WIDTH], point s
         }
     }
     
-    heap h;
-    heap_init(&h);
-    heap_push(&h, source, 0);
+    corridor_heap h;
+    corridor_heap_init(&h);
+    corridor_heap_push(&h, source, 0);
     map[source.r][source.c] = 0;
-    while (!heap_is_empty(&h)) {
+    while (!corridor_heap_is_empty(&h)) {
         point p; // point
         int d; // distance
-        heap_pop(&h, &p, &d);
+        corridor_heap_pop(&h, &p, &d);
 
         for (int r = p.r - 1; r <= p.r + 1; r++) {
             for (int c = p.c - 1; c <= p.c + 1; c++) {
@@ -35,20 +33,11 @@ int calc_dists(dungeon *dungeon, int map[DUNGEON_HEIGHT][DUNGEON_WIDTH], point s
                     continue;
                 }
 
-                int w;
-                if (hardness == 0) {
-                    w = 1;
-                } else if (hardness == 255) {
-                    w = INF;
-                } else {
-                    w = 1 + (hardness / 85);
-                }
-
+                int w = 1 + (hardness / 85);
                 int new_dist = d + w;
-
                 if (new_dist < map[r][c]) {
                     map[r][c] = new_dist;
-                    heap_push(&h, (point){r, c}, new_dist);
+                    corridor_heap_push(&h, (point){r, c}, new_dist);
                 }
             }
         }

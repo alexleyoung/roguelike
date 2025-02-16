@@ -1,7 +1,7 @@
 #ifndef GEN_H
 #define GEN_H
 
-#include "../dsa/types.h"
+#include "../types/dungeon.h"
 
 #define DEFAULT_HARDNESS 255
 

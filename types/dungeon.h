@@ -1,5 +1,5 @@
-#ifndef TYPES_H
-#define TYPES_H
+#ifndef DUNGEON_H
+#define DUNGEON_H
 
 #include <stdint.h>
 
