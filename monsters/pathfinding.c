@@ -34,7 +34,6 @@ int calc_dists(dungeon *dungeon, int map[DUNGEON_HEIGHT][DUNGEON_WIDTH], point s
                 }
 
                 int w = 1 + (hardness / 85);
-                // if the cost of current (d) > cost of the current node + 1, replace with current node + + 1 cost
                 int new_dist = d + w;
                 if (new_dist < map[r][c]) {
                     map[r][c] = new_dist;
