@@ -62,18 +62,20 @@ int main(int argc, char **argv) {
     }
 
     if (err) { return err; }
-    print_dungeon(dungeon);
+    /*print_dungeon(dungeon);*/
+    /**/
+    /*printf("Distances:\n");*/
+    /*calc_dists(dungeon, dungeon->dists, dungeon->player, 0);*/
+    /*print_dists(dungeon, dungeon->dists);*/
+    /**/
+    /*printf("Distances with Tunnels:\n");*/
+    /*calc_dists(dungeon, dungeon->tunnel_dists, dungeon->player, 1);*/
+    /*print_dists(dungeon, dungeon->tunnel_dists);*/
+    /**/
+    /*printf("hardness:\n");*/
+    /*print_hardness(dungeon);*/
 
-    printf("Distances:\n");
-    calc_dists(dungeon, dungeon->dists, dungeon->player, 0);
-    print_dists(dungeon, dungeon->dists);
-
-    printf("Distances with Tunnels:\n");
-    calc_dists(dungeon, dungeon->tunnel_dists, dungeon->player, 1);
-    print_dists(dungeon, dungeon->tunnel_dists);
-
-    printf("hardness:\n");
-    print_hardness(dungeon);
+    test_heap();
 
     return 0;
 }
@@ -141,16 +143,26 @@ void test_corridor_heap() {
     }
 }
 
-void test_heap() {
-    heap h;
-    heap_init(&h);
-    heap_push(&h, 5);
-    heap_push(&h, 4);
-    heap_push(&h, 3);
-    heap_push(&h, 2);
-    heap_push(&h, 1);
+int compare_int(const void *v1, const void *v2) {
+    return *((int *)v1) - *((int *)v2);
+}
 
+void test_heap() {
     int v;
+    heap h;
+
+    heap_init(&h, sizeof (int), compare_int);
+    v = 5;
+    if (heap_push(&h, &v)) printf("error");
+    v = 4;
+    heap_push(&h, &v);
+    v = 3;
+    heap_push(&h, &v);
+    v = 2;
+    heap_push(&h, &v);
+    v = 1;
+    heap_push(&h, &v);
+
     while (!heap_is_empty(&h)) {
         heap_pop(&h, &v);
         printf("%d\n", v);

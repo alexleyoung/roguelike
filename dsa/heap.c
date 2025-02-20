@@ -3,18 +3,17 @@
 
 #include "heap.h"
 
-void percolate_down(heap *h, int parent) {
+int percolate_down(heap *h, int parent) {
     int child = 2 * parent + 1;
     char *base = (char *)h->a; // need to cast a to char * bc void * pointer arith is undefined
 
     void *tmp = malloc(h->element_size);
     if (!tmp) {
-        free(tmp);
-        return;
+        return -1;
     }
 
     while (child < h->size) {
-        if (child + 1 < h->size && h->cmp(base + (child * h->element_size), base + ((child + 1) * h->element_size)) < 0) {
+        if (child + 1 < h->size && h->cmp(base + (child * h->element_size), base + ((child + 1) * h->element_size)) > 0) {
             child++;
         }
 
@@ -31,33 +30,41 @@ void percolate_down(heap *h, int parent) {
     }
 
     free(tmp);
+    return 0;
 }
 
-void percolate_up(heap *h, unsigned child) {
+int percolate_up(heap *h, int child) {
     int parent = (child - 1) / 2;
     char *base = (char *)h->a;
-
     void *tmp = malloc(h->element_size);
-    if (!tmp) return;
+    if (!tmp) {
+        free(tmp);
+        return -1;
+    };
 
-    while (parent > 0 && h->cmp(base + (parent * h->element_size), base + (child * h->element_size)) > 0) {
+    while (child > 0 && h->cmp(base + (parent * h->element_size), base + (child * h->element_size)) > 0) {
         // swap
-        memcpy(tmp, h->a + parent * h->element_size, h->element_size);
-        memcpy(h->a + parent * h->element_size, h->a + child * h->element_size, h->element_size);
-        memcpy(h->a + child * h->element_size, tmp, h->element_size);
+        memcpy(tmp, base + (parent * h->element_size), h->element_size);
+        memcpy(base + parent * h->element_size, base + child * h->element_size, h->element_size);
+        memcpy(base + child * h->element_size, tmp, h->element_size);
 
         child = parent;
         parent = (child - 1) / 2;
     }
 
     free(tmp);
+    return 0;
 }
 
-int heap_init(heap *h, size_t element_size) {
+int heap_init(heap *h, size_t element_size, int (*cmp)(const void *, const void *)) {
     h->a = malloc(element_size * DEFAULT_HEAP_CAPACITY);
+    if (!h->a) {
+        return -1;
+    }
     h->size = 0;
     h->capacity = DEFAULT_HEAP_CAPACITY;
     h->element_size = element_size;
+    h->cmp = cmp;
 
     return 0;
 }
@@ -71,7 +78,6 @@ int heap_destroy(heap *h) {
 
 int heap_push(heap *h, void *data) {
     char *base = (char *)h->a;
-
     if (h->size == h->capacity) {
         h->capacity *= 2;
         void *new_alloc = realloc(h->a, h->element_size * h->capacity);
@@ -80,7 +86,7 @@ int heap_push(heap *h, void *data) {
     }
 
     memcpy(base + (h->size * h->element_size), data, h->element_size);
-    percolate_up(h, h->size);
+    if (percolate_up(h, h->size)) return -1;
 
     h->size++;
     return 0;
@@ -95,10 +101,10 @@ int heap_pop(heap *h, void *data) {
 
     memcpy(data, base, h->element_size);
 
-    memcpy(base, base + ((h->size - 1) * h->element_size), h->element_size);
-
     h->size--;
-    percolate_down(h, 0);
+    memcpy(base, base + ((h->size) * h->element_size), h->element_size);
+
+    if (percolate_down(h, 0)) return -1;
 
     return 0;
 }
