@@ -3,12 +3,10 @@
 
 #include <stdint.h>
 
+#include "character.h"
+
 #define DUNGEON_WIDTH 80
 #define DUNGEON_HEIGHT 21
-
-typedef struct point {
-    uint8_t r, c;
-} point;
 
 typedef struct tile {
     char sprite;
@@ -18,7 +16,6 @@ typedef struct tile {
 typedef struct stair {
     point p;
     int type;
-    int room_id;
 } stair;
 
 typedef struct room {
@@ -40,6 +37,8 @@ typedef struct dungeon {
 
     int dists[DUNGEON_HEIGHT][DUNGEON_WIDTH];
     int tunnel_dists[DUNGEON_HEIGHT][DUNGEON_WIDTH];
+
+    character *character_map[DUNGEON_HEIGHT][DUNGEON_WIDTH];
 } dungeon;
 
 #endif

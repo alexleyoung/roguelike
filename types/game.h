@@ -2,6 +2,7 @@
 #define GAME_H
 
 #include "../dsa/heap.h"
+#include "dungeon.h"
 #include "character.h"
 
 typedef struct event {

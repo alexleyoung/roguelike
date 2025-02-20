@@ -2,13 +2,21 @@
 
 #include "game_loop.h"
 #include "../gen/gen.h"
+#include "../dsa/heap.h"
 
 // comparator for event struct
 static int compare_events(const void *v1, const void *v2) {
     event event1 = *(event *)v1;
     event event2 = *(event *)v2;
 
-    return event1.turn_time - event2.turn_time;
+    int diff;
+
+    diff = event1.turn_time - event2.turn_time;
+    if (diff) {
+        return diff;
+    } else {
+        return event1.character.id - event2.character.id;
+    }
 }
 
 // create additional maps within the game with correct IDs
@@ -35,6 +43,14 @@ int init_game(game *g) {
     g->num_maps = 1;
 
     generate_dungeon(&g->maps[0], 6);
+
+    return 0;
+}
+
+int start_game(game *g) {
+    while (heap_is_empty(&g->events)) {
+        
+    }
 
     return 0;
 }

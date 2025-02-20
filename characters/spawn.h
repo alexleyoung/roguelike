@@ -1,0 +1,8 @@
+#ifndef SPAWN_H
+#define SPAWN_H
+
+#include "../types/character.h"
+
+int create_monster(character *c, int id);
+
+#endif

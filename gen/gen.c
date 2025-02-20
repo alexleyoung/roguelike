@@ -5,10 +5,13 @@
 #include "gen.h"
 #include "../dsa/queue.h"
 #include "../dsa/corridor_heap.h"
+#include "../characters/spawn.h"
 
 #define INF 2147483647
 
 #define MAX_ROOM_TRIES 5000
+
+#define DEFAULT_MOB_COUNT 10
 
 int init_dungeon(dungeon *dungeon);
 
@@ -25,6 +28,8 @@ int find_path(dungeon *dungeon, point source, point target, int longest);
 int place_stairs(dungeon *dungeon, int num_stairs);
 
 int spawn_player(dungeon *dungeon);
+
+int spawn_monsters(dungeon *dungeon, int n);
 
 /*
 Generate a dungeon with num_rooms number of rooms and at least 2 stairs.
@@ -492,6 +497,7 @@ int place_stairs(dungeon *dungeon, int num_stairs) {
 
 int spawn_player(dungeon *dungeon) {
     int r, c;
+    character p;
 
     // pick random room
     do {
@@ -501,7 +507,38 @@ int spawn_player(dungeon *dungeon) {
 
     dungeon->player.r = r;
     dungeon->player.c = c;
-    dungeon->tiles[r][c].sprite = '@';
+
+    // player id always 0
+    p.id = 0;
+    p.traits = PLAYER_TRAIT; // special identifier for PC
+    p.speed = 10;
+    p.pos = (point) {r, c};
+
+    dungeon->character_map[r][c] = &p;
 
     return 0;
+}
+
+int spawn_monsters(dungeon *dungeon, int n) {
+    if (n < 0) {
+        n = DEFAULT_MOB_COUNT;
+    }
+    
+    int i;
+    point p;
+    for (i = 1; i <= n; i++) {
+        character mob;
+
+        // generate random traits
+        create_monster(&mob, i);
+
+        // pick random spot //  TODO: BASE OFF THE TRAITS
+        do {
+            p.r = rand() % DUNGEON_HEIGHT;
+            p.c = rand() % DUNGEON_WIDTH;
+        } while (r < 1 || r > DUNGEON_HEIGHT - 2 || c < 1 || c > DUNGEON_WIDTH - 2);
+        mob.pos = p;
+
+        dungeon->character_map[p.r][p.c] = &mob;
+    }
 }

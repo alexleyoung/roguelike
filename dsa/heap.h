@@ -3,8 +3,6 @@
 
 #include <stddef.h>
 
-#include "../types/dungeon.h"
-
 #define DEFAULT_HEAP_CAPACITY 10
 
 typedef struct heap {
