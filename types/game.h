@@ -1,10 +1,18 @@
 #ifndef GAME_H
 #define GAME_H
 
-#include "../dsa/corridor_heap.h"
+#include "../dsa/heap.h"
+#include "character.h"
+
+typedef struct event {
+    int turn_time;
+    character character;
+} event;
 
 typedef struct game {
-    
+    heap events;
+    dungeon *maps;
 } game;
+
 
 #endif

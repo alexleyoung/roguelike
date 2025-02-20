@@ -37,7 +37,6 @@ typedef struct dungeon {
 
     int dists[DUNGEON_HEIGHT][DUNGEON_WIDTH];
     int tunnel_dists[DUNGEON_HEIGHT][DUNGEON_WIDTH];
-
 } dungeon;
 
 #endif

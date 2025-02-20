@@ -62,20 +62,18 @@ int main(int argc, char **argv) {
     }
 
     if (err) { return err; }
-    /*print_dungeon(dungeon);*/
-    /**/
-    /*printf("Distances:\n");*/
-    /*calc_dists(dungeon, dungeon->dists, dungeon->player, 0);*/
-    /*print_dists(dungeon, dungeon->dists);*/
-    /**/
-    /*printf("Distances with Tunnels:\n");*/
-    /*calc_dists(dungeon, dungeon->tunnel_dists, dungeon->player, 1);*/
-    /*print_dists(dungeon, dungeon->tunnel_dists);*/
-    /**/
-    /*printf("hardness:\n");*/
-    /*print_hardness(dungeon);*/
+    print_dungeon(dungeon);
 
-    test_heap();
+    printf("Distances:\n");
+    calc_dists(dungeon, dungeon->dists, dungeon->player, 0);
+    print_dists(dungeon, dungeon->dists);
+
+    printf("Distances with Tunnels:\n");
+    calc_dists(dungeon, dungeon->tunnel_dists, dungeon->player, 1);
+    print_dists(dungeon, dungeon->tunnel_dists);
+
+    printf("hardness:\n");
+    print_hardness(dungeon);
 
     return 0;
 }
