@@ -12,7 +12,7 @@ typedef struct event {
 typedef struct game {
     heap events;
     dungeon *maps;
+    int num_maps;
 } game;
-
 
 #endif

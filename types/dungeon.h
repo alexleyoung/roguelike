@@ -18,6 +18,7 @@ typedef struct tile {
 typedef struct stair {
     point p;
     int type;
+    int room_id;
 } stair;
 
 typedef struct room {
@@ -26,6 +27,8 @@ typedef struct room {
 } room;
 
 typedef struct dungeon {
+    int id;
+
     tile tiles[DUNGEON_HEIGHT][DUNGEON_WIDTH];
 
     room *rooms;

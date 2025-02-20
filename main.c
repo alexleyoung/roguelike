@@ -8,7 +8,8 @@
 #include "types/dungeon.h"
 #include "gen/gen.h"
 #include "saves/saves.h"
-#include "monsters/pathfinding.h"
+#include "characters/pathfinding.h"
+#include "game/game.h"
 
 void print_dungeon(dungeon *dungeon);
 void print_hardness(dungeon *dungeon);
@@ -19,6 +20,7 @@ int compare_dungeons(dungeon *d1, dungeon *d2);
 void test_save_load();
 
 int main(int argc, char **argv) {
+    game g;
     dungeon *dungeon = malloc(sizeof (*dungeon));
     int err = 0;
 
@@ -55,25 +57,26 @@ int main(int argc, char **argv) {
             }
             break;
         default: // no args (1 arg, case not strictly necessary)
-            if ((err = generate_dungeon(dungeon, 6 + (rand() % 6)))) {
-                printf("Error: Failed to generate dungeon\n");
-            }; 
+            /*if ((err = generate_dungeon(dungeon, 6 + (rand() % 6)))) {*/
+            /*    printf("Error: Failed to generate dungeon\n");*/
+            /*}; */
+            init_game(&g);
             break;
     }
 
     if (err) { return err; }
-    print_dungeon(dungeon);
+    print_dungeon(&g.maps[0]);
 
-    printf("Distances:\n");
-    calc_dists(dungeon, dungeon->dists, dungeon->player, 0);
-    print_dists(dungeon, dungeon->dists);
-
-    printf("Distances with Tunnels:\n");
-    calc_dists(dungeon, dungeon->tunnel_dists, dungeon->player, 1);
-    print_dists(dungeon, dungeon->tunnel_dists);
-
-    printf("hardness:\n");
-    print_hardness(dungeon);
+    /*printf("Distances:\n");*/
+    /*calc_dists(dungeon, dungeon->dists, dungeon->player, 0);*/
+    /*print_dists(dungeon, dungeon->dists);*/
+    /**/
+    /*printf("Distances with Tunnels:\n");*/
+    /*calc_dists(dungeon, dungeon->tunnel_dists, dungeon->player, 1);*/
+    /*print_dists(dungeon, dungeon->tunnel_dists);*/
+    /**/
+    /*printf("hardness:\n");*/
+    /*print_hardness(dungeon);*/
 
     return 0;
 }
