@@ -10,14 +10,7 @@ typedef struct character {
     point pos;
     int traits;
     int speed;
+    char sprite;
 } character;
-
-// all available moves characters can make identified by type?
-// unless moves are literally just character movement *ASK JERMY*
-// 0: move
-// 1: interact
-typedef struct move {
-    int type;
-} move;
 
 #endif

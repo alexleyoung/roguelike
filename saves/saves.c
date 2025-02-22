@@ -3,6 +3,8 @@
 #include <string.h>
 
 #include "saves.h"
+#include "../gen/gen.h"
+#include "../characters/spawn.h"
 
 #if defined(__APPLE__)
 #include "../dsa/portable_endian.h"
@@ -81,10 +83,8 @@ int save_dungeon(dungeon *dungeon, const char *name) {
     fwrite(&size, sizeof(size), 1, f);
 
     // write location of player (2B)
-    dungeon->player.c = dungeon->rooms[0].corner.c;
-    dungeon->player.r = dungeon->rooms[0].corner.r;
-    fwrite(&dungeon->player.c, sizeof(dungeon->player.c), 1, f);
-    fwrite(&dungeon->player.r, sizeof(dungeon->player.r), 1, f);
+    fwrite(&dungeon->player_pos.c, sizeof(dungeon->player_pos.c), 1, f);
+    fwrite(&dungeon->player_pos.r, sizeof(dungeon->player_pos.r), 1, f);
 
     // write tiles array
     for (int r = 0; r < DUNGEON_HEIGHT; r++) {
@@ -164,6 +164,8 @@ then draws the appropriate sprites.
 Returns 0 on success, non-zero on failure.
 */
 int load_dungeon(dungeon *dungeon, const char *name) {
+    init_dungeon(dungeon);
+
     char marker[13];
     uint32_t version, file_size;
     uint8_t player_x, player_y, hardness;
@@ -202,9 +204,13 @@ int load_dungeon(dungeon *dungeon, const char *name) {
     fread(&file_size, sizeof(file_size), 1, f);
     file_size = be32toh(file_size);
 
-    // read location of player
-    fread(&dungeon->player.c, sizeof(dungeon->player.c), 1, f);
-    fread(&dungeon->player.r, sizeof(dungeon->player.r), 1, f);
+    // create player
+    fread(&dungeon->player_pos.c, sizeof(dungeon->player_pos.c), 1, f);
+    fread(&dungeon->player_pos.r, sizeof(dungeon->player_pos.r), 1, f);
+
+    character *player = malloc(sizeof (character));
+    create_player(player, dungeon->player_pos);
+    dungeon->character_map[player->pos.r][player->pos.c] = player;
 
     // read tiles array
     for (int r = 0; r < DUNGEON_HEIGHT; r++) {
@@ -279,7 +285,7 @@ int load_dungeon(dungeon *dungeon, const char *name) {
         dungeon->tiles[dungeon->stairs[u+i].p.r][dungeon->stairs[u+i].p.c].sprite = '>';
     }
     // place player sprite
-    dungeon->tiles[dungeon->player.r][dungeon->player.c].sprite = '@';
+    dungeon->tiles[dungeon->player_pos.r][dungeon->player_pos.c].sprite = '@';
 
     fclose(f);
     return 0;

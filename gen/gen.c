@@ -40,8 +40,6 @@ for corridor placement.
 Returns 0 on success, non-zero on failure.
 */
 int generate_dungeon(dungeon *dungeon, int num_rooms) {
-    srand(time(NULL)); // seed RNG
-
     dungeon->num_rooms = num_rooms;
 
     int err = 0;
@@ -52,6 +50,7 @@ int generate_dungeon(dungeon *dungeon, int num_rooms) {
     err = generate_corridors(dungeon, dungeon->rooms);
     err = place_stairs(dungeon, 2);
     err = spawn_player(dungeon);
+    err = spawn_monsters(dungeon, DEFAULT_MOB_COUNT);
 
     return err;
 }
@@ -62,13 +61,16 @@ initialize dungeon with rock and default hardness and draw border
 returns 0 on success, non-zero on failure
 */
 int init_dungeon(dungeon *dungeon) {
+    srand(time(NULL)); // seed RNG
+
     int r, c;
 
-    // fill map with rock and default hardness
+    // fill map with rock and default hardness and characters with null
     for (r = 0; r < DUNGEON_HEIGHT; r++) {
         for (c = 0; c < DUNGEON_WIDTH; c++) {
             dungeon->tiles[r][c].sprite = ' ';
             dungeon->tiles[r][c].hardness = DEFAULT_HARDNESS;
+            dungeon->character_map[r][c] = NULL;
         }
     }
 
@@ -497,7 +499,7 @@ int place_stairs(dungeon *dungeon, int num_stairs) {
 
 int spawn_player(dungeon *dungeon) {
     int r, c;
-    character p;
+    character *p = malloc(sizeof (character));
 
     // pick random room
     do {
@@ -505,40 +507,37 @@ int spawn_player(dungeon *dungeon) {
         c = rand() % DUNGEON_WIDTH;
     } while (dungeon->tiles[r][c].sprite != '.');
 
-    dungeon->player.r = r;
-    dungeon->player.c = c;
+    dungeon->player_pos.r = r;
+    dungeon->player_pos.c = c;
 
-    // player id always 0
-    p.id = 0;
-    p.traits = PLAYER_TRAIT; // special identifier for PC
-    p.speed = 10;
-    p.pos = (point) {r, c};
+    create_player(p, (point){r,c});
 
-    dungeon->character_map[r][c] = &p;
+    dungeon->character_map[r][c] = p;
 
     return 0;
 }
 
 int spawn_monsters(dungeon *dungeon, int n) {
-    if (n < 0) {
-        n = DEFAULT_MOB_COUNT;
-    }
-    
     int i;
     point p;
     for (i = 1; i <= n; i++) {
-        character mob;
+        character *mob = malloc(sizeof (character));
 
         // generate random traits
-        create_monster(&mob, i);
+        create_monster(mob, i);
 
-        // pick random spot //  TODO: BASE OFF THE TRAITS
+        // pick random spot
+        int tunnel;
+        tunnel = mob->traits >> 2 & 1 && mob->traits >> 1 & 1; // if tunneling and telepathic, can spawn in wall
         do {
             p.r = rand() % DUNGEON_HEIGHT;
             p.c = rand() % DUNGEON_WIDTH;
-        } while (r < 1 || r > DUNGEON_HEIGHT - 2 || c < 1 || c > DUNGEON_WIDTH - 2);
-        mob.pos = p;
+        } while ((tunnel && (p.r < 1 || p.r > DUNGEON_HEIGHT - 2 || p.c < 1 || p.c > DUNGEON_WIDTH - 2))
+                || (!tunnel && dungeon->tiles[p.r][p.c].sprite != '.'));
+        mob->pos = p;
 
-        dungeon->character_map[p.r][p.c] = &mob;
+        dungeon->character_map[p.r][p.c] = mob;
     }
+
+    return 0;
 }

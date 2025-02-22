@@ -33,11 +33,10 @@ typedef struct dungeon {
     stair *stairs;
     uint16_t num_stairs;
 
-    point player;
-
     int dists[DUNGEON_HEIGHT][DUNGEON_WIDTH];
     int tunnel_dists[DUNGEON_HEIGHT][DUNGEON_WIDTH];
 
+    point player_pos;
     character *character_map[DUNGEON_HEIGHT][DUNGEON_WIDTH];
 } dungeon;
 

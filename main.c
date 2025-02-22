@@ -79,10 +79,11 @@ void print_dungeon(dungeon *dungeon) {
     int r, c;
     for (r = 0; r < DUNGEON_HEIGHT; r++) {
         for (c = 0; c < DUNGEON_WIDTH; c++) {
-            if (!dungeon->tiles[r][c].sprite) {
-                printf(" ");
-                continue; }
-            printf("%c", dungeon->tiles[r][c].sprite);
+            if (dungeon->character_map[r][c]) {
+                printf("%c", dungeon->character_map[r][c]->sprite);
+            } else {
+                printf("%c", dungeon->tiles[r][c].sprite);
+            }
         }
         printf("\n");
     }
@@ -112,7 +113,7 @@ void print_dists(dungeon *dungeon, int dists[DUNGEON_HEIGHT][DUNGEON_WIDTH]) {
             if (dists[r][c] > 255) {
                 printf(" ");
                 continue;
-            } else if (r == dungeon->player.r && c == dungeon->player.c) {
+            } else if (r == dungeon->player_pos.r && c == dungeon->player_pos.c) {
                 printf("@");
             } else {
                 printf("%d", dists[r][c] % 10);
