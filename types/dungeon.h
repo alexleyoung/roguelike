@@ -3,10 +3,8 @@
 
 #include <stdint.h>
 
+#include "types.h"
 #include "character.h"
-
-#define DUNGEON_WIDTH 80
-#define DUNGEON_HEIGHT 21
 
 typedef struct tile {
     char sprite;
