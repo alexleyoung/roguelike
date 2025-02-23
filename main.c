@@ -150,16 +150,10 @@ void test_heap() {
     heap h;
 
     heap_init(&h, sizeof (int), compare_int);
-    v = 5;
-    if (heap_push(&h, &v)) printf("error");
-    v = 4;
-    heap_push(&h, &v);
-    v = 3;
-    heap_push(&h, &v);
-    v = 2;
-    heap_push(&h, &v);
-    v = 1;
-    heap_push(&h, &v);
+    for (int i = 10; i >= 0; i--) {
+        v = i;
+        heap_push(&h, &v);
+    }
 
     while (!heap_is_empty(&h)) {
         heap_pop(&h, &v);

@@ -7,6 +7,8 @@
 #include "../dsa/heap.h"
 #include "../characters/movement.h"
 
+void print_dungeon(dungeon *dungeon);
+
 // comparator for event struct
 static int compare_events(const void *v1, const void *v2) {
     event event1 = *(event *)v1;
@@ -18,7 +20,7 @@ static int compare_events(const void *v1, const void *v2) {
     if (diff) {
         return diff;
     } else {
-        return event1.character.id - event2.character.id;
+        return event1.character->id - event2.character->id;
     }
 }
 
@@ -48,17 +50,29 @@ int init_game(game *g) {
 
     generate_dungeon(&g->maps[0], 6);
 
+    // DEBUG
+    print_dungeon(&g->maps[g->current_map]);
+    for (int r = 0; r < DUNGEON_HEIGHT; r++) {
+        for (int c = 0; c < DUNGEON_WIDTH; c++) {
+            if (g->maps[g->current_map].character_map[r][c]) {
+                printf("%c", g->maps[g->current_map].character_map[r][c]->sprite);
+            } else {
+                printf(" ");
+            }
+        }
+        printf("\n");
+    }
+
     // init event queue
     for (int r = 0; r < DUNGEON_HEIGHT; r++) {
         for (int c = 0; c < DUNGEON_WIDTH; c++) {
             if (g->maps[g->current_map].character_map[r][c]) {
                 event e;
-                e.character = *g->maps[g->current_map].character_map[r][c];
+                e.character = g->maps[g->current_map].character_map[r][c];
                 e.turn_time = 0;
 
                 heap_push(&g->events, &e);
             }
-
         }
     }
 
@@ -80,16 +94,16 @@ void print_dungeon(dungeon *dungeon) {
 }
 
 int start_game(game *g) {
-    event e;
     while (!heap_is_empty(&g->events)) {
+        event e;
         heap_pop(&g->events, &e);
-        if (e.character.id == 0) {
-            print_dungeon(&g->maps[g->current_map]);
+        if (e.character->id == 0) {
         }
-        move(&g->maps[g->current_map], &e.character);
-        e.turn_time += e.character.speed;
+        print_dungeon(&g->maps[g->current_map]);
+        move(&g->maps[g->current_map], e.character);
+        e.turn_time += e.character->speed;
         heap_push(&g->events, &e);
-        usleep(125000);
+        usleep(250000);
     }
 
     return 0;

@@ -77,7 +77,6 @@ int heap_destroy(heap *h) {
 }
 
 int heap_push(heap *h, void *data) {
-    char *base = (char *)h->a;
     if (h->size == h->capacity) {
         h->capacity *= 2;
         void *new_alloc = realloc(h->a, h->element_size * h->capacity);
@@ -85,6 +84,7 @@ int heap_push(heap *h, void *data) {
         h->a = new_alloc;
     }
 
+    char *base = (char *)h->a;
     memcpy(base + (h->size * h->element_size), data, h->element_size);
     if (percolate_up(h, h->size)) return -1;
 

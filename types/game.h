@@ -7,7 +7,7 @@
 
 typedef struct event {
     int turn_time;
-    character character;
+    character *character;
 } event;
 
 typedef struct game {
