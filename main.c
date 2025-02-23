@@ -59,7 +59,9 @@ int main(int argc, char **argv) {
     }
 
     if (err) { return err; }
-    print_dungeon(&g.maps[0]);
+    /*print_dungeon(&g.maps[0]);*/
+
+    start_game(&g);
 
     /*printf("Distances:\n");*/
     /*calc_dists(dungeon, dungeon->dists, dungeon->player, 0);*/
@@ -75,19 +77,19 @@ int main(int argc, char **argv) {
     return 0;
 }
 
-void print_dungeon(dungeon *dungeon) {
-    int r, c;
-    for (r = 0; r < DUNGEON_HEIGHT; r++) {
-        for (c = 0; c < DUNGEON_WIDTH; c++) {
-            if (dungeon->character_map[r][c]) {
-                printf("%c", dungeon->character_map[r][c]->sprite);
-            } else {
-                printf("%c", dungeon->tiles[r][c].sprite);
-            }
-        }
-        printf("\n");
-    }
-}
+/*void print_dungeon(dungeon *dungeon) {*/
+/*    int r, c;*/
+/*    for (r = 0; r < DUNGEON_HEIGHT; r++) {*/
+/*        for (c = 0; c < DUNGEON_WIDTH; c++) {*/
+/*            if (dungeon->character_map[r][c]) {*/
+/*                printf("%c", dungeon->character_map[r][c]->sprite);*/
+/*            } else {*/
+/*                printf("%c", dungeon->tiles[r][c].sprite);*/
+/*            }*/
+/*        }*/
+/*        printf("\n");*/
+/*    }*/
+/*}*/
 
 void print_hardness(dungeon *dungeon) {
     int r, c;

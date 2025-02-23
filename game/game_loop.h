@@ -6,5 +6,6 @@
 #include "../types/dungeon.h"
 
 int init_game(game *g);
+int start_game(game *g);
 
 #endif

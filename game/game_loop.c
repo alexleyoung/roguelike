@@ -1,8 +1,11 @@
 #include <stdlib.h>
+#include <unistd.h>
+#include <stdio.h>
 
 #include "game_loop.h"
 #include "../gen/gen.h"
 #include "../dsa/heap.h"
+#include "../characters/movement.h"
 
 // comparator for event struct
 static int compare_events(const void *v1, const void *v2) {
@@ -41,15 +44,52 @@ int init_game(game *g) {
     g->maps = malloc(sizeof (*g->maps));
     heap_init(&g->events, sizeof (event), compare_events);
     g->num_maps = 1;
+    g->current_map = 0;
 
     generate_dungeon(&g->maps[0], 6);
+
+    // init event queue
+    for (int r = 0; r < DUNGEON_HEIGHT; r++) {
+        for (int c = 0; c < DUNGEON_WIDTH; c++) {
+            if (g->maps[g->current_map].character_map[r][c]) {
+                event e;
+                e.character = *g->maps[g->current_map].character_map[r][c];
+                e.turn_time = 0;
+
+                heap_push(&g->events, &e);
+            }
+
+        }
+    }
 
     return 0;
 }
 
+void print_dungeon(dungeon *dungeon) {
+    int r, c;
+    for (r = 0; r < DUNGEON_HEIGHT; r++) {
+        for (c = 0; c < DUNGEON_WIDTH; c++) {
+            if (dungeon->character_map[r][c]) {
+                printf("%c", dungeon->character_map[r][c]->sprite);
+            } else {
+                printf("%c", dungeon->tiles[r][c].sprite);
+            }
+        }
+        printf("\n");
+    }
+}
+
 int start_game(game *g) {
-    while (heap_is_empty(&g->events)) {
-        
+    event e;
+    while (!heap_is_empty(&g->events)) {
+        heap_pop(&g->events, &e);
+        if (e.character.id == 0) {
+            print_dungeon(&g->maps[g->current_map]);
+        }
+        move(&g->maps[g->current_map], &e.character);
+        e.turn_time += e.character.speed;
+        heap_push(&g->events, &e);
+        usleep(125000);
     }
 
     return 0;

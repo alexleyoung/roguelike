@@ -533,7 +533,8 @@ int spawn_monsters(dungeon *dungeon, int n) {
             p.r = rand() % DUNGEON_HEIGHT;
             p.c = rand() % DUNGEON_WIDTH;
         } while ((tunnel && (p.r < 1 || p.r > DUNGEON_HEIGHT - 2 || p.c < 1 || p.c > DUNGEON_WIDTH - 2))
-                || (!tunnel && dungeon->tiles[p.r][p.c].sprite != '.'));
+                || (!tunnel && dungeon->tiles[p.r][p.c].sprite != '.')
+                || dungeon->character_map[p.r][p.c]);
         mob->pos = p;
 
         dungeon->character_map[p.r][p.c] = mob;

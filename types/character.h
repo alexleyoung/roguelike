@@ -3,7 +3,7 @@
 
 #include "types.h"
 
-#define PLAYER_TRAIT -1
+#define PLAYER_TRAIT 33
 
 typedef struct character {
     int id;

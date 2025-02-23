@@ -14,6 +14,7 @@ typedef struct game {
     heap events;
     dungeon *maps;
     int num_maps;
+    int current_map;
 } game;
 
 #endif
