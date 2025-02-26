@@ -50,19 +50,6 @@ int init_game(game *g) {
 
     generate_dungeon(&g->maps[0], 6);
 
-    // DEBUG
-    print_dungeon(&g->maps[g->current_map]);
-    for (int r = 0; r < DUNGEON_HEIGHT; r++) {
-        for (int c = 0; c < DUNGEON_WIDTH; c++) {
-            if (g->maps[g->current_map].character_map[r][c]) {
-                printf("%c", g->maps[g->current_map].character_map[r][c]->sprite);
-            } else {
-                printf(" ");
-            }
-        }
-        printf("\n");
-    }
-
     // init event queue
     for (int r = 0; r < DUNGEON_HEIGHT; r++) {
         for (int c = 0; c < DUNGEON_WIDTH; c++) {
@@ -98,8 +85,8 @@ int start_game(game *g) {
         event e;
         heap_pop(&g->events, &e);
         if (e.character->id == 0) {
+            print_dungeon(&g->maps[g->current_map]);
         }
-        print_dungeon(&g->maps[g->current_map]);
         move(&g->maps[g->current_map], e.character);
         e.turn_time += e.character->speed;
         heap_push(&g->events, &e);

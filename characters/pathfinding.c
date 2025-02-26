@@ -29,7 +29,7 @@ int calc_dists(dungeon *dungeon, int map[DUNGEON_HEIGHT][DUNGEON_WIDTH], point s
                     (r < 1 || r > DUNGEON_HEIGHT - 2 || c < 1 || c > DUNGEON_WIDTH - 2)) {
                     continue;
                 }
-                if (!enable_tunnels && hardness) { // if tunnels disabled and hardness not 0, skip
+                if (!enable_tunnels && dungeon->tiles[r][c].hardness) { // if tunnels disabled and hardness not 0, skip
                     continue;
                 }
 
