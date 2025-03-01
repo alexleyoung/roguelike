@@ -1,191 +1,203 @@
-commit 515dd81233af7ec1e6976577626e8c7ab54a176f (HEAD -> main, origin/main)
+commit 51671f3d8b916a430e2ee464bd766f59ac381ad2
 Author: Alex Young <alexyoung0119@gmail.com>
-Date: Mon Feb 10 15:42:17 2025 -0600
+Date:   Tue Feb 11 19:20:38 2025 -0600
+
+    ditch bfs for consolidated dijkstra, update main to test separate dist maps, add dist maps to dungeon struct
+
+commit 9f94fde6ccb4c419911e7f440399c4bf6f8c9b8b
+Author: Alex Young <alexyoung0119@gmail.com>
+Date:   Tue Feb 11 16:19:53 2025 -0600
+
+    add non-tunneling distance calculation (bfs)
+
+commit 515dd81233af7ec1e6976577626e8c7ab54a176f
+Author: Alex Young <alexyoung0119@gmail.com>
+Date:   Mon Feb 10 15:42:17 2025 -0600
 
     add conditional check for apple on endian import; add better error handling/output in main
 
 commit 35efc1f82f80c0be45ed31eb677afd4d4a436f51
 Author: Alex Young <alexyoung0119@gmail.com>
-Date: Sat Feb 8 00:24:20 2025 -0600
+Date:   Sat Feb 8 00:24:20 2025 -0600
 
     added player sprite to dungeon struct and updated save/load accordingly; added --load <filename> for testing
 
 commit ecb714669f5d330bd40736e0135d1793d9aa41ca
 Author: Alex Young <alexyoung0119@gmail.com>
-Date: Sat Feb 8 00:13:21 2025 -0600
+Date:   Sat Feb 8 00:13:21 2025 -0600
 
     remove unnecessary debug print
 
 commit eca0a1e29a224bafa560c172aacd5fa5f3515dad
 Author: Alex Young <alexyoung0119@gmail.com>
-Date: Sat Feb 8 00:13:06 2025 -0600
+Date:   Sat Feb 8 00:13:06 2025 -0600
 
     rework main function to support --save and --load flags
 
 commit 076b92451b1771754e69d5d4b0cda47c3d3a88c5
 Author: Alex Young <alexyoung0119@gmail.com>
-Date: Fri Feb 7 23:49:08 2025 -0600
+Date:   Fri Feb 7 23:49:08 2025 -0600
 
     fix crash due to indexing 13 char string at index 13 instead of 12. fix load by actually placing the room and stair sprites after the dungeon struct is loaded
 
 commit a26c7d986b3501c4725955fb481c14bb440e23f7
 Author: Alex Young <alexyoung0119@gmail.com>
-Date: Fri Feb 7 23:40:45 2025 -0600
+Date:   Fri Feb 7 23:40:45 2025 -0600
 
     finish save/load, fix slight bug with hardness generation creating 0's, which are reserved for rooms + corridors, need to fix random abort after loading
 
 commit 6fde9edebb481e50fd52641fd4011eb9f80062b7
 Author: Alex Young <alexyoung0119@gmail.com>
-Date: Fri Feb 7 23:00:45 2025 -0600
+Date:   Fri Feb 7 23:00:45 2025 -0600
 
     fix overwriting border hardness in hardness seeding filling
 
 commit 2f4760f59c2658b3eaba840256ba01fb3d61f7a0
 Author: Alex Young <alexyoung0119@gmail.com>
-Date: Fri Feb 7 22:47:55 2025 -0600
+Date:   Fri Feb 7 22:47:55 2025 -0600
 
     start save/load; dealing with endianness bugs
 
 commit 4110b749f5c8f5368d9940c84829d9d85a2a3c42
 Author: Alex Young <alexyoung0119@gmail.com>
-Date: Thu Feb 6 15:15:01 2025 -0600
+Date:   Thu Feb 6 15:15:01 2025 -0600
 
     modify dungeon struct to include information to simplify saving; implement saves without endianness consideration
 
 commit ad02589eec4839182da0611fd7b6dfdfac231c55
 Author: Alex Young <alexyoung0119@gmail.com>
-Date: Thu Feb 6 12:40:53 2025 -0600
+Date:   Thu Feb 6 12:40:53 2025 -0600
 
     start assignment 2; create saves.h/c
 
 commit 352426fdf702ead5cb960ae639d25f31f8128c72
 Author: Alex Young <alexyoung0119@gmail.com>
-Date: Wed Feb 5 00:25:22 2025 -0600
+Date:   Wed Feb 5 00:25:22 2025 -0600
 
     adjust primary generation function to be more consistent and cleaner
 
 commit ca3784128b155623a5c46ccb6095f6c4c12b0ce3
 Author: Alex Young <alexyoung0119@gmail.com>
-Date: Wed Feb 5 00:15:48 2025 -0600
+Date:   Wed Feb 5 00:15:48 2025 -0600
 
     fix critical bugs like hardness propgation missed spots, gaussian blur on negative border values, dijkstra pathing through border, removed debug code, added more documentation
 
 commit 552f46f5acf4820dfb0a3b2070c5faa9a75c0a68
 Author: Alex Young <alexyoung0119@gmail.com>
-Date: Tue Feb 4 13:31:14 2025 -0600
+Date:   Tue Feb 4 13:31:14 2025 -0600
 
     remove copied files
 
 commit c46cc5f30f97f3768ba2ff7cc8c59f6a97a61e53
 Author: Alex Young <alexyoung0119@gmail.com>
-Date: Tue Feb 4 13:30:49 2025 -0600
+Date:   Tue Feb 4 13:30:49 2025 -0600
 
     add exit condition if dijkstras fails to find path due to incorrect edge weights
 
 commit 1c3d4217f20dfd5aaa5218bcf8c6605f0f510dab
 Author: Alex Young <alexyoung0119@gmail.com>
-Date: Mon Feb 3 23:02:56 2025 -0600
+Date:   Mon Feb 3 23:02:56 2025 -0600
 
     update readme and changelog
 
 commit 20909616902be7f07a3c854ac7a91be3a3c5eb77
 Author: Alex Young <alexyoung0119@gmail.com>
-Date: Mon Feb 3 22:31:45 2025 -0600
+Date:   Mon Feb 3 22:31:45 2025 -0600
 
     add dijkstra longer path flag, adjust randomness
 
 commit be270ae1940ff19d654694ba7e3ee474447192a0
 Author: Alex Young <alexyoung0119@gmail.com>
-Date: Mon Feb 3 12:12:00 2025 -0600
+Date:   Mon Feb 3 12:12:00 2025 -0600
 
     add documentation, tweak randomness
 
 commit 23e249cfe522426a900f7ceb7b1394d379a38f13
 Author: Alex Young <alexyoung0119@gmail.com>
-Date: Mon Feb 3 12:08:45 2025 -0600
+Date:   Mon Feb 3 12:08:45 2025 -0600
 
     add stair placing
 
 commit 9becab2cd358f830414f3f40cd6b96f09eccef60
 Author: Alex Young <alexyoung0119@gmail.com>
-Date: Sun Feb 2 23:15:30 2025 -0600
+Date:   Sun Feb 2 23:15:30 2025 -0600
 
     add dijkstra corridor generation
 
 commit 2c30276cc37537755115645bce172dd8062b4d61
 Author: Alex Young <alexyoung0119@gmail.com>
-Date: Sun Feb 2 20:24:28 2025 -0600
+Date:   Sun Feb 2 20:24:28 2025 -0600
 
     remove local mac dir
 
 commit 7a8b3d5f5d34950f60a1c3bd3ccd6b5900cbc8fa
 Author: Alex Young <alexyoung0119@gmail.com>
-Date: Sun Feb 2 20:23:30 2025 -0600
+Date:   Sun Feb 2 20:23:30 2025 -0600
 
     fix heap push by adding percolate up
 
 commit 98e6cb99c0e1b22058ab07f821b58ab32dfb73d6
 Author: Alex Young <alexyoung0119@gmail.com>
-Date: Sun Feb 2 19:50:22 2025 -0600
+Date:   Sun Feb 2 19:50:22 2025 -0600
 
     make custom min-heap for edges (points) and weights (hardness)
 
 commit f210b9a237659adbbd4312dbd3f371309bc32e06
 Author: Alex Young <alexyoung0119@gmail.com>
-Date: Sun Feb 2 00:13:15 2025 -0600
+Date:   Sun Feb 2 00:13:15 2025 -0600
 
     add guassian blur for hardness smoothing
 
 commit 6e2c939a32863d59cef05e7eafcb94765c017c05
 Author: Alex Young <alexyoung0119@gmail.com>
-Date: Sun Feb 2 00:03:35 2025 -0600
+Date:   Sun Feb 2 00:03:35 2025 -0600
 
     finish hardness propogation
 
 commit fb2666081a5e4290850a032254eba6adfa536334
 Author: Alex Young <alexyoung0119@gmail.com>
-Date: Sat Feb 1 22:34:25 2025 -0600
+Date:   Sat Feb 1 22:34:25 2025 -0600
 
     change queue to accept generic type, add bfs for propogation
 
 commit 14095030e1ffa3b18fd5cbf98d6908e5b2182ffe
 Author: Alex Young <alexyoung0119@gmail.com>
-Date: Sat Feb 1 20:46:13 2025 -0600
+Date:   Sat Feb 1 20:46:13 2025 -0600
 
     create folder for data struc + common algs, start implementation of hardness seeding algorithm
 
 commit 617a93225919a68d7c98d4cd8d2990fa29b55706
 Author: Alex Young <alexyoung0119@gmail.com>
-Date: Fri Jan 31 17:53:29 2025 -0600
+Date:   Fri Jan 31 17:53:29 2025 -0600
 
     remove accidental binary commit
 
 commit 3a3dce66822451939ff6ec798e6443bb5b16413f
 Author: Alex Young <alexyoung0119@gmail.com>
-Date: Fri Jan 31 17:53:12 2025 -0600
+Date:   Fri Jan 31 17:53:12 2025 -0600
 
     add room placing, faced lots of issues due to confusion of row, col vs cartesian col, row
 
 commit 5e1e2c6f9714995721054c4ed92e608401ad4d37
 Author: Alex Young <alexyoung0119@gmail.com>
-Date: Fri Jan 31 16:53:45 2025 -0600
+Date:   Fri Jan 31 16:53:45 2025 -0600
 
     add method to print dungeon
 
 commit 013e7a0349159fbbf5c61a1cd8635692585bce88
 Author: Alex Young <alexyoung0119@gmail.com>
-Date: Thu Jan 30 23:59:27 2025 -0600
+Date:   Thu Jan 30 23:59:27 2025 -0600
 
     modify architecture for tiles, rooms, and dungeons. add simple makefile
 
 commit 898b0d080ef9d18847e1d52da181e2c248d4bdfa
 Author: Alex Young <alexyoung0119@gmail.com>
-Date: Thu Jan 30 13:10:05 2025 -0600
+Date:   Thu Jan 30 13:10:05 2025 -0600
 
     add structs for rooms and tiles, add separate func for room gen
 
 commit 4a67712124472b2b2425c2064feaadfddb6c2a42
 Author: Alex Young <alexyoung0119@gmail.com>
-Date: Wed Jan 29 15:39:03 2025 -0600
+Date:   Wed Jan 29 15:39:03 2025 -0600
 
     first commit

@@ -1,5 +1,11 @@
 Alex Young's coms 3270 roguelike project. Makefile included with comments.
 
+Assignment 1.03 Features (characters/):
+
+- pathfinding implemented with one dijkstras function (calc_dists)
+- flag to enable tunnels or not
+- added maps to dungeon struct to store dist maps
+
 Assignment 1.02 Features (saves/):
 
 - save dungeon to binary file according to assignment specification
