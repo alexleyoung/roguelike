@@ -61,22 +61,22 @@ int main(int argc, char **argv) {
     if (err) { return err; }
 
     // test pathfinding outputs
-    dungeon *dungeon = &g.maps[g.current_map];
-    printf("Dungeon:\n");
-    print_dungeon(dungeon);
+    /*dungeon *dungeon = &g.maps[g.current_map];*/
+    /*printf("Dungeon:\n");*/
+    /*print_dungeon(dungeon);*/
+    /**/
+    /*printf("Distances:\n");*/
+    /*calc_dists(dungeon, dungeon->dists, dungeon->player_pos, 0);*/
+    /*print_dists(dungeon, dungeon->dists);*/
+    /**/
+    /*printf("Distances with Tunnels:\n");*/
+    /*calc_dists(dungeon, dungeon->tunnel_dists, dungeon->player_pos, 1);*/
+    /*print_dists(dungeon, dungeon->tunnel_dists);*/
+    /**/
+    /*printf("hardness:\n");*/
+    /*print_hardness(dungeon);*/
 
-    printf("Distances:\n");
-    calc_dists(dungeon, dungeon->dists, dungeon->player_pos, 0);
-    print_dists(dungeon, dungeon->dists);
-
-    printf("Distances with Tunnels:\n");
-    calc_dists(dungeon, dungeon->tunnel_dists, dungeon->player_pos, 1);
-    print_dists(dungeon, dungeon->tunnel_dists);
-
-    printf("hardness:\n");
-    print_hardness(dungeon);
-
-    /*start_game(&g);*/
+    start_game(&g);
 
     return 0;
 }
