@@ -10,7 +10,7 @@
 #include "saves/saves.h"
 #include "characters/pathfinding.h"
 #include "characters/spawn.h"
-#include "game/game_loop.h"
+#include "game_loop/game_loop.h"
 
 void print_dungeon(dungeon *dungeon);
 void print_hardness(dungeon *dungeon);

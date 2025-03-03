@@ -14,12 +14,4 @@ typedef struct character {
     int (*dist_to_player)[DUNGEON_HEIGHT][DUNGEON_WIDTH];
 } character;
 
-/*typedef struct character {*/
-/*    int id;*/
-/*    point pos;*/
-/*    int traits;*/
-/*    int speed;*/
-/*    char sprite;*/
-/*    int (*dist_to_player)[DUNGEON_HEIGHT][DUNGEON_WIDTH];*/
-/*} character;*/
 #endif

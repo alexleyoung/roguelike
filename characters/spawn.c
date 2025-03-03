@@ -18,6 +18,7 @@ int create_monster(character *c, int id) {
     c->traits = rand() % 15;
     c->speed = (rand() % 21) + 5;
     c->sprite = "0123456789ABCDEF"[c->traits & 0xF]; // get hex char
+    c->dist_to_player = NULL;
 
     return 0;
 }
