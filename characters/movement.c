@@ -77,29 +77,30 @@ int move(dungeon *d, character *c) {
             p.c = c->pos.c;
         }
     }
-    move_to(d, c, p);
 
-    return 0;
+    return (move_to(d, c, p));
 }
 
 int move_random(dungeon *d, character *c) {
     int new_r;
     int new_c;
 
+    int tries = 0;
     do {
         new_r = c->pos.r + rand() % 3 - 1;
         new_c = c->pos.c + rand() % 3 - 1;
-    } while (!IN_BOUNDS(new_r,new_c) || 
-            (!C_IS(c, TUNNELING) && d->tiles[new_r][new_c].hardness));
+        tries++;
+    } while ((!IN_BOUNDS(new_r,new_c) || 
+            (!C_IS(c, TUNNELING) && d->tiles[new_r][new_c].hardness)) && tries < 100);
+
+    if (tries >= 100) {printf("id: %d, sprite: %c", c->id, c->sprite); return 1;}
 
     if (new_r == c->pos.r && new_c == c->pos.c) {
         // skip if no move
         return 0;
     }
 
-    move_to(d, c, (point){new_r, new_c});
-
-    return 0;
+    return (move_to(d, c, (point){new_r, new_c}));
 }
 
 int move_to(dungeon *d, character *c, point p) {
@@ -130,15 +131,11 @@ int move_to(dungeon *d, character *c, point p) {
 
     // check collision
     if (d->character_map[p.r][p.c]) {
-        // check if player is killed
-        int end_game = 0;
-        if (d->character_map[p.r][p.c]->traits == PLAYER_TRAIT) end_game = 1;
+        if (d->character_map[p.r][p.c]->traits == PLAYER_TRAIT) return 1; // end game
 
         // kill character
         free(d->character_map[p.r][p.c]);
         d->character_map[p.r][p.c] = NULL;
-
-        if (end_game) return 1;
     }
 
     d->character_map[c->pos.r][c->pos.c] = NULL;

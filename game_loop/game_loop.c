@@ -84,27 +84,28 @@ int start_game(game *g) {
     while (!heap_is_empty(&g->events)) {
         event e;
         heap_pop(&g->events, &e);
+        /*printf("init\ncid: %d, csprite: %c\ntime: %d\n", e.character->id, e.character->sprite, e.turn_time);*/
 
         // if character is killed,
-        if (!e.character) {
+        if (!e.character || !e.character->sprite) {
             continue;
         }
 
         // print on character turn
         if (e.character->id == 0) {
-            /*print_dungeon(&g->maps[g->current_map]);*/
         }
             print_dungeon(&g->maps[g->current_map]);
 
         // move character according to their traits
         if (move(&g->maps[g->current_map], e.character)) {
-            printf("pc died!\n");
+            printf("game over. pc died!\n");
             return 0;
         };
 
         // add character back to event queue
         e.turn_time += e.character->speed;
         heap_push(&g->events, &e);
+        /*printf("cid: %d, csprite: %c\n", e.character->id, e.character->sprite);*/
         usleep(250000);
     }
 

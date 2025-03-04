@@ -3,6 +3,7 @@
 #include <time.h>
 
 #include "gen.h"
+#include "../types/utils.h"
 #include "../dsa/queue.h"
 #include "../dsa/corridor_heap.h"
 #include "../characters/spawn.h"
@@ -527,14 +528,13 @@ int spawn_monsters(dungeon *dungeon, int n) {
         create_monster(mob, i);
 
         // pick random spot
-        int tunnel;
-        tunnel = mob->traits >> 2 & 1 && mob->traits >> 1 & 1; // if tunneling and telepathic, can spawn in wall
+
+        int wall_spawn = C_IS(mob, TUNNELING) && C_IS(mob, TELEPATHIC) ? 1 : 0;
         do {
             p.r = rand() % DUNGEON_HEIGHT;
             p.c = rand() % DUNGEON_WIDTH;
-        } while ((tunnel && (p.r < 1 || p.r > DUNGEON_HEIGHT - 2 || p.c < 1 || p.c > DUNGEON_WIDTH - 2))
-                || (!tunnel && dungeon->tiles[p.r][p.c].sprite != '.')
-                || dungeon->character_map[p.r][p.c]);
+        } while (!IN_BOUNDS(p.r, p.c) || (!wall_spawn && dungeon->tiles[p.r][p.c].hardness));
+
         mob->pos = p;
 
         dungeon->character_map[p.r][p.c] = mob;
