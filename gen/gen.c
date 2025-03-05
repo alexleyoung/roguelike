@@ -528,12 +528,12 @@ int spawn_monsters(dungeon *dungeon, int n) {
         create_monster(mob, i);
 
         // pick random spot
-
         int wall_spawn = C_IS(mob, TUNNELING) && C_IS(mob, TELEPATHIC) ? 1 : 0;
         do {
             p.r = rand() % DUNGEON_HEIGHT;
             p.c = rand() % DUNGEON_WIDTH;
-        } while (!IN_BOUNDS(p.r, p.c) || (!wall_spawn && dungeon->tiles[p.r][p.c].hardness));
+        /*} while (!IN_BOUNDS(p.r, p.c) || (!wall_spawn && dungeon->tiles[p.r][p.c].hardness));*/
+        } while (dungeon->tiles[p.r][p.c].sprite != '.');
 
         mob->pos = p;
 
