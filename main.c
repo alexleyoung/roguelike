@@ -8,8 +8,6 @@
 #include "types/dungeon.h"
 #include "gen/gen.h"
 #include "saves/saves.h"
-#include "characters/pathfinding.h"
-#include "characters/spawn.h"
 #include "game_loop/game_loop.h"
 
 void print_dungeon(dungeon *dungeon);
@@ -29,12 +27,12 @@ int main(int argc, char **argv) {
         case 2: // load dungeon from file
             // check arg
             if (strcmp(argv[1], "--save") == 0) {
-                if ((err = save_dungeon(&g.maps[0], "dungeon"))) {
+                if ((err = save_dungeon(&g.maps[g.current_map], "dungeon"))) {
                     printf("Error: Failed to save dungeon\n");
                 }; // default name for assignment 
                 g.maps[0].id = 0;
             } else if (strcmp(argv[1], "--load") == 0) {
-                if ((err = load_dungeon(&g.maps[0], "dungeon"))) {
+                if ((err = load_dungeon(&g.maps[g.current_map], "dungeon"))) {
                     printf("Error: Failed to load dungeon\n");
                 }
             }
@@ -54,6 +52,8 @@ int main(int argc, char **argv) {
                 if ((err = load_dungeon(&g.maps[0], argv[2]))) {
                     printf("Error: Failed to load dungeon\n");
                 };
+            } else if (strcmp(argv[1], "--nummon") == 0) {
+                generate_dungeon(&g.maps[g.current_map], 6, atoi(argv[2]));
             }
             break;
     }
@@ -61,20 +61,20 @@ int main(int argc, char **argv) {
     if (err) { return err; }
 
     // test pathfinding outputs
-    dungeon *dungeon = &g.maps[g.current_map];
-    printf("Dungeon:\n");
-    print_dungeon(dungeon);
-
-    printf("Distances:\n");
-    calc_dists(dungeon, dungeon->dists, dungeon->player_pos, 0);
-    print_dists(dungeon, dungeon->dists);
-
-    printf("Distances with Tunnels:\n");
-    calc_dists(dungeon, dungeon->tunnel_dists, dungeon->player_pos, 1);
-    print_dists(dungeon, dungeon->tunnel_dists);
-
-    printf("hardness:\n");
-    print_hardness(dungeon);
+    /*dungeon *dungeon = &g.maps[g.current_map];*/
+    /*printf("Dungeon:\n");*/
+    /*print_dungeon(dungeon);*/
+    /**/
+    /*printf("Distances:\n");*/
+    /*calc_dists(dungeon, dungeon->dists, dungeon->player_pos, 0);*/
+    /*print_dists(dungeon, dungeon->dists);*/
+    /**/
+    /*printf("Distances with Tunnels:\n");*/
+    /*calc_dists(dungeon, dungeon->tunnel_dists, dungeon->player_pos, 1);*/
+    /*print_dists(dungeon, dungeon->tunnel_dists);*/
+    /**/
+    /*printf("hardness:\n");*/
+    /*print_hardness(dungeon);*/
 
     start_game(&g);
 
@@ -181,7 +181,7 @@ int compare_dungeons(dungeon *d1, dungeon *d2) {
 
 void test_save_load() {
     dungeon dungeon1, dungeon2;
-    generate_dungeon(&dungeon1, 6);
+    generate_dungeon(&dungeon1, 6, 10);
     print_dungeon(&dungeon1);
     
     const char *test_file = "dungeon";

@@ -1,5 +1,16 @@
 Alex Young's coms 3270 roguelike project. Makefile included with comments.
 
+Assignment 1.04 Features (game_loop/):
+- Game struct responsible for game loop, as well as map(s)
+- Discrete event simulation powered by generic binary heap written myself
+- Character struct for PC and monsters
+- Monster spawning logic
+- nummon switch to spawn arbitrary num monsters
+- movement logic for monsters depending on traits
+
+KNOWN ISSUES:
+- collision issues resulting in occasional double freeing
+
 Assignment 1.03 Features (characters/):
 
 - pathfinding implemented with one dijkstras function (calc_dists)
@@ -29,3 +40,4 @@ Data Structures / Algorithms (dsa/):
 - queue for bfs (implemented in class)
 - min-heap for dijkstra (custom implementation for my dungeon structure)
 - types (for common structs like point)
+- generic heap

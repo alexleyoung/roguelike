@@ -1,3 +1,117 @@
+commit 61151ef95b49ff2c120c80887aac746cf64456f6 (HEAD -> main, origin/main)
+Author: Alex Young <alexyoung0119@gmail.com>
+Date:   Wed Mar 5 00:45:01 2025 -0600
+
+    spend double digit hours getting nowhere in regards to some sort of collision bug
+
+commit 5ec56d7359d5ac9c57ea2cd5fa5e105a910f47a9
+Author: Alex Young <alexyoung0119@gmail.com>
+Date:   Tue Mar 4 13:43:40 2025 -0600
+
+    add check for character sprite due to heap(? maybe) bug which corrupts event queue in game loop
+
+commit 364adbf8500526fab00768855f1bf8c7acf9898a
+Author: Alex Young <alexyoung0119@gmail.com>
+Date:   Mon Mar 3 16:06:17 2025 -0600
+
+    add character collision, add unintelligent movement, add erratic movement
+
+commit dfeaa77a0d860108ebca113a6205870ebacf6365
+Author: Alex Young <alexyoung0119@gmail.com>
+Date:   Sun Mar 2 22:08:26 2025 -0600
+
+    create move_to function, add macro for bounds check
+
+commit 256e9f1dd7b9d8d9df67f5f447a78979841de07e
+Author: Alex Young <alexyoung0119@gmail.com>
+Date:   Sat Mar 1 16:22:31 2025 -0600
+
+    implement bresenham's line alg for los check
+
+commit 2e6bcbf311388ddff32d489a2974d26a8de017d6
+Author: Alex Young <alexyoung0119@gmail.com>
+Date:   Wed Feb 26 14:26:19 2025 -0600
+
+    fixed bug with non-tunnel map which happened after my fix to use source hardness rather than neighbor hardness
+
+commit 9d3fed211c2db3a8fa86d589884a4f70ca81b92f
+Author: Alex Young <alexyoung0119@gmail.com>
+Date:   Sun Feb 23 14:38:23 2025 -0600
+
+    fix most diabolical heap bug; when creating a char pointer for the base of my byte array, i did so before checking for resizing, so resize would move the pointer and base would be the wrong address.
+
+commit 8c2c66bae925e45447405f30e60d41fbf17c42d2
+Author: Alex Young <alexyoung0119@gmail.com>
+Date:   Sun Feb 23 00:09:09 2025 -0600
+
+    fix putting addresses of locally defined character structs, which go on the stack, in my dungeon monster maps beacuse the memory gets destroyed after the function returns
+
+commit 389c574d825a4d31e55f8bc0271eea48b32acb8c
+Author: Alex Young <alexyoung0119@gmail.com>
+Date:   Sat Feb 22 21:28:00 2025 -0600
+
+    add game loop logic, add player auto-movement
+
+commit db1ff25f0e0b9c9f4563631cc6026b2eec1a43ec
+Author: Alex Young <alexyoung0119@gmail.com>
+Date:   Sat Feb 22 14:53:04 2025 -0600
+
+    start character movement
+
+commit c99163e64678afaaced315c6c7656e7729003ea4
+Author: Alex Young <alexyoung0119@gmail.com>
+Date:   Sat Feb 22 14:40:57 2025 -0600
+
+    add player creation and monster spawning with traits
+
+commit d639b38370d2eaf464030c51dda5575ada14b199
+Author: Alex Young <alexyoung0119@gmail.com>
+Date:   Thu Feb 20 14:14:02 2025 -0600
+
+    start monster spawning and logic
+
+commit f4d3c190ed5a097dcc72d30251b95f00193cbdc3
+Author: Alex Young <alexyoung0119@gmail.com>
+Date:   Wed Feb 19 20:46:14 2025 -0600
+
+    update stair struct and game struct to support multiple rooms for future stair functionality with continuity
+
+commit 8e6e07fdd789cea0637fedb56f8bd511918dff69
+Author: Alex Young <alexyoung0119@gmail.com>
+Date:   Wed Feb 19 19:05:50 2025 -0600
+
+    rename monsters to characters
+
+commit 8774395176da3659e5eeaecaf9d9f6266184f980
+Author: Alex Young <alexyoung0119@gmail.com>
+Date:   Wed Feb 19 18:52:26 2025 -0600
+
+    FINALLY fix my generic heap... had error with percolate down min-heap logic (accidentally swapped children if it was BIGGER... and also accidentally used an unsigned int in percolate_* which caused an overflow then seg fault...
+
+commit 5e1f808ede74330580bad16252ecee03c129defd
+Author: Alex Young <alexyoung0119@gmail.com>
+Date:   Wed Feb 19 17:05:52 2025 -0600
+
+    refactor heap to be generic
+
+commit 71e5a61d20a10a089e6a3c6a6ff61470f87b49e8
+Author: Alex Young <alexyoung0119@gmail.com>
+Date:   Wed Feb 19 17:05:42 2025 -0600
+
+    refactor heap to be generic
+
+commit 3a2c980261274594077d5e2990b86d07ce08083c
+Author: Alex Young <alexyoung0119@gmail.com>
+Date:   Tue Feb 18 18:44:42 2025 -0600
+
+    fix tunneling pathfinding bug in dijkstra after asking prof. had to use source hardness, not neighbor hardness, for weight calculation
+
+commit 31cd1e1f378828e66ba358ff773b048be1774cae
+Author: Alex Young <alexyoung0119@gmail.com>
+Date:   Sat Feb 15 21:52:22 2025 -0600
+
+    create int heap, separate types into own dir, start game loop structs
+
 commit 51671f3d8b916a430e2ee464bd766f59ac381ad2
 Author: Alex Young <alexyoung0119@gmail.com>
 Date:   Tue Feb 11 19:20:38 2025 -0600

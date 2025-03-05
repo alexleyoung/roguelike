@@ -16,6 +16,6 @@ typedef struct seed {
 } seed;
 
 int init_dungeon(dungeon *dungeon);
-int generate_dungeon(dungeon *dungeon,int num_rooms);
+int generate_dungeon(dungeon *dungeon, int num_rooms, int num_monsters);
 
 #endif

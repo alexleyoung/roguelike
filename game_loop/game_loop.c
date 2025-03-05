@@ -8,6 +8,8 @@
 #include "../dsa/heap.h"
 #include "../characters/movement.h"
 
+#define DEFAULT_MOB_COUNT 10
+
 void print_dungeon(dungeon *dungeon);
 
 // comparator for event struct
@@ -49,7 +51,7 @@ static int add_dungeon(game *g) {
     }
     g->maps = tmp;
 
-    generate_dungeon(&g->maps[g->num_maps - 1], (rand() % 6) + 3);
+    generate_dungeon(&g->maps[g->num_maps - 1], (rand() % 6) + 3, DEFAULT_MOB_COUNT);
     g->maps[g->num_maps - 1].id = g->num_maps - 1;
 
     return 0;
@@ -63,22 +65,7 @@ int init_game(game *g) {
     g->num_maps = 1;
     g->current_map = 0;
 
-    generate_dungeon(&g->maps[0], 6);
-
-    // init event queue
-    for (int r = 0; r < DUNGEON_HEIGHT; r++) {
-        for (int c = 0; c < DUNGEON_WIDTH; c++) {
-            if (g->maps[g->current_map].character_map[r][c]) {
-                event e;
-                printf("char id: %d\n", g->maps[g->current_map].character_map[r][c]->id);
-                e.character = g->maps[g->current_map].character_map[r][c];
-                e.turn_time = 0;
-
-                heap_push(&g->events, &e);
-                /*heap_insert(&g->events, &e);*/
-            }
-        }
-    }
+    generate_dungeon(&g->maps[g->current_map], 6, DEFAULT_MOB_COUNT);
 
     return 0;
 }
@@ -98,8 +85,22 @@ void print_dungeon(dungeon *dungeon) {
 }
 
 int start_game(game *g) {
-    /*while (!heap_is_empty(&g->events)) {*/
-    while (g->events.size) {
+    // init event queue
+    for (int r = 0; r < DUNGEON_HEIGHT; r++) {
+        for (int c = 0; c < DUNGEON_WIDTH; c++) {
+            if (g->maps[g->current_map].character_map[r][c]) {
+                event e;
+                e.character = g->maps[g->current_map].character_map[r][c];
+                e.turn_time = 0;
+
+                heap_push(&g->events, &e);
+                /*heap_insert(&g->events, &e);*/
+            }
+        }
+    }
+
+    while (!heap_is_empty(&g->events)) {
+    /*while (g->events.size) {*/
         event e;
         heap_pop(&g->events, &e);
         /*event *f;*/

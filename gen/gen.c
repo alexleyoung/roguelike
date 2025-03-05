@@ -12,7 +12,6 @@
 
 #define MAX_ROOM_TRIES 5000
 
-#define DEFAULT_MOB_COUNT 10
 
 int init_dungeon(dungeon *dungeon);
 
@@ -40,7 +39,7 @@ for corridor placement.
 
 Returns 0 on success, non-zero on failure.
 */
-int generate_dungeon(dungeon *dungeon, int num_rooms) {
+int generate_dungeon(dungeon *dungeon, int num_rooms, int num_monsters) {
     dungeon->num_rooms = num_rooms;
 
     int err = 0;
@@ -51,7 +50,7 @@ int generate_dungeon(dungeon *dungeon, int num_rooms) {
     err = generate_corridors(dungeon, dungeon->rooms);
     err = place_stairs(dungeon, 2);
     err = spawn_player(dungeon);
-    err = spawn_monsters(dungeon, DEFAULT_MOB_COUNT);
+    err = spawn_monsters(dungeon, num_monsters);
 
     return err;
 }
@@ -533,7 +532,7 @@ int spawn_monsters(dungeon *dungeon, int n) {
             p.r = rand() % DUNGEON_HEIGHT;
             p.c = rand() % DUNGEON_WIDTH;
         /*} while (!IN_BOUNDS(p.r, p.c) || (!wall_spawn && dungeon->tiles[p.r][p.c].hardness));*/
-        } while (dungeon->tiles[p.r][p.c].sprite != '.');
+        } while (dungeon->tiles[p.r][p.c].sprite != '.' || dungeon->character_map[p.r][p.c]);
 
         mob->pos = p;
 
