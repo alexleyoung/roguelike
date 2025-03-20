@@ -1,4 +1,10 @@
-commit 61151ef95b49ff2c120c80887aac746cf64456f6 (HEAD -> main, origin/main)
+commit 5b4eae49e48805a5a82bb1cd9f9b0506c3c55059 (HEAD -> main, origin/main)
+Author: Alex Young <alexyoung0119@gmail.com>
+Date:   Wed Mar 5 01:16:10 2025 -0600
+
+    add nummon switch, modify init to accomodate
+
+commit 61151ef95b49ff2c120c80887aac746cf64456f6
 Author: Alex Young <alexyoung0119@gmail.com>
 Date:   Wed Mar 5 00:45:01 2025 -0600
 

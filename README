@@ -7,9 +7,12 @@ Assignment 1.04 Features (game_loop/):
 - Monster spawning logic
 - nummon switch to spawn arbitrary num monsters
 - movement logic for monsters depending on traits
+- bresenham's line-drawing algorithim for LOS
 
 KNOWN ISSUES:
-- collision issues resulting in occasional double freeing
+- collision issues resulting in occasional double freeing. deeply troubling bug
+  which has been incredibly demoralizing. code is, as a result of debugging efforts, 
+  significantly messier.
 
 Assignment 1.03 Features (characters/):
 
