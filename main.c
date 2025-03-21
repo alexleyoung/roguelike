@@ -1,3 +1,4 @@
+#include "ui.h"
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -10,8 +11,8 @@
 #include <heap.h>
 #include <ncurses.h>
 #include <saves.h>
+#include <ui.h>
 
-void print_dungeon(dungeon *dungeon);
 void print_hardness(dungeon *dungeon);
 void print_dists(dungeon *dungeon, int dists[DUNGEON_HEIGHT][DUNGEON_WIDTH]);
 void test_corridor_heap();
@@ -186,7 +187,7 @@ int compare_dungeons(dungeon *d1, dungeon *d2) {
 void test_save_load() {
   dungeon dungeon1, dungeon2;
   generate_dungeon(&dungeon1, 6, 10);
-  print_dungeon(&dungeon1);
+  draw_dungeon(&dungeon1);
 
   const char *test_file = "dungeon";
   save_dungeon(&dungeon1, test_file);
@@ -194,6 +195,6 @@ void test_save_load() {
   assert(load_success == 0);
   assert(compare_dungeons(&dungeon1, &dungeon2) == 0);
 
-  print_dungeon(&dungeon2);
+  draw_dungeon(&dungeon2);
   printf("Test passed: Dungeon saved and loaded successfully!\n");
 }

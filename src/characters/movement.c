@@ -22,69 +22,190 @@ int move_player(dungeon *d, character *c, int move) {
   point p;
 
   switch (move) {
+  //// movement
   // up left
   case KEY_HOME:
   case '7':
   case 'y':
-    draw_status_message("up left");
-    break;
-
+    p.r = c->pos.r - 1;
+    p.c = c->pos.c - 1;
+    if (!IN_BOUNDS(p.r, p.c)) {
+      draw_status_message("Can't move out of bounds!");
+      return 0;
+    } else {
+      return move_to(d, c, p);
+    }
   // up
   case KEY_UP:
   case '8':
   case 'k':
-    draw_status_message("up");
-    break;
-
+    p.r = c->pos.r - 1;
+    p.c = c->pos.c;
+    if (!IN_BOUNDS(p.r, p.c)) {
+      draw_status_message("Can't move out of bounds!");
+      return 0;
+    } else {
+      return move_to(d, c, p);
+    }
   // up right
   case KEY_PPAGE:
   case '9':
   case 'u':
-    draw_status_message("up right");
-    break;
-
+    p.r = c->pos.r - 1;
+    p.c = c->pos.c + 1;
+    if (!IN_BOUNDS(p.r, p.c)) {
+      draw_status_message("Can't move out of bounds!");
+      return 0;
+    } else {
+      return move_to(d, c, p);
+    }
   // right
   case KEY_RIGHT:
   case '6':
   case 'l':
-    draw_status_message("right");
-    break;
-
+    p.r = c->pos.r;
+    p.c = c->pos.c + 1;
+    if (!IN_BOUNDS(p.r, p.c)) {
+      draw_status_message("Can't move out of bounds!");
+      return 0;
+    } else {
+      return move_to(d, c, p);
+    }
   // down right
   case KEY_NPAGE:
   case '3':
   case 'n':
-    draw_status_message("down right");
-    break;
-
+    p.r = c->pos.r + 1;
+    p.c = c->pos.c + 1;
+    if (!IN_BOUNDS(p.r, p.c)) {
+      draw_status_message("Can't move out of bounds!");
+      return 0;
+    } else {
+      return move_to(d, c, p);
+    }
   // down
   case KEY_DOWN:
   case '2':
   case 'j':
-    draw_status_message("down");
-    break;
-
+    p.r = c->pos.r + 1;
+    p.c = c->pos.c;
+    if (!IN_BOUNDS(p.r, p.c)) {
+      draw_status_message("Can't move out of bounds!");
+      return 0;
+    } else {
+      return move_to(d, c, p);
+    }
   // down left
   case KEY_END:
   case '1':
   case 'b':
-    draw_status_message("down left");
-    break;
-
+    p.r = c->pos.r + 1;
+    p.c = c->pos.c - 1;
+    if (!IN_BOUNDS(p.r, p.c)) {
+      draw_status_message("Can't move out of bounds!");
+      return 0;
+    } else {
+      return move_to(d, c, p);
+    }
   // left
   case KEY_LEFT:
   case '4':
   case 'h':
-    draw_status_message("left");
-    break;
-
+    p.r = c->pos.r;
+    p.c = c->pos.c - 1;
+    if (!IN_BOUNDS(p.r, p.c)) {
+      draw_status_message("Can't move out of bounds!");
+      return 0;
+    } else {
+      return move_to(d, c, p);
+    }
   // rest
   case KEY_B2:
   case ' ':
   case '.':
   case '5':
-    draw_status_message("rest");
+    return 0;
+  // stairs
+  case '>':
+    draw_status_message("down stair");
     break;
+  case '<':
+    draw_status_message("up stair");
+    break;
+
+  //// actions
+  // drop item
+  case 'd':
+    draw_status_message("drop item");
+    break;
+  // take off item
+  case 't':
+    draw_status_message("take off item");
+    break;
+  // wear item
+  case 'w':
+    draw_status_message("wear item");
+    break;
+  // expunge item
+  case 'x':
+    draw_status_message("expunge item");
+    break;
+  // display equipment
+  case 'e':
+    draw_status_message("display equipment");
+    break;
+  // display inv
+  case 'i':
+    draw_status_message("display inventory");
+    break;
+  // inspect item
+  case 'E':
+    draw_status_message("expunge item");
+    break;
+  // player info
+  case 'c':
+    draw_status_message("character info");
+    break;
+  // monster list
+  case 'm':
+    draw_status_message("monster list");
+    break;
+
+  //// debug
+  // toggle fow
+  case 'f':
+    draw_status_message("fog of war");
+    break;
+  // tp (goto)
+  case 'g':
+    draw_status_message("teleport");
+    break;
+  // default terrain map
+  case 's':
+    draw_status_message("terrain map");
+    break;
+  // hardness map
+  case 'H':
+    draw_status_message("hardness map");
+    break;
+  // non-tunneling dist map
+  case 'D':
+    draw_status_message("non-tunneling dist map");
+    break;
+  // tunneling dist map
+  case 'T':
+    draw_status_message("tunneling dist map");
+    break;
+  // look monster
+  case 'L':
+    draw_status_message("look monster");
+    break;
+
+  //// quit game
+  case 'Q':
+    draw_status_message("Quitting game...");
+    refresh();
+    return 1;
 
   default:
     draw_status_message("Invalid key press: %c", move);

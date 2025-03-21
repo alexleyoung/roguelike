@@ -1,17 +1,16 @@
-#include "character.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 
+#include <character.h>
 #include <game_loop.h>
 #include <gen.h>
 #include <heap.h>
 #include <movement.h>
 #include <ncurses.h>
+#include <ui.h>
 
 #define DEFAULT_MOB_COUNT 10
-
-void print_dungeon(dungeon *dungeon);
 
 static int compare_events(const void *v1, const void *v2) {
   event *event1 = (event *)v1;
@@ -58,19 +57,6 @@ int init_game(game *g) {
   return 0;
 }
 
-void print_dungeon(dungeon *dungeon) {
-  int r, c;
-  for (r = 0; r < DUNGEON_HEIGHT; r++) {
-    for (c = 0; c < DUNGEON_WIDTH; c++) {
-      if (dungeon->character_map[r][c]) {
-        mvaddch(r + 1, c, dungeon->character_map[r][c]->sprite);
-      } else {
-        mvaddch(r + 1, c, dungeon->tiles[r][c].sprite);
-      }
-    }
-  }
-}
-
 int start_game(game *g) {
   // init ncurses display and settings
   initscr();
@@ -112,9 +98,11 @@ int start_game(game *g) {
     // print on player turn
     if (e.character->traits ==
         PLAYER_TRAIT) { // TODO: add check for ai player flag prob
-      print_dungeon(&g->maps[g->current_map]);
+      draw_dungeon(&g->maps[g->current_map]);
       input = getch();
-      move_player(&g->maps[g->current_map], e.character, input);
+      if (move_player(&g->maps[g->current_map], e.character, input))
+        // quit
+        return 0;
     } else {
       // move npc character according to their traits
       move_character(&g->maps[g->current_map], e.character);
