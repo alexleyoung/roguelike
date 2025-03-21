@@ -7,15 +7,16 @@
 #define ATTRIBUTE_ERRATIC 0x8
 
 #define min(x, y) (x < y ? x : y)
-#define C_IS(c, attr) (c->traits & ATTRIBUTE_ ## attr)
+#define CEIL(x, y) (((x) + (y) - 1) / (y))
+#define C_IS(c, attr) (c->traits & ATTRIBUTE_##attr)
 #define abs(x) (x < 0 ? x * -1 : x)
-#define COPY_2D_ARRAY(dest, src, rows, cols) \
-    do { \
-        for (int i = 0; i < rows; i++) { \
-            for (int j = 0; j < cols; j++) { \
-                dest[i][j] = src[i][j]; \
-            } \
-        } \
-    } while (0)
+#define COPY_2D_ARRAY(dest, src, rows, cols)                                   \
+  do {                                                                         \
+    for (int i = 0; i < rows; i++) {                                           \
+      for (int j = 0; j < cols; j++) {                                         \
+        dest[i][j] = src[i][j];                                                \
+      }                                                                        \
+    }                                                                          \
+  } while (0)
 
 #endif

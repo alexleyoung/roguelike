@@ -5,6 +5,8 @@
 #include "dungeon.h"
 #include "heap.h"
 
+#define DEFAULT_MOB_COUNT 30
+
 typedef struct event {
   int turn_time;
   character *character;

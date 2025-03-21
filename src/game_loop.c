@@ -10,8 +10,6 @@
 #include <ncurses.h>
 #include <ui.h>
 
-#define DEFAULT_MOB_COUNT 10
-
 static int compare_events(const void *v1, const void *v2) {
   event *event1 = (event *)v1;
   event *event2 = (event *)v2;

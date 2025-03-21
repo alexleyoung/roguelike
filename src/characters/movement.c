@@ -30,7 +30,7 @@ int move_player(dungeon *d, character *c, int move) {
     p.r = c->pos.r - 1;
     p.c = c->pos.c - 1;
     if (!IN_BOUNDS(p.r, p.c)) {
-      draw_status_message("Can't move out of bounds!");
+      draw_message("Can't move out of bounds!");
       return 0;
     } else {
       return move_to(d, c, p);
@@ -42,7 +42,7 @@ int move_player(dungeon *d, character *c, int move) {
     p.r = c->pos.r - 1;
     p.c = c->pos.c;
     if (!IN_BOUNDS(p.r, p.c)) {
-      draw_status_message("Can't move out of bounds!");
+      draw_message("Can't move out of bounds!");
       return 0;
     } else {
       return move_to(d, c, p);
@@ -54,7 +54,7 @@ int move_player(dungeon *d, character *c, int move) {
     p.r = c->pos.r - 1;
     p.c = c->pos.c + 1;
     if (!IN_BOUNDS(p.r, p.c)) {
-      draw_status_message("Can't move out of bounds!");
+      draw_message("Can't move out of bounds!");
       return 0;
     } else {
       return move_to(d, c, p);
@@ -66,7 +66,7 @@ int move_player(dungeon *d, character *c, int move) {
     p.r = c->pos.r;
     p.c = c->pos.c + 1;
     if (!IN_BOUNDS(p.r, p.c)) {
-      draw_status_message("Can't move out of bounds!");
+      draw_message("Can't move out of bounds!");
       return 0;
     } else {
       return move_to(d, c, p);
@@ -78,7 +78,7 @@ int move_player(dungeon *d, character *c, int move) {
     p.r = c->pos.r + 1;
     p.c = c->pos.c + 1;
     if (!IN_BOUNDS(p.r, p.c)) {
-      draw_status_message("Can't move out of bounds!");
+      draw_message("Can't move out of bounds!");
       return 0;
     } else {
       return move_to(d, c, p);
@@ -90,7 +90,7 @@ int move_player(dungeon *d, character *c, int move) {
     p.r = c->pos.r + 1;
     p.c = c->pos.c;
     if (!IN_BOUNDS(p.r, p.c)) {
-      draw_status_message("Can't move out of bounds!");
+      draw_message("Can't move out of bounds!");
       return 0;
     } else {
       return move_to(d, c, p);
@@ -102,7 +102,7 @@ int move_player(dungeon *d, character *c, int move) {
     p.r = c->pos.r + 1;
     p.c = c->pos.c - 1;
     if (!IN_BOUNDS(p.r, p.c)) {
-      draw_status_message("Can't move out of bounds!");
+      draw_message("Can't move out of bounds!");
       return 0;
     } else {
       return move_to(d, c, p);
@@ -114,7 +114,7 @@ int move_player(dungeon *d, character *c, int move) {
     p.r = c->pos.r;
     p.c = c->pos.c - 1;
     if (!IN_BOUNDS(p.r, p.c)) {
-      draw_status_message("Can't move out of bounds!");
+      draw_message("Can't move out of bounds!");
       return 0;
     } else {
       return move_to(d, c, p);
@@ -127,88 +127,88 @@ int move_player(dungeon *d, character *c, int move) {
     return 0;
   // stairs
   case '>':
-    draw_status_message("down stair");
+    draw_message("down stair");
     break;
   case '<':
-    draw_status_message("up stair");
+    draw_message("up stair");
     break;
 
   //// actions
   // drop item
   case 'd':
-    draw_status_message("drop item");
+    draw_message("drop item");
     break;
   // take off item
   case 't':
-    draw_status_message("take off item");
+    draw_message("take off item");
     break;
   // wear item
   case 'w':
-    draw_status_message("wear item");
+    draw_message("wear item");
     break;
   // expunge item
   case 'x':
-    draw_status_message("expunge item");
+    draw_message("expunge item");
     break;
   // display equipment
   case 'e':
-    draw_status_message("display equipment");
+    draw_message("display equipment");
     break;
   // display inv
   case 'i':
-    draw_status_message("display inventory");
+    draw_message("display inventory");
     break;
   // inspect item
   case 'E':
-    draw_status_message("expunge item");
+    draw_message("expunge item");
     break;
   // player info
   case 'c':
-    draw_status_message("character info");
+    draw_message("character info");
     break;
   // monster list
   case 'm':
-    draw_status_message("monster list");
+    draw_monster_list(d, c);
     break;
 
   //// debug
   // toggle fow
   case 'f':
-    draw_status_message("fog of war");
+    draw_message("fog of war");
     break;
   // tp (goto)
   case 'g':
-    draw_status_message("teleport");
+    draw_message("teleport");
     break;
   // default terrain map
   case 's':
-    draw_status_message("terrain map");
+    draw_message("terrain map");
     break;
   // hardness map
   case 'H':
-    draw_status_message("hardness map");
+    draw_message("hardness map");
     break;
   // non-tunneling dist map
   case 'D':
-    draw_status_message("non-tunneling dist map");
+    draw_message("non-tunneling dist map");
     break;
   // tunneling dist map
   case 'T':
-    draw_status_message("tunneling dist map");
+    draw_message("tunneling dist map");
     break;
   // look monster
   case 'L':
-    draw_status_message("look monster");
+    draw_message("look monster");
     break;
 
   //// quit game
   case 'Q':
-    draw_status_message("Quitting game...");
+    draw_message("Quitting game...");
     refresh();
     return 1;
 
   default:
-    draw_status_message("Invalid key press: %c", move);
+    draw_message("Invalid key press: %c", move);
     break;
   };
 
