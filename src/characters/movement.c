@@ -16,7 +16,7 @@ int check_los(dungeon *d, character *c);
 int check_horizontal(dungeon *d, character *c);
 int check_vertical(dungeon *d, character *c);
 
-int move(dungeon *d, character *c) {
+int move_character(dungeon *d, character *c) {
   // only random player movement for now
   if (c->traits == PLAYER_TRAIT) {
     return move_random(d, c);

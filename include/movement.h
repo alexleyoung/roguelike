@@ -4,6 +4,6 @@
 #include "character.h"
 #include "dungeon.h"
 
-int move(dungeon *d, character *c);
+int move_character(dungeon *d, character *c);
 
 #endif

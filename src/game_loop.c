@@ -1,3 +1,4 @@
+#include "character.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -6,25 +7,12 @@
 #include <gen.h>
 #include <heap.h>
 #include <movement.h>
+#include <ncurses.h>
 
 #define DEFAULT_MOB_COUNT 10
 
 void print_dungeon(dungeon *dungeon);
 
-// comparator for event struct
-/*static int compare_events(const void *v1, const void *v2) {*/
-/*    event event1 = *(event *)v1;*/
-/*    event event2 = *(event *)v2;*/
-/**/
-/*    int diff;*/
-/**/
-/*    diff = event1.turn_time - event2.turn_time;*/
-/*    if (diff) {*/
-/*        return diff;*/
-/*    } else {*/
-/*        return event1.character->id - event2.character->id;*/
-/*    }*/
-/*}*/
 static int compare_events(const void *v1, const void *v2) {
   event *event1 = (event *)v1;
   event *event2 = (event *)v2;
@@ -75,16 +63,23 @@ void print_dungeon(dungeon *dungeon) {
   for (r = 0; r < DUNGEON_HEIGHT; r++) {
     for (c = 0; c < DUNGEON_WIDTH; c++) {
       if (dungeon->character_map[r][c]) {
-        printf("%c", dungeon->character_map[r][c]->sprite);
+        mvprintw(r + 1, c, "%c", dungeon->character_map[r][c]->sprite);
       } else {
-        printf("%c", dungeon->tiles[r][c].sprite);
+        mvprintw(r + 1, c, "%c", dungeon->tiles[r][c].sprite);
       }
     }
-    printf("\n");
   }
 }
 
 int start_game(game *g) {
+  // init ncurses display and settings
+  initscr();
+  clear();
+  cbreak();
+  noecho();
+  curs_set(0);
+  keypad(stdscr, TRUE);
+
   // init event queue
   for (int r = 0; r < DUNGEON_HEIGHT; r++) {
     for (int c = 0; c < DUNGEON_WIDTH; c++) {
@@ -104,34 +99,33 @@ int start_game(game *g) {
     heap_pop(&g->events, &e);
 
     if (!e.character->alive) {
+      if (e.character->traits == PLAYER_TRAIT) {
+        printf("game over. pc died!\n");
+        return 0;
+      }
+
       g->maps[g->current_map]
           .character_map[e.character->pos.r][e.character->pos.c] = NULL;
       free(e.character);
       continue;
     }
 
-    // print on character turn
-    if (e.character->id == 0) {
+    // print on player turn
+    if (e.character->traits == PLAYER_TRAIT) {
       print_dungeon(&g->maps[g->current_map]);
+      int input = getch();
     }
 
     // move character according to their traits
-    int res = move(&g->maps[g->current_map], e.character);
-    if (res == 1) {
-      print_dungeon(&g->maps[g->current_map]);
-      printf("game over. pc died!\n");
-      return 0;
-    } else if (res == 2) {
-      // dont add to queue if monster is killed
-      print_dungeon(&g->maps[g->current_map]);
-      continue;
-    };
+    move_character(&g->maps[g->current_map], e.character);
 
     // add character back to event queue
     e.turn_time += 1000 / e.character->speed;
     heap_push(&g->events, &e);
-    usleep(250000);
   }
+
+  // close ncurses win
+  endwin();
 
   return 0;
 }
