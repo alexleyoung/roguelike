@@ -63,9 +63,9 @@ void print_dungeon(dungeon *dungeon) {
   for (r = 0; r < DUNGEON_HEIGHT; r++) {
     for (c = 0; c < DUNGEON_WIDTH; c++) {
       if (dungeon->character_map[r][c]) {
-        mvprintw(r + 1, c, "%c", dungeon->character_map[r][c]->sprite);
+        mvaddch(r + 1, c, dungeon->character_map[r][c]->sprite);
       } else {
-        mvprintw(r + 1, c, "%c", dungeon->tiles[r][c].sprite);
+        mvaddch(r + 1, c, dungeon->tiles[r][c].sprite);
       }
     }
   }
@@ -94,8 +94,9 @@ int start_game(game *g) {
     }
   }
 
+  event e;
+  int input;
   while (!heap_is_empty(&g->events)) {
-    event e;
     heap_pop(&g->events, &e);
 
     if (!e.character->alive) {
@@ -104,20 +105,20 @@ int start_game(game *g) {
         return 0;
       }
 
-      g->maps[g->current_map]
-          .character_map[e.character->pos.r][e.character->pos.c] = NULL;
       free(e.character);
       continue;
     }
 
     // print on player turn
-    if (e.character->traits == PLAYER_TRAIT) {
+    if (e.character->traits ==
+        PLAYER_TRAIT) { // TODO: add check for ai player flag prob
       print_dungeon(&g->maps[g->current_map]);
-      int input = getch();
+      input = getch();
+      move_player(&g->maps[g->current_map], e.character, input);
+    } else {
+      // move npc character according to their traits
+      move_character(&g->maps[g->current_map], e.character);
     }
-
-    // move character according to their traits
-    move_character(&g->maps[g->current_map], e.character);
 
     // add character back to event queue
     e.turn_time += 1000 / e.character->speed;

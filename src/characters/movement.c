@@ -2,7 +2,9 @@
 #include <stdlib.h>
 
 #include <movement.h>
+#include <ncurses.h> // drawing in the move file feels super bad but oh well...
 #include <pathfinding.h>
+#include <ui.h>
 #include <utils.h>
 
 #define ATTRIBUTE_INTELLIGENT 0x1
@@ -15,6 +17,82 @@ int move_to(dungeon *d, character *c, point p);
 int check_los(dungeon *d, character *c);
 int check_horizontal(dungeon *d, character *c);
 int check_vertical(dungeon *d, character *c);
+
+int move_player(dungeon *d, character *c, int move) {
+  point p;
+
+  switch (move) {
+  // up left
+  case KEY_HOME:
+  case '7':
+  case 'y':
+    draw_status_message("up left");
+    break;
+
+  // up
+  case KEY_UP:
+  case '8':
+  case 'k':
+    draw_status_message("up");
+    break;
+
+  // up right
+  case KEY_PPAGE:
+  case '9':
+  case 'u':
+    draw_status_message("up right");
+    break;
+
+  // right
+  case KEY_RIGHT:
+  case '6':
+  case 'l':
+    draw_status_message("right");
+    break;
+
+  // down right
+  case KEY_NPAGE:
+  case '3':
+  case 'n':
+    draw_status_message("down right");
+    break;
+
+  // down
+  case KEY_DOWN:
+  case '2':
+  case 'j':
+    draw_status_message("down");
+    break;
+
+  // down left
+  case KEY_END:
+  case '1':
+  case 'b':
+    draw_status_message("down left");
+    break;
+
+  // left
+  case KEY_LEFT:
+  case '4':
+  case 'h':
+    draw_status_message("left");
+    break;
+
+  // rest
+  case KEY_B2:
+  case ' ':
+  case '.':
+  case '5':
+    draw_status_message("rest");
+    break;
+
+  default:
+    draw_status_message("Invalid key press: %c", move);
+    break;
+  };
+
+  return 0;
+};
 
 int move_character(dungeon *d, character *c) {
   // only random player movement for now
@@ -116,12 +194,9 @@ int move_random(dungeon *d, character *c) {
 int move_to(dungeon *d, character *c, point p) {
   // if moving into rock, check tunneling: if not, return
   if (d->tiles[p.r][p.c].hardness) {
-    /*printf("%d moving into hard tile\n", c->id);*/
     if (C_IS(c, TUNNELING)) {
-      /*printf("drilling\n");*/
       d->tiles[p.r][p.c].hardness -= 85;
     } else {
-      /*printf("cant drill\n");*/
       return 0;
     }
   }
@@ -145,16 +220,8 @@ int move_to(dungeon *d, character *c, point p) {
     if (d->character_map[p.r][p.c]->traits == PLAYER_TRAIT)
       end = 1; // end game
 
-    // kill character
-    /*printf("%d (sprite: %c) kills %d (sprite: %c) from (%d,%d) to (%d,%d)\n",
-     * c->id, c->sprite,
-     * d->character_map[p.r][p.c]->id,d->character_map[p.r][p.c]->sprite,
-     * c->pos.r, c->pos.c, p.r, p.c);*/
-
-    /*free(d->character_map[p.r][p.c]);*/
-    /*d->character_map[p.r][p.c] = NULL;*/
-
     d->character_map[p.r][p.c]->alive = 0;
+    d->character_map[p.r][p.c] = NULL;
 
     if (end)
       return end;
@@ -174,50 +241,6 @@ int move_to(dungeon *d, character *c, point p) {
   return 0;
 }
 
-/*int check_los(dungeon *d, character *c) {*/
-/*    point source = c->pos;*/
-/*    point dest = d->player_pos;*/
-/**/
-/*    // Absolute differences*/
-/*    int dx = abs(dest.c - source.c);*/
-/*    int dy = abs(dest.r - source.r);*/
-/**/
-/*    // Determine line drawing direction*/
-/*    int sx = source.c < dest.c ? 1 : -1;*/
-/*    int sy = source.r < dest.r ? 1 : -1;*/
-/**/
-/*    int err = dx - dy;*/
-/*    int x = source.c;*/
-/*    int y = source.r;*/
-/**/
-/*    while (1) {*/
-/*        // Check if current tile blocks line of sight*/
-/*        if (d->tiles[y][x].hardness > 0) {*/
-/*            return 0;  // Blocked*/
-/*        }*/
-/**/
-/*        // Reached destination*/
-/*        if (x == dest.c && y == dest.r) {*/
-/*            return 1;  // Clear line of sight*/
-/*        }*/
-/**/
-/*        // Calculate next point*/
-/*        int e2 = 2 * err;*/
-/*        if (e2 > -dy) {*/
-/*            err -= dy;*/
-/*            x += sx;*/
-/*        }*/
-/*        if (e2 < dx) {*/
-/*            err += dx;*/
-/*            y += sy;*/
-/*        }*/
-/**/
-/*        // Boundary check (optional, depends on your dungeon setup)*/
-/*        if (x < 0 || x >= DUNGEON_WIDTH || y < 0 || y >= DUNGEON_HEIGHT) {*/
-/*            return 0;*/
-/*        }*/
-/*    }*/
-/*}*/
 // bresenham's line drawing alg
 //
 // returns 0 if no LOS, 1 otherwise
