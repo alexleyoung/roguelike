@@ -1,15 +1,15 @@
 #ifndef CORRIDOR_HEAP_H
 #define CORRIDOR_HEAP_H
 
-#include "../types/dungeon.h"
+#include "dungeon.h"
 
 #define DEFAULT_HEAP_CAPACITY 10
 
 typedef struct corridor_heap {
-    point*points;
-    int *weights;
-    int size;
-    int capacity;
+  point *points;
+  int *weights;
+  int size;
+  int capacity;
 } corridor_heap;
 
 int corridor_heap_init(corridor_heap *h);

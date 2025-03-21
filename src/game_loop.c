@@ -2,11 +2,10 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#include "../characters/movement.h"
-#include "../dsa/heap.h"
-#include "../dsa/j_heap.h"
-#include "../gen/gen.h"
-#include "game_loop.h"
+#include <game_loop.h>
+#include <gen.h>
+#include <heap.h>
+#include <movement.h>
 
 #define DEFAULT_MOB_COUNT 10
 

@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "../characters/pathfinding.h"
-#include "../types/utils.h"
-#include "movement.h"
+#include <movement.h>
+#include <pathfinding.h>
+#include <utils.h>
 
 #define ATTRIBUTE_INTELLIGENT 0x1
 #define ATTRIBUTE_TELEPATHIC 0x2

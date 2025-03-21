@@ -1,7 +1,7 @@
 #ifndef GEN_H
 #define GEN_H
 
-#include "../types/dungeon.h"
+#include "dungeon.h"
 
 #define DEFAULT_HARDNESS 255
 
@@ -11,8 +11,8 @@
 #define ROOM_MAX_HEIGHT 7
 
 typedef struct seed {
-    point p;
-    int hardness;
+  point p;
+  int hardness;
 } seed;
 
 int init_dungeon(dungeon *dungeon);

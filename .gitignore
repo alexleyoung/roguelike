@@ -2,6 +2,9 @@
 
 .vscode
 
+compile_flags.txt
+.clangd
+
 out
 
 log.txt
