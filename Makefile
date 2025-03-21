@@ -1,10 +1,10 @@
 default: game
 
 game: main.c $(wildcard src/*.c) $(wildcard src/*/*.c)
-	gcc main.c src/*.c src/*/*.c -Iinclude -Llib -o out
+	gcc main.c src/*.c src/*/*.c -Iinclude -Llib -lcurses -o out
 
 debug: main.c $(wildcard src/*.c) $(wildcard src/*/*.c)
-	gcc main.c src/*.c src/*/*.c -Iinclude -Llib -g -o debug
+	gcc main.c src/*.c src/*/*.c -Iinclude -Llib -lcurses -g -o debug
 
 copy: clean # create copy of project to be turned into tarball
 	cp -R . ./copy

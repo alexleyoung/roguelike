@@ -100,31 +100,20 @@ int start_game(game *g) {
   }
 
   while (!heap_is_empty(&g->events)) {
-    /*while (g->events.size) {*/
     event e;
     heap_pop(&g->events, &e);
-    /*event *f;*/
-    /*f = heap_remove_min(&g->events);*/
-    /*e = *f;*/
 
-    // if character is killed,
-    /*if (!e.character || !e.character->sprite || e.character->id < 0 ||
-     * e.character->id > 11) {*/
-    /*    continue;*/
-    /*}*/
     if (!e.character->alive) {
       g->maps[g->current_map]
           .character_map[e.character->pos.r][e.character->pos.c] = NULL;
       free(e.character);
       continue;
     }
-    /*printf("%d's (%c) turn\n", e.character->id, e.character->sprite);*/
 
     // print on character turn
-    /*if (e.character->id == 0) {*/
-    /*    print_dungeon(&g->maps[g->current_map]);*/
-    /*}*/
-    print_dungeon(&g->maps[g->current_map]);
+    if (e.character->id == 0) {
+      print_dungeon(&g->maps[g->current_map]);
+    }
 
     // move character according to their traits
     int res = move(&g->maps[g->current_map], e.character);
@@ -141,7 +130,6 @@ int start_game(game *g) {
     // add character back to event queue
     e.turn_time += 1000 / e.character->speed;
     heap_push(&g->events, &e);
-    /*heap_insert(&g->events, &e);*/
     usleep(250000);
   }
 

@@ -8,6 +8,7 @@
 #include <game_loop.h>
 #include <gen.h>
 #include <heap.h>
+#include <ncurses.h>
 #include <saves.h>
 
 void print_dungeon(dungeon *dungeon);
