@@ -1,10 +1,10 @@
 default: game
 
-game: main.c $(wildcard gen/*.c) $(wildcard dsa/*.c) $(wildcard saves/*.c) $(wildcard characters/*.c) $(wildcard game_loop/*.c) # compile source files to out
-	gcc main.c gen/*.c dsa/*.c saves/*.c characters/*.c game_loop/*.c -Igen -Idsa -Isaves -Icharacters -Igame_loop -Itypes -o out
+game: main.c $(wildcard src/*.c) $(wildcard src/*/*.c)
+	gcc main.c src/*.c src/*/*.c -Iinclude -Llib -o out
 
-debug: main.c $(wildcard gen/*.c) $(wildcard dsa/*.c) $(wildcard saves/*.c) $(wildcard characters/*.c) $(wildcard game_loop/*.c) # compile source files to out
-	gcc main.c gen/*.c dsa/*.c saves/*.c characters/*.c game_loop/*.c -Igen -Idsa -Isaves -Icharacters -Igame_loop -Itypes -g -o debug
+debug: main.c $(wildcard src/*.c) $(wildcard src/*/*.c)
+	gcc main.c src/*.c src/*/*.c -Iinclude -Llib -g -o debug
 
 copy: clean # create copy of project to be turned into tarball
 	cp -R . ./copy
