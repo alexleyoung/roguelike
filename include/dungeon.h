@@ -3,8 +3,9 @@
 
 #include <stdint.h>
 
-#include "character.h"
-#include "types.h"
+#include <character.h>
+#include <heap.h>
+#include <types.h>
 
 typedef struct tile {
   char sprite;
@@ -21,8 +22,14 @@ typedef struct room {
   point size;
 } room;
 
+typedef struct event {
+  int turn_time;
+  character *character;
+} event;
+
 typedef struct dungeon {
   int id;
+  heap events;
 
   tile tiles[DUNGEON_HEIGHT][DUNGEON_WIDTH];
 

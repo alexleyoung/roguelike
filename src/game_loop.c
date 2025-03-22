@@ -1,14 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-
-#include <character.h>
 #include <game_loop.h>
-#include <gen.h>
-#include <heap.h>
-#include <movement.h>
-#include <ncurses.h>
-#include <ui.h>
 
 static int compare_events(const void *v1, const void *v2) {
   event *event1 = (event *)v1;
@@ -45,12 +35,12 @@ static int add_dungeon(game *g) {
 // init game struct
 int init_game(game *g) {
   g->maps = malloc(sizeof(*g->maps));
-  heap_init(&g->events, sizeof(event), compare_events);
-  /*j_heap_init(&g->events, compare_events, NULL);*/
   g->num_maps = 1;
   g->current_map = 0;
 
-  generate_dungeon(&g->maps[g->current_map], 6, DEFAULT_MOB_COUNT);
+  generate_dungeon(&g->maps[g->current_map], DEFAULT_ROOM_COUNT,
+                   DEFAULT_MOB_COUNT);
+  heap_init(&g->maps[g->current_map].events, sizeof(event), compare_events);
 
   return 0;
 }
@@ -72,16 +62,15 @@ int start_game(game *g) {
         e.character = g->maps[g->current_map].character_map[r][c];
         e.turn_time = 0;
 
-        heap_push(&g->events, &e);
-        /*heap_insert(&g->events, &e);*/
+        heap_push(&g->maps[g->current_map].events, &e);
       }
     }
   }
 
   event e;
   int input;
-  while (!heap_is_empty(&g->events)) {
-    heap_pop(&g->events, &e);
+  while (!heap_is_empty(&g->maps[g->current_map].events)) {
+    heap_pop(&g->maps[g->current_map].events, &e);
 
     if (!e.character->alive) {
       if (e.character->traits == PLAYER_TRAIT) {
@@ -97,10 +86,16 @@ int start_game(game *g) {
     if (e.character->traits ==
         PLAYER_TRAIT) { // TODO: add check for ai player flag prob
       draw_dungeon(&g->maps[g->current_map]);
+
       input = getch();
-      if (move_player(&g->maps[g->current_map], e.character, input))
-        // quit
+      int res = move_player(&g->maps[g->current_map], e.character, input);
+      if (res == PLAYER_MOVE_QUIT) { // quit game
         return 0;
+      }
+      if (res == PLAYER_MOVE_MENU) { // menud, redo turn
+        heap_push(&g->maps[g->current_map].events, &e);
+        continue;
+      }
     } else {
       // move npc character according to their traits
       move_character(&g->maps[g->current_map], e.character);
@@ -108,7 +103,7 @@ int start_game(game *g) {
 
     // add character back to event queue
     e.turn_time += 1000 / e.character->speed;
-    heap_push(&g->events, &e);
+    heap_push(&g->maps[g->current_map].events, &e);
   }
 
   // close ncurses win

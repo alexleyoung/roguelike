@@ -1,5 +1,10 @@
 #include <ui.h>
 
+// helpers
+void draw_formatted_monster_line(int offset, character *p, character *m);
+void draw_monster_page(character **monsters, int num_monsters, int page,
+                       int pages, character *p);
+
 /*
  * Draw dungeon
  *
@@ -7,6 +12,8 @@
  * d: current dungeon
  */
 void draw_dungeon(dungeon *d) {
+  clear();
+
   int r, c;
   for (r = 0; r < DUNGEON_HEIGHT; r++) {
     for (c = 0; c < DUNGEON_WIDTH; c++) {
@@ -36,10 +43,6 @@ void draw_message(char *fmt, ...) {
   va_end(args);
 }
 
-// helpers
-void draw_formatted_monster_line(int offset, character *p, character *m);
-void draw_monster_page(character **monsters, int num_monsters, int page,
-                       int pages, character *p);
 /*
  * Opens monster list menu
  *
@@ -83,6 +86,8 @@ void draw_monster_list(dungeon *d, character *c) {
       draw_monster_page(monsters, num_monsters, --page, pages, c);
     }
   } while ((inp = getch()) != 27); // 27 = esc
+
+  free(monsters);
 }
 
 // helper to draw single formatted monster line

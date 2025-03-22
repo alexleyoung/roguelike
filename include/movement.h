@@ -4,10 +4,7 @@
 #include "character.h"
 #include "dungeon.h"
 
-/*enum {*/
-/*  SUCCESS,*/
-/*  PLAYER_KILLED,*/
-/*};*/
+enum { PLAYER_MOVE_SUCCESS, PLAYER_MOVE_QUIT, PLAYER_MOVE_MENU };
 
 int move_player(dungeon *d, character *c, int move);
 int move_character(dungeon *d, character *c);

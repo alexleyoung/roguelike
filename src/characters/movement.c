@@ -169,7 +169,7 @@ int move_player(dungeon *d, character *c, int move) {
   // monster list
   case 'm':
     draw_monster_list(d, c);
-    break;
+    return PLAYER_MOVE_MENU;
 
   //// debug
   // toggle fow
@@ -205,7 +205,7 @@ int move_player(dungeon *d, character *c, int move) {
   case 'Q':
     draw_message("Quitting game...");
     refresh();
-    return 1;
+    return PLAYER_MOVE_QUIT;
 
   default:
     draw_message("Invalid key press: %c", move);
