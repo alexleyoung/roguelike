@@ -120,7 +120,16 @@ int move_player(dungeon *d, character *c, int move) {
     return 0;
   // stairs
   case '>':
+    if (d->tiles[c->pos.r][c->pos.c].sprite != '>') {
+      draw_message("Can't move down non-downward stairs!");
+      return 0;
+    }
+    return PLAYER_MOVE_STAIR;
   case '<':
+    if (d->tiles[c->pos.r][c->pos.c].sprite != '<') {
+      draw_message("Can't move down non-upward stairs!");
+      return 0;
+    }
     return PLAYER_MOVE_STAIR;
 
   //// actions

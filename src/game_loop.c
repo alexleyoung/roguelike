@@ -84,28 +84,22 @@ int start_game(game *g) {
           }
         }
 
-        if (s->d >= 0) { // stair has linked room
-          e.turn_time += 1000 / e.character->speed;
-          heap_push(&g->maps[g->current_map].events, &e);
+        // re-add player turn to this dungeon's event queue
+        e.turn_time += 1000 / e.character->speed;
+        heap_push(&g->maps[g->current_map].events, &e);
 
+        if (s->d != UNLINKED) {
           g->current_map = s->d;
-          draw_message("going to: %d", s->d);
-
-          continue;
-        } else if (s->d == UNLINKED) { // generate new room
-          // before leaving room, add player to room's heap
-          e.turn_time += 1000 / e.character->speed;
-          heap_push(&g->maps[g->current_map].events, &e);
-
+        } else {
           // create dungeon linked to the stair
           add_dungeon(g, g->current_map,
                       s->type == UP_STAIR ? DOWN_STAIR : UP_STAIR);
           g->current_map = g->num_maps - 1;
           s->d = g->current_map; // link original stair to new map
-          draw_message("linked to: %d", s->d);
-
-          continue;
         }
+
+        draw_message("Going to floor: %d", s->d);
+        continue;
       }
 
     }
