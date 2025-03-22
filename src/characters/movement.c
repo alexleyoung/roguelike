@@ -1,12 +1,5 @@
-#include <stdio.h>
-#include <stdlib.h>
 
 #include <movement.h>
-#include <ncurses.h> // drawing in the move file feels super bad but oh well...
-#include <pathfinding.h>
-#include <ui.h>
-#include <utils.h>
-
 #define ATTRIBUTE_INTELLIGENT 0x1
 #define ATTRIBUTE_TELEPATHIC 0x2
 #define ATTRIBUTE_TUNNELING 0x4
@@ -127,11 +120,8 @@ int move_player(dungeon *d, character *c, int move) {
     return 0;
   // stairs
   case '>':
-    draw_message("down stair");
-    break;
   case '<':
-    draw_message("up stair");
-    break;
+    return PLAYER_MOVE_STAIR;
 
   //// actions
   // drop item

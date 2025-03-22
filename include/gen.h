@@ -1,7 +1,15 @@
 #ifndef GEN_H
 #define GEN_H
 
-#include "dungeon.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+#include <corridor_heap.h>
+#include <dungeon.h>
+#include <queue.h>
+#include <spawn.h>
+#include <utils.h>
 
 #define DEFAULT_HARDNESS 255
 
@@ -17,5 +25,7 @@ typedef struct seed {
 
 int init_dungeon(dungeon *dungeon);
 int generate_dungeon(dungeon *dungeon, int num_rooms, int num_monsters);
+int generate_linked_dungeon(dungeon *d, int num_rooms, int num_monster,
+                            int link_id, int stair_type);
 
 #endif

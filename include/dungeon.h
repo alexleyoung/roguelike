@@ -7,15 +7,12 @@
 #include <heap.h>
 #include <types.h>
 
+enum { UP_STAIR, DOWN_STAIR };
+
 typedef struct tile {
   char sprite;
   int hardness;
 } tile;
-
-typedef struct stair {
-  point p;
-  int type;
-} stair;
 
 typedef struct room {
   point corner;
@@ -26,6 +23,12 @@ typedef struct event {
   int turn_time;
   character *character;
 } event;
+
+typedef struct stair {
+  point p;
+  int type;
+  int d; // dungeon id
+} stair;
 
 typedef struct dungeon {
   int id;

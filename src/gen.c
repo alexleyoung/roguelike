@@ -1,36 +1,21 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
-
-#include <corridor_heap.h>
 #include <gen.h>
-#include <queue.h>
-#include <spawn.h>
-#include <utils.h>
-
-#define INF 2147483647
 
 #define MAX_ROOM_TRIES 5000
 
 int init_dungeon(dungeon *dungeon);
-
 int generate_rooms(dungeon *dungeon);
 int place_room(dungeon *dungeon, room *room);
-
 int generate_hardness(dungeon *dungeon);
 void propagate_hardness(dungeon *dungeon,
                         int propagated[DUNGEON_HEIGHT][DUNGEON_WIDTH], queue *q,
                         seed *s);
 void smooth_hardness(dungeon *dungeon);
-
 int generate_corridors(dungeon *dungeon, room *rooms);
 int find_path(dungeon *dungeon, point source, point target, int longest);
-
 int place_stairs(dungeon *dungeon, int num_stairs);
-
 int spawn_player(dungeon *dungeon);
-
 int spawn_monsters(dungeon *dungeon, int n);
+int init_heap(dungeon *dungeon);
 
 /*
 Generate a dungeon with num_rooms number of rooms and at least 2 stairs.
@@ -52,8 +37,59 @@ int generate_dungeon(dungeon *dungeon, int num_rooms, int num_monsters) {
   err = place_stairs(dungeon, 2);
   err = spawn_player(dungeon);
   err = spawn_monsters(dungeon, num_monsters);
+  err = init_heap(dungeon);
 
   return err;
+}
+
+/*
+Generate a dungeon with a linked staircase
+
+Params:
+dungeon *d: dungeon to generate
+int num_rooms: number of rooms to generate
+int num_monsters: number of monsters to spawn
+int link_id: dungeon id to link connector staircase to
+int stair_type: connector stair type
+
+Returns 0 on success, non-zero on failure.
+*/
+int generate_linked_dungeon(dungeon *d, int num_rooms, int num_monsters,
+                            int link_id, int stair_type) {
+  int err;
+
+  // generate new dungeon
+  err = generate_dungeon(d, num_rooms, num_monsters);
+
+  // add connected stair with proper link
+  stair *tmp;
+  if (!(tmp = realloc(d->stairs, ++d->num_stairs * sizeof(*d->stairs)))) {
+    return 1;
+  }
+  d->stairs = tmp;
+  stair s;
+  s.p = d->player_pos;
+  s.type = stair_type;
+  s.d = link_id;
+  d->stairs[d->num_stairs - 1] = s;
+  d->tiles[s.p.r][s.p.c].sprite = stair_type == UP_STAIR ? '<' : '>';
+
+  return err;
+}
+
+// event comparator for dungeon game loop heap
+static int compare_events(const void *v1, const void *v2) {
+  event *event1 = (event *)v1;
+  event *event2 = (event *)v2;
+
+  int diff;
+
+  diff = event1->turn_time - event2->turn_time;
+  if (diff) {
+    return diff;
+  } else {
+    return event1->character->id - event2->character->id;
+  }
 }
 
 /*
@@ -489,7 +525,11 @@ int place_stairs(dungeon *dungeon, int num_stairs) {
              dungeon->tiles[r][c].sprite != '#');
 
     dungeon->tiles[r][c].sprite = stairs[i];
-    stair s = {.p = {r, c}, .type = i};
+    /*stair s = {.p = {r, c}, .type = i, .d = -1};*/
+    stair s;
+    s.p = (point){r, c};
+    s.type = i;
+    s.d = -1;
     dungeon->stairs[i] = s;
   }
 
@@ -504,7 +544,7 @@ int place_stairs(dungeon *dungeon, int num_stairs) {
     } while (dungeon->tiles[r][c].sprite != '.' &&
              dungeon->tiles[r][c].sprite != '#');
 
-    stair s = {.p = {r, c}, .type = type};
+    stair s = {.p = {r, c}, .type = type, .d = -1};
     dungeon->stairs[i] = s;
 
     dungeon->tiles[r][c].sprite = stairs[type];
@@ -550,12 +590,30 @@ int spawn_monsters(dungeon *dungeon, int n) {
       p.c = rand() % DUNGEON_WIDTH;
       /*} while (!IN_BOUNDS(p.r, p.c) || (!wall_spawn &&
        * dungeon->tiles[p.r][p.c].hardness));*/
-    } while (dungeon->tiles[p.r][p.c].sprite != '.' ||
+    } while (dungeon->tiles[p.r][p.c].sprite != '.' &&
              dungeon->character_map[p.r][p.c]);
 
     mob->pos = p;
 
     dungeon->character_map[p.r][p.c] = mob;
+  }
+
+  return 0;
+}
+
+int init_heap(dungeon *d) {
+  // init event queue
+  heap_init(&d->events, sizeof(event), compare_events);
+  for (int r = 0; r < DUNGEON_HEIGHT; r++) {
+    for (int c = 0; c < DUNGEON_WIDTH; c++) {
+      if (d->character_map[r][c]) {
+        event e;
+        e.character = d->character_map[r][c];
+        e.turn_time = 0;
+
+        heap_push(&d->events, &e);
+      }
+    }
   }
 
   return 0;
