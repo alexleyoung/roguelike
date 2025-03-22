@@ -12,7 +12,7 @@ void draw_monster_page(character **monsters, int num_monsters, int page,
  * d: current dungeon
  */
 void draw_dungeon(dungeon *d) {
-  clear();
+  /*clear();*/
 
   int r, c;
   for (r = 0; r < DUNGEON_HEIGHT; r++) {

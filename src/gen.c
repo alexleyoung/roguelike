@@ -61,16 +61,19 @@ int generate_linked_dungeon(dungeon *d, int num_rooms, int num_monsters,
   // generate new dungeon
   err = generate_dungeon(d, num_rooms, num_monsters);
 
-  // add connected stair with proper link
+  // resize stair arr
   stair *tmp;
   if (!(tmp = realloc(d->stairs, ++d->num_stairs * sizeof(*d->stairs)))) {
     return 1;
   }
   d->stairs = tmp;
-  stair s;
-  s.p = d->player_pos;
-  s.type = stair_type;
-  s.d = link_id;
+
+  // make new connected stair
+  stair s = {.p = d->player_pos, .type = stair_type, .d = link_id};
+  /*stair s;*/
+  /*s.p = d->player_pos;*/
+  /*s.type = stair_type;*/
+  /*s.d = link_id;*/
   d->stairs[d->num_stairs - 1] = s;
   d->tiles[s.p.r][s.p.c].sprite = stair_type == UP_STAIR ? '<' : '>';
 
@@ -512,7 +515,8 @@ int place_stairs(dungeon *dungeon, int num_stairs) {
     return 1;
   }
 
-  dungeon->stairs = malloc(sizeof(*dungeon->stairs) * dungeon->num_stairs);
+  dungeon->num_stairs = num_stairs;
+  dungeon->stairs = malloc(sizeof(*dungeon->stairs) * num_stairs);
 
   char stairs[2] = {'<', '>'};
 
@@ -525,11 +529,7 @@ int place_stairs(dungeon *dungeon, int num_stairs) {
              dungeon->tiles[r][c].sprite != '#');
 
     dungeon->tiles[r][c].sprite = stairs[i];
-    /*stair s = {.p = {r, c}, .type = i, .d = -1};*/
-    stair s;
-    s.p = (point){r, c};
-    s.type = i;
-    s.d = -1;
+    stair s = {.p = {r, c}, .type = i, .d = UNLINKED};
     dungeon->stairs[i] = s;
   }
 
@@ -544,13 +544,11 @@ int place_stairs(dungeon *dungeon, int num_stairs) {
     } while (dungeon->tiles[r][c].sprite != '.' &&
              dungeon->tiles[r][c].sprite != '#');
 
-    stair s = {.p = {r, c}, .type = type, .d = -1};
+    stair s = {.p = {r, c}, .type = type, .d = UNLINKED};
     dungeon->stairs[i] = s;
-
     dungeon->tiles[r][c].sprite = stairs[type];
   }
 
-  dungeon->num_stairs = i;
   return 0;
 }
 

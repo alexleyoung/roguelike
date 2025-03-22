@@ -9,6 +9,8 @@
 
 enum { UP_STAIR, DOWN_STAIR };
 
+#define UNLINKED -99
+
 typedef struct tile {
   char sprite;
   int hardness;

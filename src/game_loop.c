@@ -1,5 +1,6 @@
-#include "dungeon.h"
+#include <dungeon.h>
 #include <game_loop.h>
+#include <ui.h>
 
 // create additional maps within the game with correct IDs
 // for eventual stair continuity (hopefully)
@@ -26,6 +27,7 @@ int init_game(game *g) {
 
   generate_dungeon(&g->maps[g->current_map], DEFAULT_ROOM_COUNT,
                    DEFAULT_MOB_COUNT);
+  g->maps[g->current_map].id = 0;
 
   return 0;
 }
@@ -85,15 +87,23 @@ int start_game(game *g) {
         if (s->d >= 0) { // stair has linked room
           e.turn_time += 1000 / e.character->speed;
           heap_push(&g->maps[g->current_map].events, &e);
+
           g->current_map = s->d;
+          draw_message("going to: %d", s->d);
+
           continue;
-        } else { // generate new room
-          add_dungeon(g, g->current_map,
-                      s->type == UP_STAIR ? DOWN_STAIR : UP_STAIR);
+        } else if (s->d == UNLINKED) { // generate new room
+          // before leaving room, add player to room's heap
           e.turn_time += 1000 / e.character->speed;
           heap_push(&g->maps[g->current_map].events, &e);
+
+          // create dungeon linked to the stair
+          add_dungeon(g, g->current_map,
+                      s->type == UP_STAIR ? DOWN_STAIR : UP_STAIR);
           g->current_map = g->num_maps - 1;
           s->d = g->current_map; // link original stair to new map
+          draw_message("linked to: %d", s->d);
+
           continue;
         }
       }
