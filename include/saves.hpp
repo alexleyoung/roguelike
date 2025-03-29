@@ -1,7 +1,7 @@
-#ifndef SAVES_H
-#define SAVES_H
+#ifndef SAVES_HPP
+#define SAVES_HPP
 
-#include "dungeon.h"
+#include "dungeon.hpp"
 
 int save_dungeon(dungeon *dungeon, const char *name);
 int load_dungeon(dungeon *dungeon, const char *name);

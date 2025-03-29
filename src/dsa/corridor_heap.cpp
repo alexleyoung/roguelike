@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <corridor_heap.h>
+#include <corridor_heap.hpp>
 
 /*
 Custom min-corridor_heap implementation which holds points and weights.

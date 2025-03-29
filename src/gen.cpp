@@ -1,4 +1,4 @@
-#include <gen.h>
+#include <gen.hpp>
 
 #define MAX_ROOM_TRIES 5000
 
@@ -557,7 +557,7 @@ int place_stairs(dungeon *dungeon, int num_stairs) {
 
 int spawn_player(dungeon *dungeon) {
   uint8_t r, c;
-  character *p = (character *)(malloc(sizeof(character)));
+  player *p = (player *)(malloc(sizeof(player)));
 
   // pick random room
   do {
@@ -579,7 +579,7 @@ int spawn_monsters(dungeon *dungeon, int n) {
   int i;
   point p;
   for (i = 1; i <= n; i++) {
-    character *mob = (character *)(malloc(sizeof(character)));
+    monster *mob = (monster *)(malloc(sizeof(monster)));
 
     // generate random traits
     create_monster(mob, i);

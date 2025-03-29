@@ -2,9 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <gen.h>
-#include <saves.h>
-#include <spawn.h>
+#include <gen.hpp>
+#include <saves.hpp>
+#include <spawn.hpp>
 
 #if defined(__APPLE__)
 #include "../include/portable_endian.h"
@@ -212,9 +212,9 @@ int load_dungeon(dungeon *dungeon, const char *name) {
   fread(&dungeon->player_pos.c, sizeof(dungeon->player_pos.c), 1, f);
   fread(&dungeon->player_pos.r, sizeof(dungeon->player_pos.r), 1, f);
 
-  character *player = (character *)(malloc(sizeof(character)));
-  create_player(player, dungeon->player_pos);
-  dungeon->character_map[player->pos.r][player->pos.c] = player;
+  player *pl = (player *)(malloc(sizeof(player)));
+  create_player(pl, dungeon->player_pos);
+  dungeon->character_map[pl->pos.r][pl->pos.c] = pl;
 
   // read tiles array
   for (int r = 0; r < DUNGEON_HEIGHT; r++) {

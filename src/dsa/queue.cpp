@@ -1,6 +1,6 @@
 #include <stdlib.h>
 
-#include <queue.h>
+#include <queue.hpp>
 
 int queue_init(queue *q) {
   q->front = q->back = NULL;

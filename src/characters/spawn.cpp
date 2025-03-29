@@ -1,11 +1,10 @@
 #include <stdlib.h>
 
-#include <spawn.h>
+#include <spawn.hpp>
 
-int create_player(character *c, point p) {
+int create_player(player *c, point p) {
   // player id always 0
   c->id = 0;
-  c->traits = PLAYER_TRAIT; // special identifier for PC
   c->speed = 10;
   c->pos = p;
   c->sprite = '@';
@@ -14,7 +13,7 @@ int create_player(character *c, point p) {
   return 0;
 }
 
-int create_monster(character *c, int id) {
+int create_monster(monster *c, int id) {
   c->id = id;
   c->traits = rand() % 15;
   c->speed = (rand() % 21) + 5;

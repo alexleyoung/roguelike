@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <heap.h>
+#include <heap.hpp>
 
 int percolate_down(heap *h, int parent) {
   int child = 2 * parent + 1;

@@ -1,5 +1,5 @@
+#include <movement.hpp>
 
-#include <movement.h>
 #define ATTRIBUTE_INTELLIGENT 0x1
 #define ATTRIBUTE_TELEPATHIC 0x2
 #define ATTRIBUTE_TUNNELING 0x4
@@ -216,31 +216,33 @@ int move_player(dungeon *d, character *c, int move) {
 
 int move_character(dungeon *d, character *c) {
   // only random player movement for now
-  if (c->traits == PLAYER_TRAIT) {
+  if (c->id == 0) {
     return move_random(d, c);
   }
 
+  monster *m = dynamic_cast<monster *>(c);
+
   // update character dist_to_player if telepathic or has los
   int los = check_los(d, c);
-  if (C_IS(c, TELEPATHIC) || los) {
-    if (C_IS(c, TUNNELING)) {
-      COPY_2D_ARRAY(c->dist_to_player, d->tunnel_dists, DUNGEON_HEIGHT,
+  if (C_IS(m, TELEPATHIC) || los) {
+    if (C_IS(m, TUNNELING)) {
+      COPY_2D_ARRAY(m->dist_to_player, d->tunnel_dists, DUNGEON_HEIGHT,
                     DUNGEON_WIDTH);
     } else {
-      COPY_2D_ARRAY(c->dist_to_player, d->dists, DUNGEON_HEIGHT, DUNGEON_WIDTH);
+      COPY_2D_ARRAY(m->dist_to_player, d->dists, DUNGEON_HEIGHT, DUNGEON_WIDTH);
     }
   }
 
   // random move if no LOS and not telepathic, or hasn't seen player, or is
   // erratic
-  if ((!C_IS(c, TELEPATHIC) && !los) || (C_IS(c, ERRATIC) && rand() % 2)) {
+  if ((!C_IS(m, TELEPATHIC) && !los) || (C_IS(m, ERRATIC) && rand() % 2)) {
     return move_random(d, c);
   }
 
   point p;
 
   // if intelligent, take shortest path
-  if (C_IS(c, INTELLIGENT)) {
+  if (C_IS(m, INTELLIGENT)) {
     int shortest = 99999;
     // find neighboring tile closest to player
     for (uint8_t i = c->pos.r - 1; i <= c->pos.r + 1; i++) {
@@ -248,9 +250,9 @@ int move_character(dungeon *d, character *c) {
         if (!IN_BOUNDS(i, j)) {
           continue;
         }
-        if (c->dist_to_player[i][j] < shortest) {
+        if (m->dist_to_player[i][j] < shortest) {
           p = (point){i, j};
-          shortest = c->dist_to_player[i][j];
+          shortest = m->dist_to_player[i][j];
         }
       }
     }
@@ -290,12 +292,16 @@ int move_random(dungeon *d, character *c) {
   /*printf("id: %d, sprite: %c\n", c->id, c->sprite);*/
   /*printf("r: %d, c: %d\n", c->pos.r, c->pos.c);*/
   int tries = 0;
+
+  player *p = dynamic_cast<player *>(c);
+  monster *m = dynamic_cast<monster *>(c);
+
   do {
     new_r = c->pos.r + rand() % 3 - 1;
     new_c = c->pos.c + rand() % 3 - 1;
     tries++;
   } while ((!IN_BOUNDS(new_r, new_c) ||
-            (!C_IS(c, TUNNELING) && d->tiles[new_r][new_c].hardness)) &&
+            (m && !C_IS(m, TUNNELING) && d->tiles[new_r][new_c].hardness)) &&
            tries < 100);
 
   // TODO: this is a temporary fix
@@ -312,9 +318,12 @@ int move_random(dungeon *d, character *c) {
 }
 
 int move_to(dungeon *d, character *c, point p) {
+  player *pl = dynamic_cast<player *>(c);
+  monster *m = dynamic_cast<monster *>(c);
+
   // if moving into rock, check tunneling: if not, return
   if (d->tiles[p.r][p.c].hardness) {
-    if (C_IS(c, TUNNELING)) {
+    if (m && C_IS(m, TUNNELING)) {
       d->tiles[p.r][p.c].hardness -= 85;
     } else {
       return 0;
@@ -336,8 +345,10 @@ int move_to(dungeon *d, character *c, point p) {
 
   // check collision
   if (d->character_map[p.r][p.c]) {
+    pl = dynamic_cast<player *>(d->character_map[p.r][p.c]);
+    m = dynamic_cast<monster *>(d->character_map[p.r][p.c]);
     int end = 0;
-    if (d->character_map[p.r][p.c]->traits == PLAYER_TRAIT)
+    if (pl)
       end = 1; // end game
 
     d->character_map[p.r][p.c]->alive = 0;
@@ -348,7 +359,7 @@ int move_to(dungeon *d, character *c, point p) {
   }
 
   // if player, update dungeon
-  if (c->traits == PLAYER_TRAIT) {
+  if (pl) {
     d->player_pos = p;
     calc_dists(d, d->dists, d->player_pos, 0);
     calc_dists(d, d->tunnel_dists, d->player_pos, 1);

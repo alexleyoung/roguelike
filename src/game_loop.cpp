@@ -1,4 +1,4 @@
-#include <game_loop.h>
+#include <game_loop.hpp>
 
 // create additional maps within the game with correct IDs
 // for eventual stair continuity (hopefully)
@@ -47,8 +47,11 @@ int start_game(game *g) {
     dungeon map = g->maps[g->current_map];
     heap_pop(&g->maps[g->current_map].events, &e);
 
+    player *p = dynamic_cast<player *>(e.character);
+    monster *m = dynamic_cast<monster *>(e.character);
+
     if (!e.character->alive) {
-      if (e.character->traits == PLAYER_TRAIT) {
+      if (p) {
         printf("game over. pc died!\n");
         return 0;
       }
@@ -58,8 +61,7 @@ int start_game(game *g) {
     }
 
     // print on player turn
-    if (e.character->traits ==
-        PLAYER_TRAIT) { // TODO: add check for ai player flag prob
+    if (p) { // TODO: add check for ai player flag prob
       draw_dungeon(&g->maps[g->current_map]);
 
       input = getch();

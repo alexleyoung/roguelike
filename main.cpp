@@ -1,18 +1,17 @@
-#include "game.h"
-#include "ui.h"
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include <corridor_heap.h>
-#include <dungeon.h>
-#include <game_loop.h>
-#include <gen.h>
-#include <heap.h>
+#include <corridor_heap.hpp>
+#include <dungeon.hpp>
+#include <game.hpp>
+#include <game_loop.hpp>
+#include <gen.hpp>
+#include <heap.hpp>
 #include <ncurses.h>
-#include <saves.h>
-#include <ui.h>
+#include <saves.hpp>
+#include <ui.hpp>
 
 void print_hardness(dungeon *dungeon);
 void print_dists(dungeon *dungeon, int dists[DUNGEON_HEIGHT][DUNGEON_WIDTH]);

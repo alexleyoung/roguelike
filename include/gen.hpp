@@ -1,15 +1,15 @@
-#ifndef GEN_H
-#define GEN_H
+#ifndef GEN_HPP
+#define GEN_HPP
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 
-#include <corridor_heap.h>
-#include <dungeon.h>
-#include <queue.h>
-#include <spawn.h>
-#include <utils.h>
+#include <corridor_heap.hpp>
+#include <dungeon.hpp>
+#include <queue.hpp>
+#include <spawn.hpp>
+#include <utils.hpp>
 
 #define DEFAULT_HARDNESS 255
 

@@ -1,11 +1,11 @@
-#ifndef DUNGEON_H
-#define DUNGEON_H
+#ifndef DUNGEON_HPP
+#define DUNGEON_HPP
 
 #include <stdint.h>
 
-#include <character.h>
-#include <heap.h>
-#include <types.h>
+#include <character.hpp>
+#include <heap.hpp>
+#include <types.hpp>
 
 enum { UP_STAIR, DOWN_STAIR };
 

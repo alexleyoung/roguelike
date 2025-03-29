@@ -1,8 +1,8 @@
-#ifndef GAME_H
-#define GAME_H
+#ifndef GAME_HPP
+#define GAME_HPP
 
-#include <character.h>
-#include <dungeon.h>
+#include <character.hpp>
+#include <dungeon.hpp>
 
 #define DEFAULT_ROOM_COUNT 6
 #define DEFAULT_MOB_COUNT 10

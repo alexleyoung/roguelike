@@ -1,14 +1,14 @@
-#ifndef MOVEMENT_H
-#define MOVEMENT_H
+#ifndef MOVEMENT_HPP
+#define MOVEMENT_HPP
 
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <character.h>
-#include <dungeon.h>
-#include <pathfinding.h>
-#include <ui.h>
-#include <utils.h>
+#include <character.hpp>
+#include <dungeon.hpp>
+#include <pathfinding.hpp>
+#include <ui.hpp>
+#include <utils.hpp>
 
 enum {
   PLAYER_MOVE_SUCCESS,

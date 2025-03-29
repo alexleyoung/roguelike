@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <corridor_heap.h>
-#include <pathfinding.h>
+#include <corridor_heap.hpp>
+#include <pathfinding.hpp>
 
 #define INF 2147483647
 

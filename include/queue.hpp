@@ -1,14 +1,14 @@
-#ifndef QUEUE_H
-#define QUEUE_H
+#ifndef QUEUE_HPP
+#define QUEUE_HPP
 
 typedef struct queue_node {
-    void *data;
-    struct queue_node *next;
+  void *data;
+  struct queue_node *next;
 } queue_node;
 
 typedef struct queue {
-    queue_node *front, *back;
-    int length;
+  queue_node *front, *back;
+  int length;
 } queue;
 
 int queue_init(queue *q);

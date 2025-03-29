@@ -1,14 +1,14 @@
-#ifndef UI_H
-#define UI_H
+#ifndef UI_HPP
+#define UI_HPP
 
 #include <stdarg.h>
 #include <stdlib.h>
 
-#include <character.h>
-#include <dungeon.h>
+#include <character.hpp>
+#include <dungeon.hpp>
 #include <ncurses.h>
-#include <types.h>
-#include <utils.h>
+#include <types.hpp>
+#include <utils.hpp>
 
 #define MONSTERS_PER_PAGE 20 // max num displayed monsters
 

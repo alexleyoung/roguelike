@@ -1,4 +1,4 @@
-#include <ui.h>
+#include <ui.hpp>
 
 // helpers
 void draw_formatted_monster_line(int offset, character *p, character *m);
