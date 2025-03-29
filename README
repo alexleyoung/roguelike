@@ -1,5 +1,16 @@
 Alex Young's coms 3270 roguelike project. Makefile included with comments.
 
+Assignment 1.05 Features:
+- Reorganized file structure
+  - headers in /include
+  - c files in /src/*
+  - lib files in /lib
+- Installed ncurses for static linking
+- Player controls (movement, stairs, interaction)
+- Monster list with pagination
+- Persistent, connected staircase implementation (yay!)
+- Fixed double-free bug
+
 Assignment 1.04 Features (game_loop/):
 - Game struct responsible for game loop, as well as map(s)
 - Discrete event simulation powered by generic binary heap written myself

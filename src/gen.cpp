@@ -63,7 +63,8 @@ int generate_linked_dungeon(dungeon *d, int num_rooms, int num_monsters,
 
   // resize stair arr
   stair *tmp;
-  if (!(tmp = realloc(d->stairs, ++d->num_stairs * sizeof(*d->stairs)))) {
+  if (!(tmp = (stair *)(realloc(d->stairs,
+                                ++d->num_stairs * sizeof(*d->stairs))))) {
     return 1;
   }
   d->stairs = tmp;
@@ -144,7 +145,7 @@ int generate_hardness(dungeon *dungeon) {
 
   // place hardness seeds, add to queue for bfs
   for (i = 0; i < num_seeds; i++) {
-    s = malloc(sizeof(*s));
+    s = (seed *)(malloc(sizeof(*s)));
 
     // pick a random empty tile
     do {
@@ -231,7 +232,7 @@ void propagate_hardness(dungeon *dungeon,
     dungeon->tiles[s->p.r][s->p.c].hardness = s->hardness;
 
     // add to queue
-    child = malloc(sizeof(*child));
+    child = (seed *)(malloc(sizeof(*child)));
     child->p.r = r;
     child->p.c = c;
     child->hardness = s->hardness;
@@ -307,7 +308,8 @@ Randomly generates num_rooms rectangular rooms in the dungeon to be placed
 Returns 0 on success, non-zero on failure.
 */
 int generate_rooms(dungeon *dungeon) {
-  dungeon->rooms = malloc(sizeof(*dungeon->rooms) * dungeon->num_rooms);
+  dungeon->rooms =
+      (room *)(malloc(sizeof(*dungeon->rooms) * dungeon->num_rooms));
 
   int i, r, c, err;
 
@@ -398,10 +400,10 @@ int generate_corridors(dungeon *dungeon, room *rooms) {
 
   // find centers of rooms for pathfinding - could potentially change to random
   // points
-  point *centers = malloc(sizeof(*centers) * dungeon->num_rooms);
+  point *centers = (point *)(malloc(sizeof(*centers) * dungeon->num_rooms));
   for (i = 0; i < dungeon->num_rooms; i++) {
-    centers[i] = (point){rooms[i].corner.r + rooms[i].size.r / 2,
-                         rooms[i].corner.c + rooms[i].size.c / 2};
+    centers[i] = (point){(uint8_t)(rooms[i].corner.r + rooms[i].size.r / 2),
+                         (uint8_t)(rooms[i].corner.c + rooms[i].size.c / 2)};
   }
 
   // dijkstra to connect each room
@@ -439,7 +441,7 @@ int find_path(dungeon *dungeon, point source, point target, int longest) {
   for (r = 0; r < DUNGEON_HEIGHT; r++) {
     for (c = 0; c < DUNGEON_WIDTH; c++) {
       distances[r][c] = INF;
-      predecessors[r][c] = (point){-1, -1};
+      predecessors[r][c] = (point){255, 255};
     }
   }
 
@@ -457,8 +459,8 @@ int find_path(dungeon *dungeon, point source, point target, int longest) {
     int dr[] = {-1, 1, 0, 0};
     int dc[] = {0, 0, -1, 1};
     for (int dir = 0; dir < 4; dir++) {
-      int nr = u.r + dr[dir];
-      int nc = u.c + dc[dir];
+      uint8_t nr = u.r + dr[dir];
+      uint8_t nc = u.c + dc[dir];
 
       // check bounds
       if (nr < 1 || nr > DUNGEON_HEIGHT - 2 || nc < 1 ||
@@ -509,14 +511,15 @@ Places at least 2 stairs in any room or corridor tile
 Returns 0 on success, non-zero otherwise.
 */
 int place_stairs(dungeon *dungeon, int num_stairs) {
-  int i, r, c;
+  int i;
+  uint8_t r, c;
 
   if (num_stairs < 2) {
     return 1;
   }
 
   dungeon->num_stairs = num_stairs;
-  dungeon->stairs = malloc(sizeof(*dungeon->stairs) * num_stairs);
+  dungeon->stairs = (stair *)(malloc(sizeof(*dungeon->stairs) * num_stairs));
 
   char stairs[2] = {'<', '>'};
 
@@ -553,8 +556,8 @@ int place_stairs(dungeon *dungeon, int num_stairs) {
 }
 
 int spawn_player(dungeon *dungeon) {
-  int r, c;
-  character *p = malloc(sizeof(character));
+  uint8_t r, c;
+  character *p = (character *)(malloc(sizeof(character)));
 
   // pick random room
   do {
@@ -576,7 +579,7 @@ int spawn_monsters(dungeon *dungeon, int n) {
   int i;
   point p;
   for (i = 1; i <= n; i++) {
-    character *mob = malloc(sizeof(character));
+    character *mob = (character *)(malloc(sizeof(character)));
 
     // generate random traits
     create_monster(mob, i);

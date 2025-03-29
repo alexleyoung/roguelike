@@ -28,7 +28,7 @@ int queue_destroy(queue *q) {
 
 int queue_enqueue(queue *q, void *data) {
   queue_node *node;
-  if (!(node = malloc(sizeof(*node)))) {
+  if (!(node = (queue_node *)(malloc(sizeof(*node))))) {
     return -1;
   };
   node->data = data;

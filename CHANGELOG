@@ -1,4 +1,76 @@
-commit 5b4eae49e48805a5a82bb1cd9f9b0506c3c55059 (HEAD -> main, origin/main)
+commit 0960658045594b60e8e7ebab34453789c641d0d2 (HEAD -> main, origin/main)
+Author: Alex Young <alexyoung0119@gmail.com>
+Date:   Sat Mar 22 17:24:21 2025 -0500
+
+    fix up/down stair controls, reduce code duplication, add messages for UX
+
+commit 92474189f3a073db09f4a75ffcacdca3d5dff027
+Author: Alex Young <alexyoung0119@gmail.com>
+Date:   Sat Mar 22 13:51:20 2025 -0500
+
+    fix persistence and loop stair issues
+
+commit 296b96320ff54b04d86af97b1c569f4651c991d0
+Author: Alex Young <alexyoung0119@gmail.com>
+Date:   Sat Mar 22 01:13:18 2025 -0500
+
+    added persistent, connected stair logic. need to fix minor bugs
+
+commit de6ac65eaaa64f141d12953b5e5ab9a0f672871e
+Author: Alex Young <alexyoung0119@gmail.com>
+Date:   Fri Mar 21 19:04:51 2025 -0500
+
+    move event heap to dungeon before adding persistent, connected stairs
+
+commit a98b5164d5fd46686e6cb77ef053ea212d1078fe
+Author: Alex Young <alexyoung0119@gmail.com>
+Date:   Fri Mar 21 18:14:55 2025 -0500
+
+    monster list with pagination
+
+commit 3bbf64113a9b32bae58924505a4a767be47d4acb
+Author: Alex Young <alexyoung0119@gmail.com>
+Date:   Fri Mar 21 16:19:11 2025 -0500
+
+    basic player movement
+
+commit 24b7d0942e0b832125bb066d0900cf08977aff03
+Author: Alex Young <alexyoung0119@gmail.com>
+Date:   Fri Mar 21 15:20:54 2025 -0500
+
+    make ui file, add helper which wraps vw_printw to clear and print a status msg
+
+commit 7bd728f18f63925a81ef52d737e337e2a2fd9be7
+Author: Alex Young <alexyoung0119@gmail.com>
+Date:   Thu Mar 20 20:52:07 2025 -0500
+
+    update draw functionality in game loop to use ncurses
+
+commit 27ee49262a62e73f440bb38950f4059332bf4245
+Author: Alex Young <alexyoung0119@gmail.com>
+Date:   Thu Mar 20 20:27:00 2025 -0500
+
+    download ncurses binary and header for static link
+
+commit d9d77e7189193ec7490b5535464acf05428dd886
+Author: Alex Young <alexyoung0119@gmail.com>
+Date:   Thu Mar 20 19:50:03 2025 -0500
+
+    finish restructure, update includes to use <>
+
+commit 4e2d151e358e4231d83c32bf0b03c06c71d31bbe
+Author: Alex Young <alexyoung0119@gmail.com>
+Date:   Thu Mar 20 19:21:29 2025 -0500
+
+    restructure proj before adding ncurses
+
+commit d9bc4d7ef1bbcd5fdfa076a1b794d38b0c03fb4d
+Author: Alex Young <alexyoung0119@gmail.com>
+Date:   Thu Mar 20 16:33:34 2025 -0500
+
+    add alive flag, fixed double free bug ?
+
+commit 5b4eae49e48805a5a82bb1cd9f9b0506c3c55059
 Author: Alex Young <alexyoung0119@gmail.com>
 Date:   Wed Mar 5 01:16:10 2025 -0600
 

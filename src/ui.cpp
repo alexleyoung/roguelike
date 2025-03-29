@@ -61,7 +61,8 @@ void draw_monster_list(dungeon *d, character *c) {
       }
     }
   }
-  character **monsters = malloc(num_monsters * sizeof(*monsters));
+  character **monsters =
+      (character **)(malloc(num_monsters * sizeof(*monsters)));
   int idx = 0;
   for (int row = 0; row < DUNGEON_HEIGHT; row++) {
     for (int col = 0; col < DUNGEON_WIDTH; col++) {
@@ -79,10 +80,10 @@ void draw_monster_list(dungeon *d, character *c) {
 
   int inp;
   do {
-    if (inp == KEY_UP && page < pages) {
+    if (inp == KEY_DOWN && page < pages) {
       draw_monster_page(monsters, num_monsters, ++page, pages, c);
     }
-    if (inp == KEY_DOWN && page > 1) {
+    if (inp == KEY_UP && page > 1) {
       draw_monster_page(monsters, num_monsters, --page, pages, c);
     }
   } while ((inp = getch()) != 27); // 27 = esc

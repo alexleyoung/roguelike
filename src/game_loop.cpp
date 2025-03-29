@@ -1,19 +1,19 @@
-#include <dungeon.h>
 #include <game_loop.h>
-#include <ui.h>
 
 // create additional maps within the game with correct IDs
 // for eventual stair continuity (hopefully)
 static int add_dungeon(game *g, int link_id, int stair_type) {
-  dungeon *tmp = realloc(g->maps, sizeof(*g->maps) * ++g->num_maps);
+  dungeon *tmp =
+      (dungeon *)(realloc(g->maps, sizeof(*g->maps) * ++g->num_maps));
 
   if (!tmp) {
     return -1;
   }
   g->maps = tmp;
 
-  generate_linked_dungeon(&g->maps[g->num_maps - 1], DEFAULT_ROOM_COUNT,
-                          DEFAULT_MOB_COUNT, link_id, stair_type);
+  generate_linked_dungeon(&g->maps[g->num_maps - 1],
+                          DEFAULT_ROOM_COUNT + rand() % 4,
+                          DEFAULT_MOB_COUNT + rand() % 11, link_id, stair_type);
   g->maps[g->num_maps - 1].id = g->num_maps - 1;
 
   return 0;
@@ -21,12 +21,12 @@ static int add_dungeon(game *g, int link_id, int stair_type) {
 
 // init game struct
 int init_game(game *g) {
-  g->maps = malloc(sizeof(*g->maps));
+  g->maps = (dungeon *)(malloc(sizeof(*g->maps)));
   g->num_maps = 1;
   g->current_map = 0;
 
-  generate_dungeon(&g->maps[g->current_map], DEFAULT_ROOM_COUNT,
-                   DEFAULT_MOB_COUNT);
+  generate_dungeon(&g->maps[g->current_map], DEFAULT_ROOM_COUNT + rand() % 4,
+                   DEFAULT_MOB_COUNT + rand() % 11);
   g->maps[g->current_map].id = 0;
 
   return 0;
@@ -88,6 +88,7 @@ int start_game(game *g) {
         e.turn_time += 1000 / e.character->speed;
         heap_push(&g->maps[g->current_map].events, &e);
 
+        // go to new dungeon or make one if necessary
         if (s->d != UNLINKED) {
           g->current_map = s->d;
         } else {

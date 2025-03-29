@@ -26,8 +26,8 @@ char *get_save_path(const char *name) {
     return NULL;
   }
 
-  char *path = malloc(strlen(home) + strlen("/.rlg327/") +
-                      strlen(name)); // Extra space for "/.rlg327"
+  char *path = (char *)(malloc(strlen(home) + strlen("/.rlg327/") +
+                               strlen(name))); // Extra space for "/.rlg327"
   if (!path) {
     printf("Error: Memory allocation failed\n");
     return NULL;
@@ -212,7 +212,7 @@ int load_dungeon(dungeon *dungeon, const char *name) {
   fread(&dungeon->player_pos.c, sizeof(dungeon->player_pos.c), 1, f);
   fread(&dungeon->player_pos.r, sizeof(dungeon->player_pos.r), 1, f);
 
-  character *player = malloc(sizeof(character));
+  character *player = (character *)(malloc(sizeof(character)));
   create_player(player, dungeon->player_pos);
   dungeon->character_map[player->pos.r][player->pos.c] = player;
 
@@ -241,7 +241,7 @@ int load_dungeon(dungeon *dungeon, const char *name) {
   fread(&r, sizeof(r), 1, f);
   r = be16toh(r);
   dungeon->num_rooms = r;
-  dungeon->rooms = malloc(sizeof(*dungeon->rooms) * r);
+  dungeon->rooms = (room *)(malloc(sizeof(*dungeon->rooms) * r));
 
   for (int i = 0; i < r; i++) {
     fread(&dungeon->rooms[i].corner.c, sizeof(dungeon->rooms[i].corner.c), 1,
@@ -255,7 +255,7 @@ int load_dungeon(dungeon *dungeon, const char *name) {
   // read up stair count
   fread(&u, sizeof(u), 1, f);
   u = be16toh(u);
-  dungeon->stairs = malloc(sizeof(*dungeon->stairs) * u);
+  dungeon->stairs = (stair *)(malloc(sizeof(*dungeon->stairs) * u));
 
   for (int i = 0; i < u; i++) {
     fread(&dungeon->stairs[i].p.c, sizeof(dungeon->stairs[i].p.c), 1, f);
@@ -267,7 +267,7 @@ int load_dungeon(dungeon *dungeon, const char *name) {
   fread(&d, sizeof(d), 1, f);
   d = be16toh(d);
   dungeon->stairs =
-      realloc(dungeon->stairs, sizeof(*dungeon->stairs) * (u + d));
+      (stair *)(realloc(dungeon->stairs, sizeof(*dungeon->stairs) * (u + d)));
 
   for (int i = 0; i < d; i++) {
     fread(&dungeon->stairs[u + i].p.c, sizeof(dungeon->stairs[u + i].p.c), 1,

@@ -24,8 +24,8 @@ int calc_dists(dungeon *dungeon, int map[DUNGEON_HEIGHT][DUNGEON_WIDTH],
     corridor_heap_pop(&h, &p, &d);
     int hardness = dungeon->tiles[p.r][p.c].hardness;
 
-    for (int r = p.r - 1; r <= p.r + 1; r++) {
-      for (int c = p.c - 1; c <= p.c + 1; c++) {
+    for (uint8_t r = p.r - 1; r <= p.r + 1; r++) {
+      for (uint8_t c = p.c - 1; c <= p.c + 1; c++) {
         if ((r == p.r && c == p.c) || !IN_BOUNDS(r, c)) {
           continue;
         }

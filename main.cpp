@@ -1,3 +1,4 @@
+#include "game.h"
 #include "ui.h"
 #include <assert.h>
 #include <stdio.h>

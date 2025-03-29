@@ -6,6 +6,7 @@
 #include <unistd.h>
 
 #include <character.h>
+#include <dungeon.h>
 #include <game.h>
 #include <gen.h>
 #include <heap.h>

@@ -208,7 +208,7 @@ int move_player(dungeon *d, character *c, int move) {
 
   default:
     draw_message("Invalid key press: %c", move);
-    break;
+    return PLAYER_MOVE_MENU;
   };
 
   return 0;
@@ -243,8 +243,8 @@ int move_character(dungeon *d, character *c) {
   if (C_IS(c, INTELLIGENT)) {
     int shortest = 99999;
     // find neighboring tile closest to player
-    for (int i = c->pos.r - 1; i <= c->pos.r + 1; i++) {
-      for (int j = c->pos.c - 1; j <= c->pos.c + 1; j++) {
+    for (uint8_t i = c->pos.r - 1; i <= c->pos.r + 1; i++) {
+      for (uint8_t j = c->pos.c - 1; j <= c->pos.c + 1; j++) {
         if (!IN_BOUNDS(i, j)) {
           continue;
         }
@@ -283,8 +283,8 @@ int move_character(dungeon *d, character *c) {
 }
 
 int move_random(dungeon *d, character *c) {
-  int new_r;
-  int new_c;
+  uint8_t new_r;
+  uint8_t new_c;
 
   /*printf("TUNNELING: %d\n", C_IS(c, TUNNELING));*/
   /*printf("id: %d, sprite: %c\n", c->id, c->sprite);*/

@@ -55,8 +55,8 @@ void corridor_percolate_up(corridor_heap *h, int child) {
 init empty corridor_heap
 */
 int corridor_heap_init(corridor_heap *h) {
-  h->points = malloc(sizeof(*h->points) * DEFAULT_HEAP_CAPACITY);
-  h->weights = malloc(sizeof(*h->weights) * DEFAULT_HEAP_CAPACITY);
+  h->points = (point *)(malloc(sizeof(*h->points) * DEFAULT_HEAP_CAPACITY));
+  h->weights = (int *)(malloc(sizeof(*h->weights) * DEFAULT_HEAP_CAPACITY));
   h->size = 0;
   h->capacity = DEFAULT_HEAP_CAPACITY;
 
@@ -80,8 +80,9 @@ int corridor_heap_push(corridor_heap *h, point p, int weight) {
   // dynamically expand adhoc
   if (h->size == h->capacity) {
     h->capacity *= 2;
-    h->points = realloc(h->points, sizeof(*h->points) * h->capacity);
-    h->weights = realloc(h->weights, sizeof(*h->weights) * h->capacity);
+    h->points = (point *)(realloc(h->points, sizeof(*h->points) * h->capacity));
+    h->weights =
+        (int *)(realloc(h->weights, sizeof(*h->weights) * h->capacity));
   }
 
   h->points[h->size] = p;
