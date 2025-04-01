@@ -33,7 +33,7 @@ char *get_save_path(const char *name) {
     return NULL;
   }
 
-  sprintf(path, "%s/.rlg327/%s", home, name);
+  snprintf(path, 11, "%s/.rlg327/%s", home, name);
   return path;
 }
 
@@ -51,7 +51,7 @@ int save_dungeon(dungeon *dungeon, const char *name) {
     return 1;
   }
 
-  char *marker = "RLG327-S2025"; // 12 bytes
+  const char *marker = "RLG327-S2025"; // 12 bytes
   for (int i = 0; i < 12; i += 1) {
     uint8_t letter = marker[i];
     fwrite(&letter, sizeof(letter), 1, f);

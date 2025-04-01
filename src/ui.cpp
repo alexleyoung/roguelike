@@ -27,12 +27,39 @@ void draw_dungeon(dungeon *d) {
 }
 
 /*
+ * Draw dungeon
+ *
+ * Params:
+ * d: current dungeon
+ */
+void draw_player_dungeon(dungeon *d, player *p) {
+  /*clear();*/
+
+  int r, c;
+  for (r = 0; r < DUNGEON_HEIGHT; r++) {
+    for (c = 0; c < DUNGEON_WIDTH; c++) {
+      if (!p->terrain[r][c]) {
+        mvaddch(r + 1, c, ' ');
+        continue;
+      }
+
+      if (d->character_map[r][c] && r <= p->pos.r + 2 && p->pos.r - 2 <= r &&
+          c <= p->pos.c + 2 && p->pos.c - 2 <= c) {
+        mvaddch(r + 1, c, d->character_map[r][c]->sprite);
+      } else {
+        mvaddch(r + 1, c, d->tiles[r][c].sprite);
+      }
+    }
+  }
+}
+
+/*
  * Printw wrapper which prints top line message
  *
  * Params:
  * fmt: format string
  */
-void draw_message(char *fmt, ...) {
+void draw_message(const char *fmt, ...) {
   va_list args;
   va_start(args, fmt);
 

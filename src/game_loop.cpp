@@ -1,4 +1,8 @@
+#include "character.hpp"
+#include "movement.hpp"
+#include "ui.hpp"
 #include <game_loop.hpp>
+#include <typeinfo>
 
 // create additional maps within the game with correct IDs
 // for eventual stair continuity (hopefully)
@@ -43,12 +47,16 @@ int start_game(game *g) {
 
   event e;
   int input;
+  bool fog = true;
   while (!heap_is_empty(&g->maps[g->current_map].events)) {
     dungeon map = g->maps[g->current_map];
     heap_pop(&g->maps[g->current_map].events, &e);
 
-    player *p = dynamic_cast<player *>(e.character);
-    monster *m = dynamic_cast<monster *>(e.character);
+    player *p =
+        e.character->type == PLAYER ? static_cast<player *>(e.character) : NULL;
+    monster *m = e.character->type == MONSTER
+                     ? static_cast<monster *>(e.character)
+                     : NULL;
 
     if (!e.character->alive) {
       if (p) {
@@ -62,13 +70,23 @@ int start_game(game *g) {
 
     // print on player turn
     if (p) { // TODO: add check for ai player flag prob
-      draw_dungeon(&g->maps[g->current_map]);
+      if (fog) {
+        draw_player_dungeon(&g->maps[g->current_map], p);
+      } else {
+        draw_dungeon(&g->maps[g->current_map]);
+      }
 
       input = getch();
       int res = move_player(&g->maps[g->current_map], e.character, input);
 
       if (res == PLAYER_MOVE_QUIT) { // quit game
         return 0;
+      }
+
+      if (res == PLAYER_MOVE_INVALID) {
+        draw_message("Can't move there!");
+        heap_push(&g->maps[g->current_map].events, &e);
+        continue;
       }
 
       if (res == PLAYER_MOVE_MENU) { // menud, redo turn
@@ -105,6 +123,14 @@ int start_game(game *g) {
         continue;
       }
 
+      if (res == PLAYER_TOGGLE_FOG) {
+        fog = !fog;
+        draw_message("Toggled Fog of War");
+        heap_push(&g->maps[g->current_map].events, &e);
+        continue;
+      }
+
+      draw_message("");
     }
 
     else {

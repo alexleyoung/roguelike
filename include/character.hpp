@@ -5,6 +5,8 @@
 
 #define PLAYER_TRAIT 16
 
+enum CHARACTER_TYPE { PLAYER, MONSTER };
+
 class character {
 public:
   virtual ~character() = default;
@@ -13,11 +15,13 @@ public:
   int speed;
   char sprite;
   int alive;
+  CHARACTER_TYPE type;
 };
 
 class player : public character {
 public:
-  int terrain[DUNGEON_HEIGHT][DUNGEON_WIDTH];
+  char terrain[DUNGEON_HEIGHT][DUNGEON_WIDTH] = {};
+  character *characters[DUNGEON_HEIGHT][DUNGEON_WIDTH] = {};
 };
 
 class monster : public character {

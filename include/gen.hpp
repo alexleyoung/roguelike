@@ -7,8 +7,10 @@
 
 #include <corridor_heap.hpp>
 #include <dungeon.hpp>
+#include <movement.hpp>
 #include <queue.hpp>
 #include <spawn.hpp>
+#include <types.hpp>
 #include <utils.hpp>
 
 #define DEFAULT_HARDNESS 255

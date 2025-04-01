@@ -1,3 +1,4 @@
+#include "movement.hpp"
 #include <gen.hpp>
 
 #define MAX_ROOM_TRIES 5000
@@ -572,6 +573,9 @@ int spawn_player(dungeon *dungeon) {
 
   dungeon->character_map[r][c] = p;
 
+  // init vision
+  update_player_vision(dungeon, p);
+
   return 0;
 }
 
@@ -589,17 +593,19 @@ int spawn_monsters(dungeon *dungeon, int n) {
     do {
       p.r = rand() % DUNGEON_HEIGHT;
       p.c = rand() % DUNGEON_WIDTH;
-      /*} while (!IN_BOUNDS(p.r, p.c) || (!wall_spawn &&
-       * dungeon->tiles[p.r][p.c].hardness));*/
-    } while (dungeon->tiles[p.r][p.c].sprite != '.' &&
-             dungeon->character_map[p.r][p.c]);
-
-    mob->pos = p;
-
-    dungeon->character_map[p.r][p.c] = mob;
+    } while (!IN_BOUNDS(p.r, p.c) ||
+             (!wall_spawn && dungeon->tiles[p.r][p.c].hardness));
   }
+  while (dungeon->tiles[p.r][p.c].sprite != '.' &&
+         dungeon->character_map[p.r][p.c])
+    ;
 
-  return 0;
+  mob->pos = p;
+
+  dungeon->character_map[p.r][p.c] = mob;
+}
+
+return 0;
 }
 
 int init_heap(dungeon *d) {
@@ -608,11 +614,11 @@ int init_heap(dungeon *d) {
   for (int r = 0; r < DUNGEON_HEIGHT; r++) {
     for (int c = 0; c < DUNGEON_WIDTH; c++) {
       if (d->character_map[r][c]) {
-        event e;
-        e.character = d->character_map[r][c];
-        e.turn_time = 0;
+        event *e = (event *)(malloc(sizeof(event)));
+        e->character = d->character_map[r][c];
+        e->turn_time = 0;
 
-        heap_push(&d->events, &e);
+        heap_push(&d->events, e);
       }
     }
   }

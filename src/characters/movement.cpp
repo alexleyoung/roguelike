@@ -1,3 +1,5 @@
+#include "types.hpp"
+#include <cstring>
 #include <movement.hpp>
 
 #define ATTRIBUTE_INTELLIGENT 0x1
@@ -24,7 +26,7 @@ int move_player(dungeon *d, character *c, int move) {
     p.c = c->pos.c - 1;
     if (!IN_BOUNDS(p.r, p.c)) {
       draw_message("Can't move out of bounds!");
-      return 0;
+      return PLAYER_MOVE_INVALID;
     } else {
       return move_to(d, c, p);
     }
@@ -36,7 +38,7 @@ int move_player(dungeon *d, character *c, int move) {
     p.c = c->pos.c;
     if (!IN_BOUNDS(p.r, p.c)) {
       draw_message("Can't move out of bounds!");
-      return 0;
+      return PLAYER_MOVE_INVALID;
     } else {
       return move_to(d, c, p);
     }
@@ -48,7 +50,7 @@ int move_player(dungeon *d, character *c, int move) {
     p.c = c->pos.c + 1;
     if (!IN_BOUNDS(p.r, p.c)) {
       draw_message("Can't move out of bounds!");
-      return 0;
+      return PLAYER_MOVE_INVALID;
     } else {
       return move_to(d, c, p);
     }
@@ -60,7 +62,7 @@ int move_player(dungeon *d, character *c, int move) {
     p.c = c->pos.c + 1;
     if (!IN_BOUNDS(p.r, p.c)) {
       draw_message("Can't move out of bounds!");
-      return 0;
+      return PLAYER_MOVE_INVALID;
     } else {
       return move_to(d, c, p);
     }
@@ -72,7 +74,7 @@ int move_player(dungeon *d, character *c, int move) {
     p.c = c->pos.c + 1;
     if (!IN_BOUNDS(p.r, p.c)) {
       draw_message("Can't move out of bounds!");
-      return 0;
+      return PLAYER_MOVE_INVALID;
     } else {
       return move_to(d, c, p);
     }
@@ -84,7 +86,7 @@ int move_player(dungeon *d, character *c, int move) {
     p.c = c->pos.c;
     if (!IN_BOUNDS(p.r, p.c)) {
       draw_message("Can't move out of bounds!");
-      return 0;
+      return PLAYER_MOVE_INVALID;
     } else {
       return move_to(d, c, p);
     }
@@ -96,7 +98,7 @@ int move_player(dungeon *d, character *c, int move) {
     p.c = c->pos.c - 1;
     if (!IN_BOUNDS(p.r, p.c)) {
       draw_message("Can't move out of bounds!");
-      return 0;
+      return PLAYER_MOVE_INVALID;
     } else {
       return move_to(d, c, p);
     }
@@ -108,7 +110,7 @@ int move_player(dungeon *d, character *c, int move) {
     p.c = c->pos.c - 1;
     if (!IN_BOUNDS(p.r, p.c)) {
       draw_message("Can't move out of bounds!");
-      return 0;
+      return PLAYER_MOVE_INVALID;
     } else {
       return move_to(d, c, p);
     }
@@ -117,18 +119,18 @@ int move_player(dungeon *d, character *c, int move) {
   case ' ':
   case '.':
   case '5':
-    return 0;
+    return PLAYER_MOVE;
   // stairs
   case '>':
     if (d->tiles[c->pos.r][c->pos.c].sprite != '>') {
       draw_message("Can't move down non-downward stairs!");
-      return 0;
+      return PLAYER_MOVE_INVALID;
     }
     return PLAYER_MOVE_STAIR;
   case '<':
     if (d->tiles[c->pos.r][c->pos.c].sprite != '<') {
       draw_message("Can't move down non-upward stairs!");
-      return 0;
+      return PLAYER_MOVE_INVALID;
     }
     return PLAYER_MOVE_STAIR;
 
@@ -173,7 +175,7 @@ int move_player(dungeon *d, character *c, int move) {
   //// debug
   // toggle fow
   case 'f':
-    draw_message("fog of war");
+    return PLAYER_TOGGLE_FOG;
     break;
   // tp (goto)
   case 'g':
@@ -220,7 +222,7 @@ int move_character(dungeon *d, character *c) {
     return move_random(d, c);
   }
 
-  monster *m = dynamic_cast<monster *>(c);
+  monster *m = c->type == MONSTER ? static_cast<monster *>(c) : NULL;
 
   // update character dist_to_player if telepathic or has los
   int los = check_los(d, c);
@@ -293,8 +295,8 @@ int move_random(dungeon *d, character *c) {
   /*printf("r: %d, c: %d\n", c->pos.r, c->pos.c);*/
   int tries = 0;
 
-  player *p = dynamic_cast<player *>(c);
-  monster *m = dynamic_cast<monster *>(c);
+  player *p = c->type == PLAYER ? static_cast<player *>(c) : NULL;
+  monster *m = c->type == MONSTER ? static_cast<monster *>(c) : NULL;
 
   do {
     new_r = c->pos.r + rand() % 3 - 1;
@@ -318,13 +320,15 @@ int move_random(dungeon *d, character *c) {
 }
 
 int move_to(dungeon *d, character *c, point p) {
-  player *pl = dynamic_cast<player *>(c);
-  monster *m = dynamic_cast<monster *>(c);
+  player *pl = c->type == PLAYER ? static_cast<player *>(c) : NULL;
+  monster *m = c->type == MONSTER ? static_cast<monster *>(c) : NULL;
 
   // if moving into rock, check tunneling: if not, return
   if (d->tiles[p.r][p.c].hardness) {
     if (m && C_IS(m, TUNNELING)) {
       d->tiles[p.r][p.c].hardness -= 85;
+    } else if (pl) {
+      return PLAYER_MOVE_INVALID;
     } else {
       return 0;
     }
@@ -345,29 +349,43 @@ int move_to(dungeon *d, character *c, point p) {
 
   // check collision
   if (d->character_map[p.r][p.c]) {
-    pl = dynamic_cast<player *>(d->character_map[p.r][p.c]);
-    m = dynamic_cast<monster *>(d->character_map[p.r][p.c]);
-    int end = 0;
-    if (pl)
-      end = 1; // end game
+    // if player killed, end game
+    if (d->character_map[p.r][p.c]->type == PLAYER)
+      return 1;
 
     d->character_map[p.r][p.c]->alive = 0;
     d->character_map[p.r][p.c] = NULL;
-
-    if (end)
-      return end;
   }
 
-  // if player, update dungeon
+  // if player, update dungeon and vision
   if (pl) {
     d->player_pos = p;
     calc_dists(d, d->dists, d->player_pos, 0);
     calc_dists(d, d->tunnel_dists, d->player_pos, 1);
+
+    update_player_vision(d, pl);
   }
 
   d->character_map[c->pos.r][c->pos.c] = NULL;
   d->character_map[p.r][p.c] = c;
   c->pos = p;
+
+  return 0;
+}
+
+int update_player_vision(dungeon *d, player *p) {
+  /*memset(p->characters, 0,*/
+  /*       sizeof(*p->characters) * DUNGEON_HEIGHT * DUNGEON_WIDTH);*/
+
+  for (int r = p->pos.r - 2; r <= p->pos.r + 2; r++) {
+    for (int c = p->pos.c - 2; c <= p->pos.c + 2; c++) {
+      if (!IN_BOUNDS(r, c) || (r == p->pos.r && c == p->pos.c))
+        continue;
+
+      /*p->characters[r][c] = d->character_map[r][c];*/
+      p->terrain[r][c] = d->tiles[r][c].sprite;
+    }
+  }
 
   return 0;
 }
