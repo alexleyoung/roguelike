@@ -118,6 +118,120 @@ void draw_monster_list(dungeon *d, character *c) {
   free(monsters);
 }
 
+void draw_player_teleport(dungeon *d, player *p, point *target) {
+  point old = p->pos;
+  *target = p->pos;
+
+  while (true) {
+    switch (getch()) {
+    //// movement
+    // up left
+    case KEY_HOME:
+    case '7':
+    case 'y':
+      old = *target;
+      target->r = target->r - 1;
+      target->c = target->c - 1;
+      if (!IN_BOUNDS(target->r, target->c)) {
+        draw_message("Can't move out of bounds!");
+        *target = old;
+      }
+      break;
+    // up
+    case KEY_UP:
+    case '8':
+    case 'k':
+      old = *target;
+      target->r = target->r - 1;
+      if (!IN_BOUNDS(target->r, target->c)) {
+        draw_message("Can't move out of bounds!");
+        *target = old;
+      }
+      break;
+    // up right
+    case KEY_PPAGE:
+    case '9':
+    case 'u':
+      old = *target;
+      target->r = target->r - 1;
+      target->c = target->c + 1;
+      if (!IN_BOUNDS(target->r, target->c)) {
+        draw_message("Can't move out of bounds!");
+        *target = old;
+      }
+      break;
+    // right
+    case KEY_RIGHT:
+    case '6':
+    case 'l':
+      old = *target;
+      target->c = target->c + 1;
+      if (!IN_BOUNDS(target->r, target->c)) {
+        draw_message("Can't move out of bounds!");
+        *target = old;
+      }
+      break;
+    // down right
+    case KEY_NPAGE:
+    case '3':
+    case 'n':
+      old = *target;
+      target->r = target->r + 1;
+      target->c = target->c + 1;
+      if (!IN_BOUNDS(target->r, target->c)) {
+        draw_message("Can't move out of bounds!");
+        *target = old;
+      }
+      break;
+    // down
+    case KEY_DOWN:
+    case '2':
+    case 'j':
+      old = *target;
+      target->r = target->r + 1;
+      if (!IN_BOUNDS(target->r, target->c)) {
+        draw_message("Can't move out of bounds!");
+        *target = old;
+      }
+      break;
+    // down left
+    case KEY_END:
+    case '1':
+    case 'b':
+      old = *target;
+      target->r = target->r + 1;
+      target->c = target->c - 1;
+      if (!IN_BOUNDS(target->r, target->c)) {
+        draw_message("Can't move out of bounds!");
+        *target = old;
+      }
+      break;
+    // left
+    case KEY_LEFT:
+    case '4':
+    case 'h':
+      old = *target;
+      target->c = target->c - 1;
+      if (!IN_BOUNDS(target->r, target->c)) {
+        draw_message("Can't move out of bounds!");
+        *target = old;
+      }
+      break;
+    case 'g':
+      return;
+    case 'r':
+      target->r = rand() % 19 + 1;
+      target->c = rand() & 77 + 1;
+      return;
+    }
+    char old_sprite = d->character_map[old.r][old.c]
+                          ? d->character_map[old.r][old.c]->sprite
+                          : d->tiles[old.r][old.c].sprite;
+    mvprintw(old.r + 1, old.c, "%c", old_sprite);
+    mvprintw(target->r + 1, target->c, "%c", '*');
+  }
+}
+
 // helper to draw single formatted monster line
 void draw_formatted_monster_line(int line, character *p, character *m) {
   // print formatted info: sprite   d:rr d:cc

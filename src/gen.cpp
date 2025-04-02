@@ -593,19 +593,15 @@ int spawn_monsters(dungeon *dungeon, int n) {
     do {
       p.r = rand() % DUNGEON_HEIGHT;
       p.c = rand() % DUNGEON_WIDTH;
-    } while (!IN_BOUNDS(p.r, p.c) ||
-             (!wall_spawn && dungeon->tiles[p.r][p.c].hardness));
+    } while (!IN_BOUNDS(p.r, p.c) || dungeon->tiles[p.r][p.c].sprite != '.' &&
+                                         dungeon->character_map[p.r][p.c]);
+
+    mob->pos = p;
+
+    dungeon->character_map[p.r][p.c] = mob;
   }
-  while (dungeon->tiles[p.r][p.c].sprite != '.' &&
-         dungeon->character_map[p.r][p.c])
-    ;
 
-  mob->pos = p;
-
-  dungeon->character_map[p.r][p.c] = mob;
-}
-
-return 0;
+  return 0;
 }
 
 int init_heap(dungeon *d) {

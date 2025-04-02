@@ -1,4 +1,5 @@
 #include "types.hpp"
+#include "ui.hpp"
 #include <cstring>
 #include <movement.hpp>
 
@@ -12,6 +13,8 @@ int move_to(dungeon *d, character *c, point p);
 int check_los(dungeon *d, character *c);
 int check_horizontal(dungeon *d, character *c);
 int check_vertical(dungeon *d, character *c);
+
+bool teleport = false;
 
 int move_player(dungeon *d, character *c, int move) {
   point p;
@@ -138,35 +141,35 @@ int move_player(dungeon *d, character *c, int move) {
   // drop item
   case 'd':
     draw_message("drop item");
-    break;
+    return PLAYER_MOVE_ACTION;
   // take off item
   case 't':
     draw_message("take off item");
-    break;
+    return PLAYER_MOVE_ACTION;
   // wear item
   case 'w':
     draw_message("wear item");
-    break;
+    return PLAYER_MOVE_ACTION;
   // expunge item
   case 'x':
     draw_message("expunge item");
-    break;
+    return PLAYER_MOVE_ACTION;
   // display equipment
   case 'e':
     draw_message("display equipment");
-    break;
+    return PLAYER_MOVE_MENU;
   // display inv
   case 'i':
     draw_message("display inventory");
-    break;
+    return PLAYER_MOVE_MENU;
   // inspect item
   case 'E':
-    draw_message("expunge item");
-    break;
+    draw_message("inspect item");
+    return PLAYER_MOVE_MENU;
   // player info
   case 'c':
     draw_message("character info");
-    break;
+    return PLAYER_MOVE_MENU;
   // monster list
   case 'm':
     draw_monster_list(d, c);
@@ -180,27 +183,31 @@ int move_player(dungeon *d, character *c, int move) {
   // tp (goto)
   case 'g':
     draw_message("teleport");
-    break;
+    teleport = true;
+    draw_player_teleport(d, (player *)c, &p);
+    move_to(d, c, p);
+    teleport = false;
+    return PLAYER_MOVE_ACTION;
   // default terrain map
   case 's':
     draw_message("terrain map");
-    break;
+    return PLAYER_MOVE_MENU;
   // hardness map
   case 'H':
     draw_message("hardness map");
-    break;
+    return PLAYER_MOVE_MENU;
   // non-tunneling dist map
   case 'D':
     draw_message("non-tunneling dist map");
-    break;
+    return PLAYER_MOVE_MENU;
   // tunneling dist map
   case 'T':
     draw_message("tunneling dist map");
-    break;
+    return PLAYER_MOVE_MENU;
   // look monster
   case 'L':
     draw_message("look monster");
-    break;
+    return PLAYER_MOVE_MENU;
 
   //// quit game
   case 'Q':
@@ -210,7 +217,7 @@ int move_player(dungeon *d, character *c, int move) {
 
   default:
     draw_message("Invalid key press: %c", move);
-    return PLAYER_MOVE_MENU;
+    return PLAYER_MOVE_INVALID;
   };
 
   return 0;
@@ -324,7 +331,7 @@ int move_to(dungeon *d, character *c, point p) {
   monster *m = c->type == MONSTER ? static_cast<monster *>(c) : NULL;
 
   // if moving into rock, check tunneling: if not, return
-  if (d->tiles[p.r][p.c].hardness) {
+  if (d->tiles[p.r][p.c].hardness && !teleport) {
     if (m && C_IS(m, TUNNELING)) {
       d->tiles[p.r][p.c].hardness -= 85;
     } else if (pl) {
@@ -336,7 +343,7 @@ int move_to(dungeon *d, character *c, point p) {
 
   // if hardness still greater than 0, early exit. otherwise move into rock,
   // create corridor
-  if (d->tiles[p.r][p.c].hardness > 0) {
+  if (d->tiles[p.r][p.c].hardness > 0 && !pl && !teleport) {
     return 0;
   }
 
@@ -384,6 +391,7 @@ int update_player_vision(dungeon *d, player *p) {
 
       /*p->characters[r][c] = d->character_map[r][c];*/
       p->terrain[r][c] = d->tiles[r][c].sprite;
+      draw_player_dungeon(d, p);
     }
   }
 

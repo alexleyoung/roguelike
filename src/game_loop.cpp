@@ -83,8 +83,7 @@ int start_game(game *g) {
         return 0;
       }
 
-      if (res == PLAYER_MOVE_INVALID) {
-        draw_message("Can't move there!");
+      if (res == PLAYER_MOVE_ACTION) {
         heap_push(&g->maps[g->current_map].events, &e);
         continue;
       }
@@ -126,6 +125,11 @@ int start_game(game *g) {
       if (res == PLAYER_TOGGLE_FOG) {
         fog = !fog;
         draw_message("Toggled Fog of War");
+        heap_push(&g->maps[g->current_map].events, &e);
+        continue;
+      }
+
+      if (res == PLAYER_MOVE_INVALID) {
         heap_push(&g->maps[g->current_map].events, &e);
         continue;
       }

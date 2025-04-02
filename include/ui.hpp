@@ -16,5 +16,6 @@ void draw_dungeon(dungeon *d);
 void draw_player_dungeon(dungeon *d, player *p);
 void draw_message(const char *fmt, ...);
 void draw_monster_list(dungeon *d, character *c);
+void draw_player_teleport(dungeon *d, player *pl, point *p);
 
 #endif
