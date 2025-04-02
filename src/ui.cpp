@@ -1,3 +1,4 @@
+#include "types.hpp"
 #include <ui.hpp>
 
 // helpers
@@ -220,8 +221,10 @@ void draw_player_teleport(dungeon *d, player *p, point *target) {
     case 'g':
       return;
     case 'r':
-      target->r = rand() % 19 + 1;
-      target->c = rand() & 77 + 1;
+      do {
+        target->r = rand() % 21;
+        target->c = rand() % 80;
+      } while (!IN_BOUNDS(target->r, target->c));
       return;
     }
     char old_sprite = d->character_map[old.r][old.c]
