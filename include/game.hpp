@@ -9,10 +9,11 @@
 
 /*int RANDOMIZE_MONSTER_SPAWNS = 0;*/
 
-typedef struct game {
-  dungeon *maps;
+class game {
+public:
+  Dungeon *maps;
   int num_maps;
   int current_map;
-} game;
+};
 
 #endif

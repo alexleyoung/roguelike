@@ -11,44 +11,49 @@ enum { UP_STAIR, DOWN_STAIR };
 
 #define UNLINKED -99
 
-typedef struct tile {
+class Tile {
+public:
   char sprite;
   int hardness;
-} tile;
+};
 
-typedef struct room {
-  point corner;
-  point size;
-} room;
+class Room {
+public:
+  Point corner;
+  Point size;
+};
 
-typedef struct event {
+class Event {
+public:
   int turn_time;
-  character *character;
-} event;
+  Character *character;
+};
 
-typedef struct stair {
+class Stair {
+public:
   point p;
   int type;
   int d; // dungeon id
-} stair;
+};
 
-typedef struct dungeon {
+class Dungeon {
+public:
   int id;
   heap events;
 
-  tile tiles[DUNGEON_HEIGHT][DUNGEON_WIDTH];
+  Tile tiles[DUNGEON_HEIGHT][DUNGEON_WIDTH];
 
-  room *rooms;
+  Room *rooms;
   uint16_t num_rooms;
-  stair *stairs;
+  Stair *stairs;
   uint16_t num_stairs;
 
   int dists[DUNGEON_HEIGHT][DUNGEON_WIDTH];
   int tunnel_dists[DUNGEON_HEIGHT][DUNGEON_WIDTH];
 
-  point player_pos;
+  Point player_pos;
 
-  character *character_map[DUNGEON_HEIGHT][DUNGEON_WIDTH];
-} dungeon;
+  Character *character_map[DUNGEON_HEIGHT][DUNGEON_WIDTH];
+};
 
 #endif

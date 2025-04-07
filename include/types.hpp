@@ -9,7 +9,7 @@
 #define IN_BOUNDS(r, c)                                                        \
   (r < 1 || r > DUNGEON_HEIGHT - 2 || c < 1 || c > DUNGEON_WIDTH - 2) ? 0 : 1
 
-typedef struct point {
+typedef struct Point {
   uint8_t r, c;
 } point;
 

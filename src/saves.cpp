@@ -42,7 +42,7 @@ Save current dungeon to big endian binary file
 
 Returns 0 on success, non-zero on failure.
 */
-int save_dungeon(dungeon *dungeon, const char *name) {
+int save_dungeon(Dungeon *dungeon, const char *name) {
   // create path to file in case we want different save files eventually
   char *dir = get_save_path(name);
   FILE *f = fopen(dir, "wb");
@@ -167,7 +167,7 @@ then draws the appropriate sprites.
 
 Returns 0 on success, non-zero on failure.
 */
-int load_dungeon(dungeon *dungeon, const char *name) {
+int load_dungeon(Dungeon *dungeon, const char *name) {
   init_dungeon(dungeon);
 
   char marker[13];
@@ -212,7 +212,7 @@ int load_dungeon(dungeon *dungeon, const char *name) {
   fread(&dungeon->player_pos.c, sizeof(dungeon->player_pos.c), 1, f);
   fread(&dungeon->player_pos.r, sizeof(dungeon->player_pos.r), 1, f);
 
-  player *pl = (player *)(malloc(sizeof(player)));
+  Player *pl = (Player *)(malloc(sizeof(Player)));
   create_player(pl, dungeon->player_pos);
   dungeon->character_map[pl->pos.r][pl->pos.c] = pl;
 
@@ -241,7 +241,7 @@ int load_dungeon(dungeon *dungeon, const char *name) {
   fread(&r, sizeof(r), 1, f);
   r = be16toh(r);
   dungeon->num_rooms = r;
-  dungeon->rooms = (room *)(malloc(sizeof(*dungeon->rooms) * r));
+  dungeon->rooms = (Room *)(malloc(sizeof(*dungeon->rooms) * r));
 
   for (int i = 0; i < r; i++) {
     fread(&dungeon->rooms[i].corner.c, sizeof(dungeon->rooms[i].corner.c), 1,
@@ -252,10 +252,10 @@ int load_dungeon(dungeon *dungeon, const char *name) {
     fread(&dungeon->rooms[i].size.r, sizeof(dungeon->rooms[i].size.r), 1, f);
   }
 
-  // read up stair count
+  // read up Stair count
   fread(&u, sizeof(u), 1, f);
   u = be16toh(u);
-  dungeon->stairs = (stair *)(malloc(sizeof(*dungeon->stairs) * u));
+  dungeon->stairs = (Stair *)(malloc(sizeof(*dungeon->stairs) * u));
 
   for (int i = 0; i < u; i++) {
     fread(&dungeon->stairs[i].p.c, sizeof(dungeon->stairs[i].p.c), 1, f);
@@ -263,11 +263,11 @@ int load_dungeon(dungeon *dungeon, const char *name) {
     dungeon->stairs[i].type = 0;
   }
 
-  // read down stair count
+  // read down Stair count
   fread(&d, sizeof(d), 1, f);
   d = be16toh(d);
   dungeon->stairs =
-      (stair *)(realloc(dungeon->stairs, sizeof(*dungeon->stairs) * (u + d)));
+      (Stair *)(realloc(dungeon->stairs, sizeof(*dungeon->stairs) * (u + d)));
 
   for (int i = 0; i < d; i++) {
     fread(&dungeon->stairs[u + i].p.c, sizeof(dungeon->stairs[u + i].p.c), 1,
@@ -288,7 +288,7 @@ int load_dungeon(dungeon *dungeon, const char *name) {
       }
     }
   }
-  // place stair sprites
+  // place Stair sprites
   int stair_count = 0;
   for (int i = 0; i < u; i++) {
     dungeon->tiles[dungeon->stairs[i].p.r][dungeon->stairs[i].p.c].sprite = '<';

@@ -3,7 +3,7 @@
 
 #include "dungeon.hpp"
 
-int save_dungeon(dungeon *dungeon, const char *name);
-int load_dungeon(dungeon *dungeon, const char *name);
+int save_dungeon(Dungeon *dungeon, const char *name);
+int load_dungeon(Dungeon *dungeon, const char *name);
 
 #endif

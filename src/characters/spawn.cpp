@@ -2,7 +2,7 @@
 
 #include <spawn.hpp>
 
-int create_player(player *c, point p) {
+int create_player(Player *c, point p) {
   // player id always 0
   c->id = 0;
   c->speed = 10;
@@ -14,7 +14,7 @@ int create_player(player *c, point p) {
   return 0;
 }
 
-int create_monster(monster *c, int id) {
+int create_monster(Monster *c, int id) {
   c->id = id;
   c->traits = rand() % 16;
   c->speed = (rand() % 21) + 5;

@@ -2,9 +2,9 @@
 #include <ui.hpp>
 
 // helpers
-void draw_formatted_monster_line(int offset, character *p, character *m);
-void draw_monster_page(character **monsters, int num_monsters, int page,
-                       int pages, character *p);
+void draw_formatted_monster_line(int offset, Character *p, Character *m);
+void draw_monster_page(Character **monsters, int num_monsters, int page,
+                       int pages, Character *p);
 
 /*
  * Draw dungeon
@@ -12,7 +12,7 @@ void draw_monster_page(character **monsters, int num_monsters, int page,
  * Params:
  * d: current dungeon
  */
-void draw_dungeon(dungeon *d) {
+void draw_dungeon(Dungeon *d) {
   /*clear();*/
 
   int r, c;
@@ -33,7 +33,7 @@ void draw_dungeon(dungeon *d) {
  * Params:
  * d: current dungeon
  */
-void draw_player_dungeon(dungeon *d, player *p) {
+void draw_player_dungeon(Dungeon *d, Player *p) {
   /*clear();*/
 
   int r, c;
@@ -78,23 +78,23 @@ void draw_message(const char *fmt, ...) {
  * d: current dungeon
  * *c: player
  */
-void draw_monster_list(dungeon *d, character *c) {
+void draw_monster_list(Dungeon *d, Character *c) {
   // count monsters and make array
   int num_monsters = 0;
   for (int row = 0; row < DUNGEON_HEIGHT; row++) {
     for (int col = 0; col < DUNGEON_WIDTH; col++) {
-      character *m = d->character_map[row][col];
+      Character *m = d->character_map[row][col];
       if (m && m != c) {
         num_monsters++;
       }
     }
   }
-  character **monsters =
-      (character **)(malloc(num_monsters * sizeof(*monsters)));
+  Character **monsters =
+      (Character **)(malloc(num_monsters * sizeof(*monsters)));
   int idx = 0;
   for (int row = 0; row < DUNGEON_HEIGHT; row++) {
     for (int col = 0; col < DUNGEON_WIDTH; col++) {
-      character *m = d->character_map[row][col];
+      Character *m = d->character_map[row][col];
       if (m && m != c) {
         monsters[idx++] = m;
       }
@@ -119,7 +119,7 @@ void draw_monster_list(dungeon *d, character *c) {
   free(monsters);
 }
 
-void draw_player_teleport(dungeon *d, player *p, point *target) {
+void draw_player_teleport(Dungeon *d, Player *p, Point *target) {
   point old = p->pos;
   *target = p->pos;
 
@@ -236,7 +236,7 @@ void draw_player_teleport(dungeon *d, player *p, point *target) {
 }
 
 // helper to draw single formatted monster line
-void draw_formatted_monster_line(int line, character *p, character *m) {
+void draw_formatted_monster_line(int line, Character *p, Character *m) {
   // print formatted info: sprite   d:rr d:cc
   mvprintw(line, 0, "%c", m->sprite);
 
@@ -255,8 +255,8 @@ void draw_formatted_monster_line(int line, character *p, character *m) {
 }
 
 // draw slice of monster list
-void draw_monster_page(character **monsters, int num_monsters, int page,
-                       int pages, character *p) {
+void draw_monster_page(Character **monsters, int num_monsters, int page,
+                       int pages, Character *p) {
   clear();
   mvprintw(0, 0, "Monster List:");
   mvprintw(1, 0, "-------------");

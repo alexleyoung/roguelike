@@ -13,11 +13,11 @@
 #include <saves.hpp>
 #include <ui.hpp>
 
-void print_hardness(dungeon *dungeon);
-void print_dists(dungeon *dungeon, int dists[DUNGEON_HEIGHT][DUNGEON_WIDTH]);
+void print_hardness(Dungeon *dungeon);
+void print_dists(Dungeon *dungeon, int dists[DUNGEON_HEIGHT][DUNGEON_WIDTH]);
 void test_corridor_heap();
 void test_heap();
-int compare_dungeons(dungeon *d1, dungeon *d2);
+int compare_dungeons(Dungeon *d1, Dungeon *d2);
 void test_save_load();
 
 int main(int argc, char **argv) {
@@ -99,7 +99,7 @@ int main(int argc, char **argv) {
 /*    }*/
 /*}*/
 
-void print_hardness(dungeon *dungeon) {
+void print_hardness(Dungeon *dungeon) {
   int r, c;
   for (r = 0; r < DUNGEON_HEIGHT + 1; r++) {
     for (c = 0; c < DUNGEON_WIDTH + 1; c++) {
@@ -117,7 +117,7 @@ void print_hardness(dungeon *dungeon) {
   }
 }
 
-void print_dists(dungeon *dungeon, int dists[DUNGEON_HEIGHT][DUNGEON_WIDTH]) {
+void print_dists(Dungeon *dungeon, int dists[DUNGEON_HEIGHT][DUNGEON_WIDTH]) {
   for (int r = 0; r < DUNGEON_HEIGHT; r++) {
     for (int c = 0; c < DUNGEON_WIDTH; c++) {
       if (dists[r][c] > 255) {
@@ -169,7 +169,7 @@ void test_heap() {
   }
 }
 
-int compare_dungeons(dungeon *d1, dungeon *d2) {
+int compare_dungeons(Dungeon *d1, Dungeon *d2) {
   if (d1->num_rooms != d2->num_rooms)
     return 0;
   for (int i = 0; i < DUNGEON_HEIGHT; i++) {
@@ -185,7 +185,7 @@ int compare_dungeons(dungeon *d1, dungeon *d2) {
 }
 
 void test_save_load() {
-  dungeon dungeon1, dungeon2;
+  Dungeon dungeon1, dungeon2;
   generate_dungeon(&dungeon1, 6, 10);
   draw_dungeon(&dungeon1);
 

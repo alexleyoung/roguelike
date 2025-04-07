@@ -12,10 +12,10 @@
 
 #define MONSTERS_PER_PAGE 20 // max num displayed monsters
 
-void draw_dungeon(dungeon *d);
-void draw_player_dungeon(dungeon *d, player *p);
+void draw_dungeon(Dungeon *d);
+void draw_player_dungeon(Dungeon *d, Player *p);
 void draw_message(const char *fmt, ...);
-void draw_monster_list(dungeon *d, character *c);
-void draw_player_teleport(dungeon *d, player *pl, point *p);
+void draw_monster_list(Dungeon *d, Character *c);
+void draw_player_teleport(Dungeon *d, Player *pl, Point *p);
 
 #endif

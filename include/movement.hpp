@@ -21,8 +21,8 @@ enum {
   PLAYER_TOGGLE_FOG,
 };
 
-int move_player(dungeon *d, character *c, int move);
-int move_character(dungeon *d, character *c);
-int update_player_vision(dungeon *d, player *p);
+int move_player(Dungeon *d, Character *c, int move);
+int move_character(Dungeon *d, Character *c);
+int update_player_vision(Dungeon *d, Player *p);
 
 #endif

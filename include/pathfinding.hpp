@@ -3,7 +3,7 @@
 
 #include "dungeon.hpp"
 
-int calc_dists(dungeon *dungeon, int map[DUNGEON_HEIGHT][DUNGEON_WIDTH],
-               point source, int enable_tunnels);
+int calc_dists(Dungeon *dungeon, int map[DUNGEON_HEIGHT][DUNGEON_WIDTH],
+               Point source, int enable_tunnels);
 
 #endif

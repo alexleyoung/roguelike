@@ -1,3 +1,4 @@
+#include "character.hpp"
 #include "types.hpp"
 #include "ui.hpp"
 #include <cstring>
@@ -8,15 +9,15 @@
 #define ATTRIBUTE_TUNNELING 0x4
 #define ATTRIBUTE_ERRATIC 0x8
 
-int move_random(dungeon *d, character *c);
-int move_to(dungeon *d, character *c, point p);
-int check_los(dungeon *d, character *c);
-int check_horizontal(dungeon *d, character *c);
-int check_vertical(dungeon *d, character *c);
+int move_random(Dungeon *d, Character *c);
+int move_to(Dungeon *d, Character *c, point p);
+int check_los(Dungeon *d, Character *c);
+int check_horizontal(Dungeon *d, Character *c);
+int check_vertical(Dungeon *d, Character *c);
 
 bool teleport = false;
 
-int move_player(dungeon *d, character *c, int move) {
+int move_player(Dungeon *d, Character *c, int move) {
   point p;
 
   switch (move) {
@@ -166,11 +167,11 @@ int move_player(dungeon *d, character *c, int move) {
   case 'E':
     draw_message("inspect item");
     return PLAYER_MOVE_MENU;
-  // player info
+  // Player info
   case 'c':
-    draw_message("character info");
+    draw_message("Character info");
     return PLAYER_MOVE_MENU;
-  // monster list
+  // Monster list
   case 'm':
     draw_monster_list(d, c);
     return PLAYER_MOVE_MENU;
@@ -184,7 +185,7 @@ int move_player(dungeon *d, character *c, int move) {
   case 'g':
     draw_message("teleport");
     teleport = true;
-    draw_player_teleport(d, (player *)c, &p);
+    draw_player_teleport(d, (Player *)c, &p);
     move_to(d, c, p);
     teleport = false;
     return PLAYER_MOVE_ACTION;
@@ -204,9 +205,9 @@ int move_player(dungeon *d, character *c, int move) {
   case 'T':
     draw_message("tunneling dist map");
     return PLAYER_MOVE_MENU;
-  // look monster
+  // look Monster
   case 'L':
-    draw_message("look monster");
+    draw_message("look Monster");
     return PLAYER_MOVE_MENU;
 
   //// quit game
@@ -223,15 +224,15 @@ int move_player(dungeon *d, character *c, int move) {
   return 0;
 };
 
-int move_character(dungeon *d, character *c) {
-  // only random player movement for now
+int move_character(Dungeon *d, Character *c) {
+  // only random Player movement for now
   if (c->id == 0) {
     return move_random(d, c);
   }
 
-  monster *m = c->type == MONSTER ? static_cast<monster *>(c) : NULL;
+  Monster *m = c->type == MONSTER ? static_cast<Monster *>(c) : NULL;
 
-  // update character dist_to_player if telepathic or has los
+  // update Character dist_to_player if telepathic or has los
   int los = check_los(d, c);
   if (C_IS(m, TELEPATHIC) || los) {
     if (C_IS(m, TUNNELING)) {
@@ -242,7 +243,7 @@ int move_character(dungeon *d, character *c) {
     }
   }
 
-  // random move if no LOS and not telepathic, or hasn't seen player, or is
+  // random move if no LOS and not telepathic, or hasn't seen Player, or is
   // erratic
   if ((!C_IS(m, TELEPATHIC) && !los) || (C_IS(m, ERRATIC) && rand() % 2)) {
     return move_random(d, c);
@@ -253,7 +254,7 @@ int move_character(dungeon *d, character *c) {
   // if intelligent, take shortest path
   if (C_IS(m, INTELLIGENT)) {
     int shortest = 99999;
-    // find neighboring tile closest to player
+    // find neighboring tile closest to Player
     for (uint8_t i = c->pos.r - 1; i <= c->pos.r + 1; i++) {
       for (uint8_t j = c->pos.c - 1; j <= c->pos.c + 1; j++) {
         if (!IN_BOUNDS(i, j)) {
@@ -265,7 +266,7 @@ int move_character(dungeon *d, character *c) {
         }
       }
     }
-  } else { // move in straight line path toward player
+  } else { // move in straight line path toward Player
     // move up, down, or neither
     if (c->pos.r < d->player_pos.r) {
       p.r = c->pos.r + 1;
@@ -293,7 +294,7 @@ int move_character(dungeon *d, character *c) {
   return (move_to(d, c, p));
 }
 
-int move_random(dungeon *d, character *c) {
+int move_random(Dungeon *d, Character *c) {
   uint8_t new_r;
   uint8_t new_c;
 
@@ -302,8 +303,8 @@ int move_random(dungeon *d, character *c) {
   /*printf("r: %d, c: %d\n", c->pos.r, c->pos.c);*/
   int tries = 0;
 
-  player *p = c->type == PLAYER ? static_cast<player *>(c) : NULL;
-  monster *m = c->type == MONSTER ? static_cast<monster *>(c) : NULL;
+  Player *p = c->type == PLAYER ? static_cast<Player *>(c) : NULL;
+  Monster *m = c->type == MONSTER ? static_cast<Monster *>(c) : NULL;
 
   do {
     new_r = c->pos.r + rand() % 3 - 1;
@@ -326,9 +327,9 @@ int move_random(dungeon *d, character *c) {
   return (move_to(d, c, (point){new_r, new_c}));
 }
 
-int move_to(dungeon *d, character *c, point p) {
-  player *pl = c->type == PLAYER ? static_cast<player *>(c) : NULL;
-  monster *m = c->type == MONSTER ? static_cast<monster *>(c) : NULL;
+int move_to(Dungeon *d, Character *c, point p) {
+  Player *pl = c->type == PLAYER ? static_cast<Player *>(c) : NULL;
+  Monster *m = c->type == MONSTER ? static_cast<Monster *>(c) : NULL;
 
   // if moving into rock, check tunneling: if not, return
   if (d->tiles[p.r][p.c].hardness && !teleport) {
@@ -356,7 +357,7 @@ int move_to(dungeon *d, character *c, point p) {
 
   // check collision
   if (d->character_map[p.r][p.c]) {
-    // if player killed, end game
+    // if Player killed, end game
     if (d->character_map[p.r][p.c]->type == PLAYER)
       return 1;
 
@@ -364,7 +365,7 @@ int move_to(dungeon *d, character *c, point p) {
     d->character_map[p.r][p.c] = NULL;
   }
 
-  // if player, update dungeon and vision
+  // if Player, update Dungeon and vision
   if (pl) {
     d->player_pos = p;
     calc_dists(d, d->dists, d->player_pos, 0);
@@ -380,7 +381,7 @@ int move_to(dungeon *d, character *c, point p) {
   return 0;
 }
 
-int update_player_vision(dungeon *d, player *p) {
+int update_player_vision(Dungeon *d, Player *p) {
   /*memset(p->characters, 0,*/
   /*       sizeof(*p->characters) * DUNGEON_HEIGHT * DUNGEON_WIDTH);*/
 
@@ -401,7 +402,7 @@ int update_player_vision(dungeon *d, player *p) {
 // bresenham's line drawing alg
 //
 // returns 0 if no LOS, 1 otherwise
-int check_los(dungeon *d, character *c) {
+int check_los(Dungeon *d, Character *c) {
   point source = c->pos;
   point dest = d->player_pos;
   int los = 0;
@@ -415,7 +416,7 @@ int check_los(dungeon *d, character *c) {
   }
 }
 
-int check_horizontal(dungeon *d, character *c) {
+int check_horizontal(Dungeon *d, Character *c) {
   point source = c->pos;
   point dest = d->player_pos;
 
@@ -449,7 +450,7 @@ int check_horizontal(dungeon *d, character *c) {
   return 1;
 }
 
-int check_vertical(dungeon *d, character *c) {
+int check_vertical(Dungeon *d, Character *c) {
   point source = c->pos;
   point dest = d->player_pos;
 

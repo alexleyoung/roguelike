@@ -1,7 +1,7 @@
 #ifndef CORRIDOR_HEAP_HPP
 #define CORRIDOR_HEAP_HPP
 
-#include "dungeon.hpp"
+#include "types.hpp"
 
 #define DEFAULT_HEAP_CAPACITY 10
 

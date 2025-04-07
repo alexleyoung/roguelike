@@ -2,13 +2,12 @@
 #include "movement.hpp"
 #include "ui.hpp"
 #include <game_loop.hpp>
-#include <typeinfo>
 
 // create additional maps within the game with correct IDs
 // for eventual stair continuity (hopefully)
 static int add_dungeon(game *g, int link_id, int stair_type) {
-  dungeon *tmp =
-      (dungeon *)(realloc(g->maps, sizeof(*g->maps) * ++g->num_maps));
+  Dungeon *tmp =
+      (Dungeon *)(realloc(g->maps, sizeof(*g->maps) * ++g->num_maps));
 
   if (!tmp) {
     return -1;
@@ -25,7 +24,7 @@ static int add_dungeon(game *g, int link_id, int stair_type) {
 
 // init game struct
 int init_game(game *g) {
-  g->maps = (dungeon *)(malloc(sizeof(*g->maps)));
+  g->maps = (Dungeon *)(malloc(sizeof(*g->maps)));
   g->num_maps = 1;
   g->current_map = 0;
 
@@ -45,17 +44,17 @@ int start_game(game *g) {
   curs_set(0);
   keypad(stdscr, TRUE);
 
-  event e;
+  Event e;
   int input;
   bool fog = true;
   while (!heap_is_empty(&g->maps[g->current_map].events)) {
-    dungeon map = g->maps[g->current_map];
+    Dungeon map = g->maps[g->current_map];
     heap_pop(&g->maps[g->current_map].events, &e);
 
-    player *p =
-        e.character->type == PLAYER ? static_cast<player *>(e.character) : NULL;
-    monster *m = e.character->type == MONSTER
-                     ? static_cast<monster *>(e.character)
+    Player *p =
+        e.character->type == PLAYER ? static_cast<Player *>(e.character) : NULL;
+    Monster *m = e.character->type == MONSTER
+                     ? static_cast<Monster *>(e.character)
                      : NULL;
 
     if (!e.character->alive) {
@@ -95,7 +94,7 @@ int start_game(game *g) {
 
       if (res == PLAYER_MOVE_STAIR) {
         // find stair
-        stair *s;
+        Stair *s;
         for (int i = 0; i < g->maps[g->current_map].num_stairs; i++) {
           if (e.character->pos.r == g->maps[g->current_map].stairs[i].p.r &&
               e.character->pos.c == g->maps[g->current_map].stairs[i].p.c) {
@@ -103,15 +102,15 @@ int start_game(game *g) {
           }
         }
 
-        // re-add player turn to this dungeon's event queue
+        // re-add player turn to this Dungeon's Event queue
         e.turn_time += 1000 / e.character->speed;
         heap_push(&g->maps[g->current_map].events, &e);
 
-        // go to new dungeon or make one if necessary
+        // go to new Dungeon or make one if necessary
         if (s->d != UNLINKED) {
           g->current_map = s->d;
         } else {
-          // create dungeon linked to the stair
+          // create Dungeon linked to the stair
           add_dungeon(g, g->current_map,
                       s->type == UP_STAIR ? DOWN_STAIR : UP_STAIR);
           g->current_map = g->num_maps - 1;
@@ -142,7 +141,7 @@ int start_game(game *g) {
       move_character(&g->maps[g->current_map], e.character);
     }
 
-    // add character back to event queue
+    // add character back to Event queue
     e.turn_time += 1000 / e.character->speed;
     heap_push(&g->maps[g->current_map].events, &e);
   }

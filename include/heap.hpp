@@ -5,13 +5,14 @@
 
 #define DEFAULT_HEAP_CAPACITY 10
 
-typedef struct heap {
+class heap {
+public:
   void *a;
   int size;
   int capacity;
   size_t element_size;
   int (*cmp)(const void *, const void *);
-} heap;
+};
 
 int heap_init(heap *h, size_t element_size,
               int (*cmp)(const void *, const void *));

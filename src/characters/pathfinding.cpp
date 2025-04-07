@@ -6,7 +6,7 @@
 
 #define INF 2147483647
 
-int calc_dists(dungeon *dungeon, int map[DUNGEON_HEIGHT][DUNGEON_WIDTH],
+int calc_dists(Dungeon *dungeon, int map[DUNGEON_HEIGHT][DUNGEON_WIDTH],
                point source, int enable_tunnels) {
   for (int r = 0; r < DUNGEON_HEIGHT; r++) {
     for (int c = 0; c < DUNGEON_WIDTH; c++) {

@@ -3,7 +3,7 @@
 
 #include "character.hpp"
 
-int create_player(player *c, point p);
-int create_monster(monster *c, int id);
+int create_player(Player *c, Point p);
+int create_monster(Monster *c, int id);
 
 #endif

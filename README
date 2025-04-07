@@ -1,5 +1,10 @@
 Alex Young's coms 3270 roguelike project. Makefile included with comments.
 
+Assignment 1.06 Features:
+- migrate to C++
+- fog of war w/ toggle
+- teleport w/ UI
+
 Assignment 1.05 Features:
 - Reorganized file structure
   - headers in /include

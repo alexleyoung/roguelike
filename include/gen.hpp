@@ -20,14 +20,15 @@
 #define ROOM_MAX_WIDTH 13
 #define ROOM_MAX_HEIGHT 7
 
-typedef struct seed {
+class seed {
+public:
   point p;
   int hardness;
-} seed;
+};
 
-int init_dungeon(dungeon *dungeon);
-int generate_dungeon(dungeon *dungeon, int num_rooms, int num_monsters);
-int generate_linked_dungeon(dungeon *d, int num_rooms, int num_monster,
+int init_dungeon(Dungeon *dungeon);
+int generate_dungeon(Dungeon *dungeon, int num_rooms, int num_monsters);
+int generate_linked_dungeon(Dungeon *d, int num_rooms, int num_monster,
                             int link_id, int stair_type);
 
 #endif
