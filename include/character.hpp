@@ -46,10 +46,18 @@ public:
   std::string speed;
   // space-separated keywords
   std::string abilities;
-  int hp;
+  std::string hp;
   std::string ad;
-  char symbol;
-  int rarity;
+  std::string symbol;
+  std::string rarity;
+
+  Monster_Description(std::string name, std::string description,
+                      std::string color, std::string speed,
+                      std::string abilities, std::string hp, std::string ad,
+                      std::string symbol, std::string rarity)
+      : name(name), description(description), color(color), speed(speed),
+        abilities(abilities), hp(hp), ad(ad), symbol(symbol), rarity(rarity) {};
+  ~Monster_Description() {};
 };
 
 #endif
