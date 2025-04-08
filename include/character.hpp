@@ -1,6 +1,7 @@
 #ifndef CHARACTER_HPP
 #define CHARACTER_HPP
 
+#include <iostream>
 #include <string>
 
 #include <types.hpp>
@@ -58,6 +59,18 @@ public:
       : name(name), description(description), color(color), speed(speed),
         abilities(abilities), hp(hp), ad(ad), symbol(symbol), rarity(rarity) {};
   ~Monster_Description() {};
+
+  void print_info() {
+    std::cout << name << std::endl;
+    std::cout << description << std::endl;
+    std::cout << color << std::endl;
+    std::cout << speed << std::endl;
+    std::cout << abilities << std::endl;
+    std::cout << hp << std::endl;
+    std::cout << ad << std::endl;
+    std::cout << symbol << std::endl;
+    std::cout << rarity << std::endl;
+  }
 };
 
 #endif
