@@ -9,6 +9,7 @@
 #include <game_loop.hpp>
 #include <gen.hpp>
 #include <heap.hpp>
+#include <load_monsters.hpp>
 #include <ncurses.h>
 #include <saves.hpp>
 #include <ui.hpp>
@@ -21,48 +22,50 @@ int compare_dungeons(Dungeon *d1, Dungeon *d2);
 void test_save_load();
 
 int main(int argc, char **argv) {
-  game g;
-  init_game(&g);
-  int err = 0;
-
-  switch (argc) {
-  case 2: // load dungeon from file
-    // check arg
-    if (strcmp(argv[1], "--save") == 0) {
-      if ((err = save_dungeon(&g.maps[g.current_map], "dungeon"))) {
-        printf("Error: Failed to save dungeon\n");
-      }; // default name for assignment
-      g.maps[0].id = 0;
-    } else if (strcmp(argv[1], "--load") == 0) {
-      if ((err = load_dungeon(&g.maps[g.current_map], "dungeon"))) {
-        printf("Error: Failed to load dungeon\n");
-      }
-    }
-    break;
-  case 3: // load and save dungeon to file
-    if ((strcmp(argv[1], "--load") == 0 && strcmp(argv[2], "--save") == 0) ||
-        (strcmp(argv[1], "--save") == 0 && strcmp(argv[2], "--load") == 0)) {
-      if ((err = load_dungeon(&g.maps[0], "dungeon"))) {
-        printf("Error: Failed to load dungeon\n");
-      };
-      g.maps[0].id = 0;
-      if ((err = save_dungeon(&g.maps[0], "dungeon"))) {
-        printf("Error: Failed to save dungeon\n");
-      };
-    } else if (strcmp(argv[1], "--load") == 0) {
-      // load custom save
-      if ((err = load_dungeon(&g.maps[0], argv[2]))) {
-        printf("Error: Failed to load dungeon\n");
-      };
-    } else if (strcmp(argv[1], "--nummon") == 0) {
-      generate_dungeon(&g.maps[g.current_map], 6, atoi(argv[2]));
-    }
-    break;
-  }
-
-  if (err) {
-    return err;
-  }
+  /*game g;*/
+  /*init_game(&g);*/
+  /*int err = 0;*/
+  /**/
+  /*switch (argc) {*/
+  /*case 2: // load dungeon from file*/
+  /*  // check arg*/
+  /*  if (strcmp(argv[1], "--save") == 0) {*/
+  /*    if ((err = save_dungeon(&g.maps[g.current_map], "dungeon"))) {*/
+  /*      printf("Error: Failed to save dungeon\n");*/
+  /*    }; // default name for assignment*/
+  /*    g.maps[0].id = 0;*/
+  /*  } else if (strcmp(argv[1], "--load") == 0) {*/
+  /*    if ((err = load_dungeon(&g.maps[g.current_map], "dungeon"))) {*/
+  /*      printf("Error: Failed to load dungeon\n");*/
+  /*    }*/
+  /*  }*/
+  /*  break;*/
+  /*case 3: // load and save dungeon to file*/
+  /*  if ((strcmp(argv[1], "--load") == 0 && strcmp(argv[2], "--save") == 0)
+   * ||*/
+  /*      (strcmp(argv[1], "--save") == 0 && strcmp(argv[2], "--load") == 0))
+   * {*/
+  /*    if ((err = load_dungeon(&g.maps[0], "dungeon"))) {*/
+  /*      printf("Error: Failed to load dungeon\n");*/
+  /*    };*/
+  /*    g.maps[0].id = 0;*/
+  /*    if ((err = save_dungeon(&g.maps[0], "dungeon"))) {*/
+  /*      printf("Error: Failed to save dungeon\n");*/
+  /*    };*/
+  /*  } else if (strcmp(argv[1], "--load") == 0) {*/
+  /*    // load custom save*/
+  /*    if ((err = load_dungeon(&g.maps[0], argv[2]))) {*/
+  /*      printf("Error: Failed to load dungeon\n");*/
+  /*    };*/
+  /*  } else if (strcmp(argv[1], "--nummon") == 0) {*/
+  /*    generate_dungeon(&g.maps[g.current_map], 6, atoi(argv[2]));*/
+  /*  }*/
+  /*  break;*/
+  /*}*/
+  /**/
+  /*if (err) {*/
+  /*  return err;*/
+  /*}*/
 
   // test pathfinding outputs
   /*dungeon *dungeon = &g.maps[g.current_map];*/
@@ -80,7 +83,9 @@ int main(int argc, char **argv) {
   /*printf("hardness:\n");*/
   /*print_hardness(dungeon);*/
 
-  start_game(&g);
+  /*start_game(&g);*/
+
+  load_monster_descriptions("monster_desc.txt");
 
   return 0;
 }

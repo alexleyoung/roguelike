@@ -33,7 +33,7 @@ char *get_save_path(const char *name) {
     return NULL;
   }
 
-  snprintf(path, 11, "%s/.rlg327/%s", home, name);
+  snprintf(path, 64, "%s/.rlg327/%s", home, name);
   return path;
 }
 
