@@ -4,12 +4,12 @@
 #include <string.h>
 
 #include <corridor_heap.hpp>
+#include <descriptions.hpp>
 #include <dungeon.hpp>
 #include <game.hpp>
 #include <game_loop.hpp>
 #include <gen.hpp>
 #include <heap.hpp>
-#include <load_monsters.hpp>
 #include <ncurses.h>
 #include <saves.hpp>
 #include <ui.hpp>
@@ -22,8 +22,8 @@ int compare_dungeons(Dungeon *d1, Dungeon *d2);
 void test_save_load();
 
 int main(int argc, char **argv) {
-  /*game g;*/
-  /*init_game(&g);*/
+  game g;
+  init_game(&g);
   /*int err = 0;*/
   /**/
   /*switch (argc) {*/
@@ -83,9 +83,9 @@ int main(int argc, char **argv) {
   /*printf("hardness:\n");*/
   /*print_hardness(dungeon);*/
 
-  /*start_game(&g);*/
+  start_game(&g);
 
-  load_monster_descriptions("monster_desc.txt");
+  /*load_monster_descriptions("monster_desc.txt");*/
 
   return 0;
 }
