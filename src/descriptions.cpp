@@ -220,7 +220,8 @@ void Monster_Description::print_info() {
 
   std::cout << "Color(s): ";
   for (int i = 0; i < NUM_COLORS; ++i) {
-    std::cout << color[i] << " ";
+    if (color[i] != INVALID_COLOR)
+      std::cout << to_string(color[i]) << " ";
   }
   std::cout << "\n";
 
@@ -228,7 +229,8 @@ void Monster_Description::print_info() {
 
   std::cout << "Abilities: ";
   for (int i = 0; i < NUM_ABILITIES; ++i) {
-    std::cout << abil[i] << " ";
+    if (abil[i] != INVALID_ABILITY)
+      std::cout << to_string(abil[i]) << " ";
   }
   std::cout << "\n";
 
@@ -370,7 +372,8 @@ void Object_Description::print_info() {
 
   std::cout << "Color(s): ";
   for (int i = 0; i < NUM_COLORS; ++i) {
-    std::cout << color[i] << " ";
+    if (color[i] != INVALID_COLOR)
+      std::cout << to_string(color[i]) << " ";
   }
   std::cout << "\n";
 

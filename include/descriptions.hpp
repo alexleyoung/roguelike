@@ -8,8 +8,19 @@
 #include <dice.hpp>
 #include <saves.hpp>
 
-enum COLOR { RED, GREEN, BLUE, CYAN, YELLOW, MAGENTA, WHITE, BLACK };
 #define NUM_COLORS 8
+enum COLOR {
+  RED,
+  GREEN,
+  BLUE,
+  CYAN,
+  YELLOW,
+  MAGENTA,
+  WHITE,
+  BLACK,
+  INVALID_COLOR
+};
+#define NUM_ABILITIES 9
 enum ABILITY {
   SMART,
   TELE,
@@ -19,9 +30,9 @@ enum ABILITY {
   PICKUP,
   DESTROY,
   UNIQ,
-  BOSS
+  BOSS,
+  INVALID_ABILITY
 };
-#define NUM_ABILITIES 9
 enum OBJECT_TYPE {
   WEAPON,
   OFFHAND,
@@ -57,7 +68,10 @@ private:
   int rrty;
 
 public:
-  Monster_Description() {}
+  Monster_Description() {
+    std::fill_n(color, NUM_COLORS, INVALID_COLOR);
+    std::fill_n(abil, NUM_ABILITIES, INVALID_ABILITY);
+  }
   ~Monster_Description() {}
 
   bool set_name(const std::string &);
@@ -90,7 +104,7 @@ private:
   int rrty;
 
 public:
-  Object_Description() {}
+  Object_Description() { std::fill_n(color, NUM_COLORS, INVALID_COLOR); };
   ~Object_Description() {}
 
   bool set_name(const std::string &);
