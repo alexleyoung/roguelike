@@ -4,14 +4,14 @@
 #include <iostream>
 #include <stdint.h>
 
-class dice {
+class Dice {
 private:
   int32_t base;
   uint32_t number, sides;
 
 public:
-  dice() : base(0), number(0), sides(0) {}
-  dice(int32_t base, uint32_t number, uint32_t sides)
+  Dice() : base(0), number(0), sides(0) {}
+  Dice(int32_t base, uint32_t number, uint32_t sides)
       : base(base), number(number), sides(sides) {}
   inline void set(int32_t base, uint32_t number, uint32_t sides) {
     this->base = base;
@@ -28,6 +28,6 @@ public:
   inline int32_t get_sides() const { return sides; }
 };
 
-std::ostream &operator<<(std::ostream &o, dice &d);
+std::ostream &operator<<(std::ostream &o, Dice &d);
 
 #endif

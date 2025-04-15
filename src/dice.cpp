@@ -4,7 +4,7 @@
 #include "dice.hpp"
 #include "utils.hpp"
 
-int32_t dice::roll(void) const {
+int32_t Dice::roll(void) const {
   int32_t total;
   uint32_t i;
 
@@ -19,8 +19,8 @@ int32_t dice::roll(void) const {
   return total;
 }
 
-std::ostream &dice::print(std::ostream &o) {
+std::ostream &Dice::print(std::ostream &o) {
   return o << base << '+' << number << 'd' << sides;
 }
 
-std::ostream &operator<<(std::ostream &o, dice &d) { return d.print(o); }
+std::ostream &operator<<(std::ostream &o, Dice &d) { return d.print(o); }
