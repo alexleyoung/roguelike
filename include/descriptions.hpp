@@ -72,7 +72,7 @@ public:
 };
 
 class Object_Description {
-public:
+private:
   std::string name;
   std::string desc;
   OBJECT_TYPE type;
@@ -88,17 +88,20 @@ public:
   bool art;
   int rrty;
 
-  Object_Description() {};
+public:
+  Object_Description() {}
   ~Object_Description() {};
 
   bool set_name(std::string name) {
     this->name = name;
     return true;
   }
+
   bool set_desc(std::string desc) {
     this->desc = desc;
     return true;
   }
+
   bool set_type(std::string type) {
     if (type == "WEAPON")
       this->type = WEAPON;
@@ -143,6 +146,7 @@ public:
     }
     return true;
   }
+
   bool set_color(std::string color) {
     int count = 0;
     std::stringstream ss(color);
@@ -173,48 +177,250 @@ public:
 
     return true;
   }
+
   bool set_hit(std::string hit) {
     Dice hit_dice;
+    std::string val;
+
+    try {
+      std::stringstream ss(hit);
+      // base
+      std::getline(ss, val, '+');
+      hit_dice.set_base(std::stoi(val));
+
+      // # of dice
+      std::getline(ss, val, 'd');
+      hit_dice.set_number(std::stoi(val));
+
+      // sides
+      std::getline(ss, val);
+      hit_dice.set_sides(std::stoi(val));
+    } catch (...) {
+      return false;
+    }
+
     this->hit = hit_dice;
     return true;
   }
+
   bool set_dam(std::string dam) {
     Dice dam_dice;
+    std::string val;
+
+    try {
+      std::stringstream ss(dam);
+      // base
+      std::getline(ss, val, '+');
+      dam_dice.set_base(std::stoi(val));
+
+      // # of dice
+      std::getline(ss, val, 'd');
+      dam_dice.set_number(std::stoi(val));
+
+      // sides
+      std::getline(ss, val);
+      dam_dice.set_sides(std::stoi(val));
+    } catch (...) {
+      return false;
+    }
+
     this->dam = dam_dice;
     return true;
   }
+
   bool set_dodge(std::string dodge) {
     Dice dodge_dice;
+    std::string val;
+
+    try {
+      std::stringstream ss(dodge);
+      // base
+      std::getline(ss, val, '+');
+      dodge_dice.set_base(std::stoi(val));
+
+      // # of dice
+      std::getline(ss, val, 'd');
+      dodge_dice.set_number(std::stoi(val));
+
+      // sides
+      std::getline(ss, val);
+      dodge_dice.set_sides(std::stoi(val));
+    } catch (...) {
+      return false;
+    }
+
     this->dodge = dodge_dice;
     return true;
   }
+
   bool set_def(std::string def) {
     Dice def_dice;
+    std::string val;
+
+    try {
+      std::stringstream ss(def);
+      // base
+      std::getline(ss, val, '+');
+      def_dice.set_base(std::stoi(val));
+
+      // # of dice
+      std::getline(ss, val, 'd');
+      def_dice.set_number(std::stoi(val));
+
+      // sides
+      std::getline(ss, val);
+      def_dice.set_sides(std::stoi(val));
+    } catch (...) {
+      return false;
+    }
+
     this->def = def_dice;
     return true;
   }
+
+  bool set_weight(std::string weight) {
+    Dice weight_dice;
+    std::string val;
+
+    try {
+      std::stringstream ss(weight);
+      // base
+      std::getline(ss, val, '+');
+      weight_dice.set_base(std::stoi(val));
+
+      // # of dice
+      std::getline(ss, val, 'd');
+      weight_dice.set_number(std::stoi(val));
+
+      // sides
+      std::getline(ss, val);
+      weight_dice.set_sides(std::stoi(val));
+    } catch (...) {
+      return false;
+    }
+
+    this->def = weight_dice;
+    return true;
+  }
+
   bool set_speed(std::string speed) {
     Dice speed_dice;
+    std::string val;
+
+    try {
+      std::stringstream ss(speed);
+      // base
+      std::getline(ss, val, '+');
+      speed_dice.set_base(std::stoi(val));
+
+      // # of dice
+      std::getline(ss, val, 'd');
+      speed_dice.set_number(std::stoi(val));
+
+      // sides
+      std::getline(ss, val);
+      speed_dice.set_sides(std::stoi(val));
+    } catch (...) {
+      return false;
+    }
+
     this->speed = speed_dice;
     return true;
   }
+
   bool set_attr(std::string attr) {
     Dice attr_dice;
+    std::string val;
+
+    try {
+      std::stringstream ss(attr);
+
+      // base
+      std::getline(ss, val, '+');
+      attr_dice.set_base(std::stoi(val));
+
+      // # of dice
+      std::getline(ss, val, 'd');
+      attr_dice.set_number(std::stoi(val));
+
+      // sides
+      std::getline(ss, val);
+      attr_dice.set_sides(std::stoi(val));
+    } catch (...) {
+      return false;
+    }
+
     this->attr = attr_dice;
     return true;
   }
+
   bool set_val(std::string val) {
     Dice val_dice;
+    std::string dice_val;
+
+    try {
+      std::stringstream ss(val);
+
+      // base
+      std::getline(ss, dice_val, '+');
+      val_dice.set_base(std::stoi(dice_val));
+
+      // # of dice
+      std::getline(ss, dice_val, 'd');
+      val_dice.set_number(std::stoi(dice_val));
+
+      // sides
+      std::getline(ss, dice_val);
+      val_dice.set_sides(std::stoi(dice_val));
+    } catch (...) {
+      return false;
+    }
+
     this->val = val_dice;
     return true;
   }
+
   bool set_art(std::string art) {
-    this->art = FALSE;
+    if (art == "FALSE")
+      this->art = false;
+    else if (art == "TRUE")
+      this->art = true;
+    else
+      return false;
     return true;
   }
+
   bool set_rrty(std::string rrty) {
-    this->rrty = rrty;
+    try {
+      this->rrty = std::stoi(rrty);
+    } catch (...) {
+      return false;
+    }
     return true;
+  }
+
+  void print_info() {
+    std::cout << "Name: " << name << "\n";
+    std::cout << "Description:\n" << desc;
+    std::cout << "Type: " << type << "\n";
+    std::cout << "Color(s): ";
+    for (int i = 0; i < 8; ++i) {
+      // Assuming COLOR has a sentinel like COLOR_NONE or similar to mark unused
+      // slots Otherwise, check against an internal count or null/default value
+      std::cout << color[i] << " ";
+    }
+    std::cout << "\n";
+
+    std::cout << "Hit: " << hit << "\n";
+    std::cout << "Damage: " << dam << "\n";
+    std::cout << "Dodge: " << dodge << "\n";
+    std::cout << "Defense: " << def << "\n";
+    std::cout << "Weight: " << weight << "\n";
+    std::cout << "Speed: " << speed << "\n";
+    std::cout << "Attribute: " << attr << "\n";
+    std::cout << "Value: " << val << "\n";
+    std::cout << "Artifact: " << (art ? "Yes" : "No") << "\n";
+    std::cout << "Rarity: " << rrty << "\n";
   }
 };
 
