@@ -1,10 +1,10 @@
 default: game
 
-game: main.cpp $(wildcard src/*.cpp) $(wildcard src/*/*.cpp)
-	g++ -std=c++11 main.cpp src/*.cpp src/*/*.cpp -Iinclude -Llib -lcurses -o out
+game: main.cpp $(wildcard src/*/*.cpp)
+	g++ -std=c++11 main.cpp src/*/*.cpp -Iinclude -Llib -lcurses -o out
 
-debug: main.cpp $(wildcard src/*.c) $(wildcard src/*/*.c)
-	g++ -std=c++11 main.cpp src/*.cpp src/*/*.cpp -Iinclude -Llib -lcurses -g -o debug
+debug: main.cpp $(wildcard src/*/*.c)
+	g++ -std=c++11 main.cpp src/*/*.cpp -Iinclude -Llib -lcurses -g -o debug
 
 copy: clean # create copy of project to be turned into tarball
 	cp -R . ./copy

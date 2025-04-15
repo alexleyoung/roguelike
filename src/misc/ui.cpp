@@ -6,6 +6,30 @@ void draw_formatted_monster_line(int offset, Character *p, Character *m);
 void draw_monster_page(Character **monsters, int num_monsters, int page,
                        int pages, Character *p);
 
+void ui_init() {
+  // init ncurses and clear
+  initscr();
+  clear();
+
+  cbreak();
+  // disable cursor and input visibility
+  noecho();
+  curs_set(0);
+  // enable keypad
+  keypad(stdscr, TRUE);
+
+  // init colors
+  start_color();
+  init_pair(COLOR_RED, COLOR_RED, COLOR_BLACK);
+  init_pair(COLOR_GREEN, COLOR_GREEN, COLOR_BLACK);
+  init_pair(COLOR_BLUE, COLOR_BLUE, COLOR_BLACK);
+  init_pair(COLOR_CYAN, COLOR_CYAN, COLOR_BLACK);
+  init_pair(COLOR_RED, COLOR_YELLOW, COLOR_BLACK);
+  init_pair(COLOR_RED, COLOR_MAGENTA, COLOR_BLACK);
+  init_pair(COLOR_WHITE, COLOR_WHITE, COLOR_BLACK);
+  init_pair(COLOR_BLACK, COLOR_WHITE, COLOR_BLACK);
+}
+
 /*
  * Draw dungeon
  *

@@ -37,12 +37,7 @@ int init_game(game *g) {
 
 int start_game(game *g) {
   // init ncurses display and settings
-  initscr();
-  clear();
-  cbreak();
-  noecho();
-  curs_set(0);
-  keypad(stdscr, TRUE);
+  ui_init();
 
   Event e;
   int input;

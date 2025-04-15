@@ -30,4 +30,7 @@ public:
   int dist_to_player[DUNGEON_HEIGHT][DUNGEON_WIDTH];
 };
 
+int create_player(Player *c, Point p);
+int create_monster(Monster *c, int id);
+
 #endif

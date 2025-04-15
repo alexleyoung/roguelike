@@ -1,6 +1,6 @@
 #include <stdlib.h>
 
-#include <spawn.hpp>
+#include <character.hpp>
 
 int create_player(Player *c, point p) {
   // player id always 0

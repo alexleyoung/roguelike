@@ -4,7 +4,6 @@
 
 #include <gen.hpp>
 #include <saves.hpp>
-#include <spawn.hpp>
 
 #if defined(__APPLE__)
 #include "../include/portable_endian.h"

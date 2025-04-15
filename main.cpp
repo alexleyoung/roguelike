@@ -83,9 +83,9 @@ int main(int argc, char **argv) {
   /*printf("hardness:\n");*/
   /*print_hardness(dungeon);*/
 
-  /*start_game(&g);*/
+  start_game(&g);
 
-  load_monster_descriptions("monster_desc.txt");
+  /*load_monster_descriptions("monster_desc.txt");*/
   /*load_object_descriptions("object_desc.txt");*/
 
   return 0;
