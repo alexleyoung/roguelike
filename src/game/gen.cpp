@@ -1,5 +1,7 @@
-#include "movement.hpp"
+#include <descriptions.hpp>
 #include <gen.hpp>
+#include <movement.hpp>
+#include <utils.hpp>
 
 #define MAX_ROOM_TRIES 5000
 
@@ -558,7 +560,6 @@ int place_stairs(Dungeon *dungeon, int num_stairs) {
 
 int spawn_player(Dungeon *dungeon) {
   uint8_t r, c;
-  Player *p = (Player *)(malloc(sizeof(Player)));
 
   // pick random Room
   do {
@@ -569,9 +570,9 @@ int spawn_player(Dungeon *dungeon) {
   dungeon->player_pos.r = r;
   dungeon->player_pos.c = c;
 
-  create_player(p, (point){r, c});
+  Player *p = new Player((point){r, c});
 
-  dungeon->character_map[r][c] = p;
+  dungeon->character_map[r][c] = (Character *)p;
 
   // init vision
   update_player_vision(dungeon, p);
@@ -582,11 +583,13 @@ int spawn_player(Dungeon *dungeon) {
 int spawn_monsters(Dungeon *dungeon, int n) {
   int i;
   point p;
-  for (i = 1; i <= n; i++) {
-    Monster *mob = (Monster *)(malloc(sizeof(Monster)));
 
+  std::vector<Monster_Description> descriptions =
+      load_monster_descriptions("monster_desc.txt");
+
+  for (i = 1; i <= n; i++) {
     // generate random traits
-    create_monster(mob, i);
+    Monster *mob = new Monster(i);
 
     // pick random spot
     int wall_spawn = C_IS(mob, TUNNELING) && C_IS(mob, TELEPATHIC) ? 1 : 0;

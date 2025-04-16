@@ -6,33 +6,8 @@
 
 #include <character.hpp>
 #include <dice.hpp>
-#include <saves.hpp>
+#include <utils.hpp>
 
-#define NUM_COLORS 8
-enum COLOR {
-  RED,
-  GREEN,
-  BLUE,
-  CYAN,
-  YELLOW,
-  MAGENTA,
-  WHITE,
-  BLACK,
-  INVALID_COLOR
-};
-#define NUM_ABILITIES 9
-enum ABILITY {
-  SMART,
-  TELE,
-  TUNNEL,
-  ERRATIC,
-  PASS,
-  PICKUP,
-  DESTROY,
-  UNIQ,
-  BOSS,
-  INVALID_ABILITY
-};
 enum OBJECT_TYPE {
   WEAPON,
   OFFHAND,
@@ -83,6 +58,9 @@ public:
   bool set_abil(const std::string &);
   bool set_symb(const std::string &);
   bool set_rrty(const std::string &);
+
+  Monster *generate(int id);
+
   void print_info();
 };
 
@@ -123,6 +101,8 @@ public:
   bool set_art(const std::string &);
   bool set_rrty(const std::string &);
   void print_info();
+
+  /*Object *generate();*/
 };
 
 std::vector<Monster_Description> load_monster_descriptions(const char *);

@@ -4,6 +4,7 @@
 #include <sstream>
 #include <vector>
 
+#include "character.hpp"
 #include "descriptions.hpp"
 #include "saves.hpp"
 
@@ -211,6 +212,18 @@ bool Monster_Description::set_rrty(const std::string &s) {
     return false;
   }
   return true;
+}
+
+Monster *Monster_Description::generate(int id) {
+  int abilities;
+
+  for (int i = 0; i < NUM_ABILITIES; i++) {
+    if (abil[i] != INVALID_ABILITY)
+      abilities = abilities | abil[i];
+  }
+
+  return new Monster(id, name, desc, color[0], speed.roll(), abilities,
+                     hp.roll(), dam, symb, rrty);
 }
 
 void Monster_Description::print_info() {

@@ -4,37 +4,13 @@
 
 #include <gen.hpp>
 #include <saves.hpp>
+#include <utils.hpp>
 
 #if defined(__APPLE__)
 #include "../include/portable_endian.h"
 #else
 #include <endian.h>
 #endif
-
-/*
-Returns home dir appended with /.rlg327
-
-Name arg is the name of the file to save/load
-
-Returns path to file
-*/
-char *get_save_path(const char *name) {
-  char *home = getenv("HOME");
-  if (!home) {
-    printf("Error: Could not get home directory\n");
-    return NULL;
-  }
-
-  char *path = (char *)(malloc(strlen(home) + strlen("/.rlg327/") +
-                               strlen(name))); // Extra space for "/.rlg327"
-  if (!path) {
-    printf("Error: Memory allocation failed\n");
-    return NULL;
-  }
-
-  snprintf(path, 64, "%s/.rlg327/%s", home, name);
-  return path;
-}
 
 /*
 Save current dungeon to big endian binary file
@@ -211,8 +187,9 @@ int load_dungeon(Dungeon *dungeon, const char *name) {
   fread(&dungeon->player_pos.c, sizeof(dungeon->player_pos.c), 1, f);
   fread(&dungeon->player_pos.r, sizeof(dungeon->player_pos.r), 1, f);
 
-  Player *pl = (Player *)(malloc(sizeof(Player)));
-  create_player(pl, dungeon->player_pos);
+  /*Player *pl = (Player *)(malloc(sizeof(Player)));*/
+  /*create_player(pl, dungeon->player_pos);*/
+  Player *pl = new Player(dungeon->player_pos);
   dungeon->character_map[pl->pos.r][pl->pos.c] = pl;
 
   // read tiles array

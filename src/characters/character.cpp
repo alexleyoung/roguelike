@@ -2,25 +2,37 @@
 
 #include <character.hpp>
 
-int create_player(Player *c, point p) {
+Player::Player(Point p) {
   // player id always 0
-  c->id = 0;
-  c->speed = 10;
-  c->pos = p;
-  c->sprite = '@';
-  c->alive = 1;
-  c->type = PLAYER;
+  this->id = 0;
+  this->speed = 10;
+  this->pos = p;
+  this->sprite = '@';
+  this->alive = 1;
+  this->type = PLAYER;
+};
 
-  return 0;
-}
+Monster::Monster(int id) {
+  this->id = id;
+  this->speed = (rand() % 21) + 5;
+  this->sprite = "0123456789ABCDEF"[this->traits & 0xF]; // get hex char
+  this->alive = 1;
+  this->type = MONSTER;
 
-int create_monster(Monster *c, int id) {
-  c->id = id;
-  c->traits = rand() % 16;
-  c->speed = (rand() % 21) + 5;
-  c->sprite = "0123456789ABCDEF"[c->traits & 0xF]; // get hex char
-  c->alive = 1;
-  c->type = MONSTER;
+  this->traits = rand() % 16;
+};
 
-  return 0;
-}
+Monster::Monster(int id, std::string name, std::string desc, COLOR color,
+                 int speed, int abil, int hp, Dice dam, char symb, int rrty) {
+  this->id = id;
+  this->name = name;
+  this->desc = desc;
+  this->speed = speed;
+  this->traits = abil;
+  this->hp = hp;
+  this->dam = dam;
+  this->sprite = symb;
+  this->rrty = rrty;
+  this->alive = 1;
+  this->type = MONSTER;
+};

@@ -8,6 +8,19 @@
 #define ATTRIBUTE_TUNNELING 0x4
 #define ATTRIBUTE_ERRATIC 0x8
 
+#define NUM_COLORS 8
+enum COLOR {
+  BLACK,
+  RED,
+  GREEN,
+  YELLOW,
+  BLUE,
+  MAGENTA,
+  CYAN,
+  WHITE,
+  INVALID_COLOR
+};
+
 #define min(x, y) (x < y ? x : y)
 #define CEIL(x, y) (((x) + (y) - 1) / (y))
 #define C_IS(c, attr) (c->traits & ATTRIBUTE_##attr)
@@ -21,5 +34,7 @@
       }                                                                        \
     }                                                                          \
   } while (0)
+
+char *get_save_path(const char *name);
 
 #endif
