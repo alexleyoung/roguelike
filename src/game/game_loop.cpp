@@ -14,9 +14,10 @@ static int add_dungeon(game *g, int link_id, int stair_type) {
   }
   g->maps = tmp;
 
-  generate_linked_dungeon(&g->maps[g->num_maps - 1],
-                          DEFAULT_ROOM_COUNT + rand() % 4,
-                          DEFAULT_MOB_COUNT + rand() % 11, link_id, stair_type);
+  generate_linked_dungeon(
+      &g->maps[g->num_maps - 1], DEFAULT_ROOM_COUNT + rand() % 4,
+      DEFAULT_MOB_COUNT + rand() % 11, DEFAULT_OBJECT_COUNT + rand() % 5,
+      link_id, stair_type);
   g->maps[g->num_maps - 1].id = g->num_maps - 1;
 
   return 0;
@@ -29,7 +30,8 @@ int init_game(game *g) {
   g->current_map = 0;
 
   generate_dungeon(&g->maps[g->current_map], DEFAULT_ROOM_COUNT + rand() % 4,
-                   DEFAULT_MOB_COUNT + rand() % 11);
+                   DEFAULT_MOB_COUNT + rand() % 11,
+                   DEFAULT_OBJECT_COUNT + rand() % 5);
   g->maps[g->current_map].id = 0;
 
   return 0;

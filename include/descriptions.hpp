@@ -6,29 +6,8 @@
 
 #include <character.hpp>
 #include <dice.hpp>
+#include <object.hpp>
 #include <utils.hpp>
-
-enum OBJECT_TYPE {
-  WEAPON,
-  OFFHAND,
-  RANGED,
-  ARMOR,
-  HELMET,
-  CLOAK,
-  GLOVES,
-  BOOTS,
-  RING,
-  AMULET,
-  LIGHT,
-  SCROLL,
-  BOOK,
-  FLASK,
-  GOLD,
-  AMMUNITION,
-  FOOD,
-  WAND,
-  CONTAINER
-};
 
 class Monster_Description {
 private:
@@ -95,6 +74,8 @@ private:
   int rrty;
 
 public:
+  bool spawnable = true;
+
   Object_Description() { std::fill_n(color, NUM_COLORS, INVALID_COLOR); };
   ~Object_Description() {}
 
@@ -127,12 +108,12 @@ public:
   const Dice &get_attr() const { return attr; }
   const Dice &get_val() const { return val; }
 
-  bool is_artifact() const { return art; }
+  bool get_art() const { return art; }
   int get_rrty() const { return rrty; }
 
   void print_info();
 
-  /*Object *generate();*/
+  Object *generate();
 };
 
 std::vector<Monster_Description> load_monster_descriptions(const char *);

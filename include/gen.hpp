@@ -26,8 +26,9 @@ public:
 };
 
 int init_dungeon(Dungeon *dungeon);
-int generate_dungeon(Dungeon *dungeon, int num_rooms, int num_monsters);
+int generate_dungeon(Dungeon *dungeon, int num_rooms, int num_monsters,
+                     int num_objects);
 int generate_linked_dungeon(Dungeon *d, int num_rooms, int num_monster,
-                            int link_id, int stair_type);
+                            int num_objects, int link_id, int stair_type);
 
 #endif

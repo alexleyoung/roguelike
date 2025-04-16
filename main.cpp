@@ -197,7 +197,7 @@ int compare_dungeons(Dungeon *d1, Dungeon *d2) {
 
 void test_save_load() {
   Dungeon dungeon1, dungeon2;
-  generate_dungeon(&dungeon1, 6, 10);
+  generate_dungeon(&dungeon1, 6, 10, 10);
   draw_dungeon(&dungeon1);
 
   const char *test_file = "dungeon";

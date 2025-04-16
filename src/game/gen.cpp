@@ -18,6 +18,7 @@ int find_path(Dungeon *dungeon, Point source, Point target, int longest);
 int place_stairs(Dungeon *dungeon, int num_stairs);
 int spawn_player(Dungeon *dungeon);
 int spawn_monsters(Dungeon *dungeon, int n);
+int spawn_objects(Dungeon *dungeon, int n);
 int init_heap(Dungeon *dungeon);
 
 /*
@@ -28,7 +29,8 @@ for corridor placement.
 
 Returns 0 on success, non-zero on failure.
 */
-int generate_dungeon(Dungeon *dungeon, int num_rooms, int num_monsters) {
+int generate_dungeon(Dungeon *dungeon, int num_rooms, int num_monsters,
+                     int num_objects) {
   dungeon->num_rooms = num_rooms;
 
   int err = 0;
@@ -40,6 +42,7 @@ int generate_dungeon(Dungeon *dungeon, int num_rooms, int num_monsters) {
   err = place_stairs(dungeon, 2);
   err = spawn_player(dungeon);
   err = spawn_monsters(dungeon, num_monsters);
+  err = spawn_objects(dungeon, num_objects);
   err = init_heap(dungeon);
 
   return err;
@@ -58,11 +61,11 @@ int stair_type: connector Stair type
 Returns 0 on success, non-zero on failure.
 */
 int generate_linked_dungeon(Dungeon *d, int num_rooms, int num_monsters,
-                            int link_id, int stair_type) {
+                            int num_objects, int link_id, int stair_type) {
   int err;
 
   // generate new Dungeon
-  err = generate_dungeon(d, num_rooms, num_monsters);
+  err = generate_dungeon(d, num_rooms, num_monsters, num_objects);
 
   // resize Stair arr
   Stair *tmp;
@@ -604,16 +607,52 @@ int spawn_monsters(Dungeon *dungeon, int n) {
     Monster *mob = md.generate(i);
 
     // pick random spot
-    int wall_spawn = C_IS(mob, TUNNELING) && C_IS(mob, TELEPATHIC) ? 1 : 0;
+    bool wall_spawn =
+        C_IS(mob, TUNNELING) && C_IS(mob, TELEPATHIC) ? true : false;
     do {
       p.r = rand() % DUNGEON_HEIGHT;
       p.c = rand() % DUNGEON_WIDTH;
-    } while (!IN_BOUNDS(p.r, p.c) || dungeon->tiles[p.r][p.c].sprite != '.' ||
-             dungeon->character_map[p.r][p.c]);
+    } while (!IN_BOUNDS(p.r, p.c) &&
+             (dungeon->tiles[p.r][p.c].sprite != '.' && !wall_spawn));
 
     mob->pos = p;
 
     dungeon->character_map[p.r][p.c] = mob;
+  }
+
+  return 0;
+}
+
+int spawn_objects(Dungeon *dungeon, int n) {
+  int i;
+  Point p;
+
+  std::vector<Object_Description> descriptions =
+      load_object_descriptions("object_desc.txt");
+
+  for (i = 0; i < n; i++) {
+    int type, rare;
+    Object_Description od;
+    do {
+      type = rand_range(0, descriptions.size() - 1);
+      rare = rand_range(0, 99);
+      od = descriptions[type];
+    } while (rare >= od.get_rrty() || !od.spawnable);
+
+    if (od.get_art())
+      od.spawnable = false;
+
+    Object *obj = od.generate();
+
+    do {
+      p.r = rand() % DUNGEON_HEIGHT;
+      p.c = rand() % DUNGEON_WIDTH;
+    } while (dungeon->tiles[p.r][p.c].sprite != '.' ||
+             dungeon->object_map[p.r][p.c]);
+
+    obj->pos = p;
+
+    dungeon->object_map[p.r][p.c] = obj;
   }
 
   return 0;

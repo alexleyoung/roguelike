@@ -42,12 +42,18 @@ void draw_dungeon(Dungeon *d) {
 
   int r, c;
   Character *character;
+  Object *object;
   for (r = 0; r < DUNGEON_HEIGHT; r++) {
     for (c = 0; c < DUNGEON_WIDTH; c++) {
+
       if ((character = d->character_map[r][c])) {
         attron(COLOR_PAIR(character->color));
         mvaddch(r + 1, c, character->sprite);
         attroff(COLOR_PAIR(character->color));
+      } else if ((object = d->object_map[r][c])) {
+        attron(COLOR_PAIR(object->color));
+        mvaddch(r + 1, c, object->sprite);
+        attroff(COLOR_PAIR(object->color));
       } else {
         mvaddch(r + 1, c, d->tiles[r][c].sprite);
       }
@@ -72,9 +78,18 @@ void draw_player_dungeon(Dungeon *d, Player *p) {
         continue;
       }
 
-      if (d->character_map[r][c] && r <= p->pos.r + 2 && p->pos.r - 2 <= r &&
-          c <= p->pos.c + 2 && p->pos.c - 2 <= c) {
-        mvaddch(r + 1, c, d->character_map[r][c]->sprite);
+      Character *character;
+      Object *object;
+      if ((character = d->character_map[r][c]) && r <= p->pos.r + 2 &&
+          p->pos.r - 2 <= r && c <= p->pos.c + 2 && p->pos.c - 2 <= c) {
+        attron(COLOR_PAIR(character->color));
+        mvaddch(r + 1, c, character->sprite);
+        attroff(COLOR_PAIR(character->color));
+      } else if ((object = d->object_map[r][c]) && r <= p->pos.r + 2 &&
+                 p->pos.r - 2 <= r && c <= p->pos.c + 2 && p->pos.c - 2 <= c) {
+        attron(COLOR_PAIR(object->color));
+        mvaddch(r + 1, c, object->sprite);
+        attroff(COLOR_PAIR(object->color));
       } else {
         mvaddch(r + 1, c, d->tiles[r][c].sprite);
       }

@@ -385,6 +385,12 @@ bool Object_Description::set_rrty(const std::string &rrty_str) {
   return true;
 }
 
+Object *Object_Description::generate() {
+  return new Object(name, desc, type, color[0], hit.roll(), dam, dodge.roll(),
+                    def.roll(), weight.roll(), speed.roll(), attr.roll(),
+                    val.roll(), art, rrty);
+}
+
 void Object_Description::print_info() {
   std::cout << "Name: " << name << "\n";
   std::cout << "Description:\n" << desc;
@@ -679,13 +685,13 @@ void parse_object(std::ifstream &file, std::string &line,
       if (!(name_set && desc_set && type_set && color_set && hit_set &&
             dam_set && dodge_set && def_set && weight_set && speed_set &&
             attr_set && val_set && art_set && rrty_set)) {
-        std::cout << "Missing fields before END: " << keyword << std::endl;
+        std::cout << "Missing fields before END for item: " << od.get_name()
+                  << std::endl;
         std::cout << "Skipping object." << std::endl;
         return;
       }
 
       // Successfully parsed the object
-      od.print_info();
       std::cout << std::endl;
       vec.push_back(od);
       break;

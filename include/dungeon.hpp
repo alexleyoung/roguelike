@@ -5,6 +5,7 @@
 
 #include <character.hpp>
 #include <heap.hpp>
+#include <object.hpp>
 #include <types.hpp>
 
 enum { UP_STAIR, DOWN_STAIR };
@@ -54,6 +55,7 @@ public:
   Point player_pos;
 
   Character *character_map[DUNGEON_HEIGHT][DUNGEON_WIDTH];
+  Object *object_map[DUNGEON_HEIGHT][DUNGEON_WIDTH];
 };
 
 #endif
