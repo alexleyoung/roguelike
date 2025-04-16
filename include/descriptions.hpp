@@ -43,6 +43,8 @@ private:
   int rrty;
 
 public:
+  bool spawnable = true;
+
   Monster_Description() {
     std::fill_n(color, NUM_COLORS, INVALID_COLOR);
     std::fill_n(abil, NUM_ABILITIES, INVALID_ABILITY);
@@ -59,6 +61,17 @@ public:
   bool set_symb(const std::string &);
   bool set_rrty(const std::string &);
 
+  std::string get_name() { return name; }
+  std::string get_desc() { return desc; }
+  COLOR *get_color() { return color; }
+  Dice get_speed() { return speed; }
+  ABILITY *get_abil() { return abil; }
+  Dice get_hp() { return hp; }
+  Dice get_dam() { return dam; }
+  char get_symb() { return symb; }
+  int get_rrty() { return rrty; };
+
+  bool is_unique();
   Monster *generate(int id);
 
   void print_info();
@@ -100,6 +113,23 @@ public:
   bool set_val(const std::string &);
   bool set_art(const std::string &);
   bool set_rrty(const std::string &);
+
+  const std::string &get_name() const { return name; }
+  const std::string &get_desc() const { return desc; }
+  OBJECT_TYPE get_type() const { return type; }
+  const COLOR *get_color() const { return color; }
+  const Dice &get_hit() const { return hit; }
+  const Dice &get_dam() const { return dam; }
+  const Dice &get_dodge() const { return dodge; }
+  const Dice &get_def() const { return def; }
+  const Dice &get_weight() const { return weight; }
+  const Dice &get_speed() const { return speed; }
+  const Dice &get_attr() const { return attr; }
+  const Dice &get_val() const { return val; }
+
+  bool is_artifact() const { return art; }
+  int get_rrty() const { return rrty; }
+
   void print_info();
 
   /*Object *generate();*/

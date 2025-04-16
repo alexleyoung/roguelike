@@ -588,8 +588,20 @@ int spawn_monsters(Dungeon *dungeon, int n) {
       load_monster_descriptions("monster_desc.txt");
 
   for (i = 1; i <= n; i++) {
-    // generate random traits
-    Monster *mob = new Monster(i);
+    // randomly pick from descriptions
+
+    int type, rare;
+    Monster_Description md;
+    do {
+      type = rand_range(0, descriptions.size());
+      rare = rand_range(0, 99);
+      md = descriptions[type];
+    } while (rare < md.get_rrty() && !md.spawnable);
+
+    if (md.is_unique())
+      md.spawnable = false;
+
+    Monster *mob = md.generate(i);
 
     // pick random spot
     int wall_spawn = C_IS(mob, TUNNELING) && C_IS(mob, TELEPATHIC) ? 1 : 0;

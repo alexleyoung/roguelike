@@ -4,9 +4,9 @@
 #include <sstream>
 #include <vector>
 
-#include "character.hpp"
-#include "descriptions.hpp"
-#include "saves.hpp"
+#include <character.hpp>
+#include <descriptions.hpp>
+#include <saves.hpp>
 
 /*
  * UTIL METHODS
@@ -212,6 +212,15 @@ bool Monster_Description::set_rrty(const std::string &s) {
     return false;
   }
   return true;
+}
+
+bool Monster_Description::is_unique() {
+  for (ABILITY a : abil) {
+    if (a == UNIQ)
+      return true;
+  }
+
+  return false;
 }
 
 Monster *Monster_Description::generate(int id) {

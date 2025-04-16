@@ -7,6 +7,8 @@
 #include <types.hpp>
 #include <utils.hpp>
 
+class Monster_Description;
+
 #define NUM_ABILITIES 9
 enum ABILITY {
   SMART = 1,
@@ -58,6 +60,7 @@ public:
   Monster(int id);
   Monster(int id, std::string name, std::string desc, COLOR color, int speed,
           int abil, int hp, Dice dam, char symb, int rrty);
+  Monster(Monster_Description);
 };
 
 #endif
