@@ -27,6 +27,7 @@ Monster::Monster(int id, std::string name, std::string desc, COLOR color,
   this->id = id;
   this->name = name;
   this->desc = desc;
+  this->color = color;
   this->speed = speed;
   this->traits = abil;
   this->hp = hp;

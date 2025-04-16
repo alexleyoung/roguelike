@@ -6,7 +6,6 @@
 
 #include <character.hpp>
 #include <descriptions.hpp>
-#include <saves.hpp>
 
 /*
  * UTIL METHODS
@@ -230,7 +229,6 @@ Monster *Monster_Description::generate(int id) {
     if (abil[i] != INVALID_ABILITY)
       abilities = abilities | abil[i];
   }
-
   return new Monster(id, name, desc, color[0], speed.roll(), abilities,
                      hp.roll(), dam, symb, rrty);
 }
@@ -521,7 +519,6 @@ void parse_monster(std::ifstream &file, std::string &line,
         return;
       }
 
-      md.print_info();
       std::cout << std::endl;
       vec.push_back(md);
       break;

@@ -593,10 +593,10 @@ int spawn_monsters(Dungeon *dungeon, int n) {
     int type, rare;
     Monster_Description md;
     do {
-      type = rand_range(0, descriptions.size());
+      type = rand_range(0, descriptions.size() - 1);
       rare = rand_range(0, 99);
       md = descriptions[type];
-    } while (rare < md.get_rrty() && !md.spawnable);
+    } while (rare >= md.get_rrty() || !md.spawnable);
 
     if (md.is_unique())
       md.spawnable = false;

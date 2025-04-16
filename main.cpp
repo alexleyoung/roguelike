@@ -85,7 +85,12 @@ int main(int argc, char **argv) {
 
   start_game(&g);
 
-  /*load_monster_descriptions("monster_desc.txt");*/
+  /*std::vector<Monster_Description> vec =*/
+  /*    load_monster_descriptions("monster_desc.txt");*/
+  /*for (Monster_Description md : vec) {*/
+  /*  md.print_info();*/
+  /*  std::cout << std::endl;*/
+  /*}*/
   /*load_object_descriptions("object_desc.txt");*/
 
   return 0;

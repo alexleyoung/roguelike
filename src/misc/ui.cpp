@@ -1,3 +1,4 @@
+#include "character.hpp"
 #include "types.hpp"
 #include <ui.hpp>
 
@@ -40,10 +41,13 @@ void draw_dungeon(Dungeon *d) {
   /*clear();*/
 
   int r, c;
+  Character *character;
   for (r = 0; r < DUNGEON_HEIGHT; r++) {
     for (c = 0; c < DUNGEON_WIDTH; c++) {
-      if (d->character_map[r][c]) {
-        mvaddch(r + 1, c, d->character_map[r][c]->sprite);
+      if ((character = d->character_map[r][c])) {
+        attron(COLOR_PAIR(character->color));
+        mvaddch(r + 1, c, character->sprite);
+        attroff(COLOR_PAIR(character->color));
       } else {
         mvaddch(r + 1, c, d->tiles[r][c].sprite);
       }
