@@ -4,10 +4,13 @@
 #include <string>
 
 #include <dice.hpp>
+#include <object.hpp>
 #include <types.hpp>
 #include <utils.hpp>
 
 class Monster_Description;
+
+#define NUM_CARRY_SLOTS 10
 
 #define NUM_ABILITIES 9
 enum ABILITY {
@@ -24,6 +27,22 @@ enum ABILITY {
 };
 
 enum CHARACTER_TYPE { PLAYER, MONSTER };
+
+#define NUM_EQUIPMENT_SLOTS 12
+enum EQUIPMENT_SLOTS {
+  WEAPON_SLOT,
+  OFFHAND_SLOT,
+  RANGED_SLOT,
+  ARMOR_SLOT,
+  HELEMET_SLOT,
+  CLOAK_SLOT,
+  GLOVES_SLOT,
+  BOOTS_SLOT,
+  AMUELT_SLOT,
+  LIGHT_SLOT,
+  RING1_SLOT,
+  RING2_SLOT
+};
 
 class Character {
 public:
@@ -47,6 +66,9 @@ class Player : public Character {
 public:
   char terrain[DUNGEON_HEIGHT][DUNGEON_WIDTH] = {};
   Character *characters[DUNGEON_HEIGHT][DUNGEON_WIDTH] = {};
+
+  Object *equipment[NUM_EQUIPMENT_SLOTS] = {};
+  Object *carry[NUM_CARRY_SLOTS] = {};
 
   Player(Point p);
 };

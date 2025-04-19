@@ -1,4 +1,88 @@
-commit 288d6a1f75cc67f284ff42dbbce0d69c3afbce59 (HEAD -> main, origin/main)
+commit 6ac0d8e8acd2793ec850c78347728dc307782149 (HEAD -> main, origin/main)
+Author: Alex Young <alexyoung0119@gmail.com>
+Date:   Wed Apr 16 12:50:57 2025 -0500
+
+    fix spawning for monster + objects, add object class, object_desc generate method, object rendering
+
+commit fd704a29803e728c5d89b20f88fecaa052583018
+Author: Alex Young <alexyoung0119@gmail.com>
+Date:   Tue Apr 15 22:18:23 2025 -0500
+
+    add colored enemies
+
+commit ca092ce60eb1f31bbc8022cfb321df5ccd632bc2
+Author: Alex Young <alexyoung0119@gmail.com>
+Date:   Tue Apr 15 21:26:37 2025 -0500
+
+    refactor spawning to use monster descs
+
+commit 89f2202271ed3e8791da135c5d270a523ca8753a
+Author: Alex Young <alexyoung0119@gmail.com>
+Date:   Tue Apr 15 20:44:34 2025 -0500
+
+    create monster_description generate method, alongside constructors for player/monster
+
+commit a61797f7f8630e33070c67d711d903944a37f67e
+Author: Alex Young <alexyoung0119@gmail.com>
+Date:   Tue Apr 15 16:24:47 2025 -0500
+
+    add color init
+
+commit 4c19b1f04d52ed6285c28b77fb28ee47c33b8f62
+Author: Alex Young <alexyoung0119@gmail.com>
+Date:   Tue Apr 15 16:07:54 2025 -0500
+
+    add tostrings for abilities and colors
+
+commit df5a944d3d1546e42aa242ae4ba666dd016db7a8
+Author: Alex Young <alexyoung0119@gmail.com>
+Date:   Tue Apr 15 15:53:53 2025 -0500
+
+    finish refactor of descriptions
+
+commit eae56ef5441d5c78d05b085e10fdeb3232865c11
+Author: Alex Young <alexyoung0119@gmail.com>
+Date:   Tue Apr 15 14:52:02 2025 -0500
+
+    finish object parser
+
+commit 7fec227404db731b2e0603ef083bc0269bca7bb9
+Author: Alex Young <alexyoung0119@gmail.com>
+Date:   Tue Apr 15 13:02:56 2025 -0500
+
+    start refacotr for object desc to setter methods instead of large constructor
+
+commit c421c2c0efe89d9a1e731fbee39305c3d4f6b839
+Author: Alex Young <alexyoung0119@gmail.com>
+Date:   Mon Apr 14 22:57:28 2025 -0500
+
+    add dice from jeremy, refactor descriptiosn to fit both item and monster descs
+
+commit a570decb7f5fbec92132031cadd89e5e06c8bef6
+Author: Alex Young <alexyoung0119@gmail.com>
+Date:   Tue Apr 8 16:53:56 2025 -0500
+
+    add duplicate/missing field protection
+
+commit f5a5ad3086dc3ae90ae428e94aa2ca09083e507a
+Author: Alex Young <alexyoung0119@gmail.com>
+Date:   Tue Apr 8 15:40:23 2025 -0500
+
+    fix description parsing
+
+commit 09a8655e044e5946e39ef96f9c79be5a2ad08e29
+Author: Alex Young <alexyoung0119@gmail.com>
+Date:   Tue Apr 8 09:36:07 2025 -0500
+
+    add basic monster desc class to character header, start parsing function, setup metadata check
+
+commit 238189a6d2149cd08a9f0acbd8d6dfa9b60aae36
+Author: Alex Young <alexyoung0119@gmail.com>
+Date:   Sun Apr 6 20:41:35 2025 -0500
+
+    refactor classes to be capitalized
+
+commit 288d6a1f75cc67f284ff42dbbce0d69c3afbce59
 Author: Alex Young <alexyoung0119@gmail.com>
 Date:   Tue Apr 1 22:06:13 2025 -0500
 

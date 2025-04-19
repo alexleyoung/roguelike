@@ -4,9 +4,15 @@
 
 Player::Player(Point p) {
   // player id always 0
+  this->name = "Player";
+  this->desc = "mc frfr";
+  this->color = WHITE;
+  this->hp = 100;
+  this->dam = Dice(0, 1, 4);
+
   this->id = 0;
-  this->speed = 10;
   this->pos = p;
+  this->speed = 10;
   this->sprite = '@';
   this->alive = 1;
   this->type = PLAYER;

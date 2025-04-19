@@ -370,13 +370,15 @@ int move_to(Dungeon *d, Character *c, point p) {
     d->player_pos = p;
     calc_dists(d, d->dists, d->player_pos, 0);
     calc_dists(d, d->tunnel_dists, d->player_pos, 1);
-
-    update_player_vision(d, pl);
   }
 
   d->character_map[c->pos.r][c->pos.c] = NULL;
   d->character_map[p.r][p.c] = c;
   c->pos = p;
+
+  if (pl) {
+    update_player_vision(d, pl);
+  }
 
   return 0;
 }
@@ -392,7 +394,6 @@ int update_player_vision(Dungeon *d, Player *p) {
 
       /*p->characters[r][c] = d->character_map[r][c];*/
       p->terrain[r][c] = d->tiles[r][c].sprite;
-      draw_player_dungeon(d, p);
     }
   }
 

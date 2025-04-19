@@ -1,5 +1,14 @@
 Alex Young's coms 3270 roguelike project. Makefile included with comments.
 
+Assignment 1.08 Features:
+- Object Class
+- Monster/Object_Description Refactor
+- Color Support
+- General Fixes
+
+Assignment 1.07 Features:
+- Monster Description Parsing
+
 Assignment 1.06 Features:
 - migrate to C++
 - fog of war w/ toggle
