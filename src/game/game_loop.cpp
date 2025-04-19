@@ -73,7 +73,7 @@ int start_game(game *g) {
       }
 
       input = getch();
-      int res = move_player(&g->maps[g->current_map], e.character, input);
+      int res = move_player(&g->maps[g->current_map], p, input);
 
       if (res == PLAYER_MOVE_QUIT) { // quit game
         return 0;

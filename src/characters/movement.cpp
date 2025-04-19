@@ -1,8 +1,8 @@
-#include "character.hpp"
-#include "types.hpp"
-#include "ui.hpp"
-#include <cstring>
+#include <character.hpp>
+#include <interact.hpp>
 #include <movement.hpp>
+#include <types.hpp>
+#include <ui.hpp>
 
 #define ATTRIBUTE_INTELLIGENT 0x1
 #define ATTRIBUTE_TELEPATHIC 0x2
@@ -17,7 +17,7 @@ int check_vertical(Dungeon *d, Character *c);
 
 bool teleport = false;
 
-int move_player(Dungeon *d, Character *c, int move) {
+int move_player(Dungeon *d, Player *c, int move) {
   point p;
 
   switch (move) {
@@ -137,50 +137,6 @@ int move_player(Dungeon *d, Character *c, int move) {
       return PLAYER_MOVE_INVALID;
     }
     return PLAYER_MOVE_STAIR;
-
-  //// actions
-  // drop item
-  case 'd':
-    draw_message("drop item");
-    return PLAYER_MOVE_ACTION;
-  // take off item
-  case 't':
-    draw_message("take off item");
-    return PLAYER_MOVE_ACTION;
-  // wear item
-  case 'w':
-    draw_message("wear item");
-    return PLAYER_MOVE_ACTION;
-  // expunge item
-  case 'x':
-    draw_message("expunge item");
-    return PLAYER_MOVE_ACTION;
-  // display equipment
-  case 'e':
-    draw_message("display equipment");
-    return PLAYER_MOVE_MENU;
-  // display inv
-  case 'i':
-    draw_message("display inventory");
-    return PLAYER_MOVE_MENU;
-  // inspect item
-  case 'E':
-    draw_message("inspect item");
-    return PLAYER_MOVE_MENU;
-  // Player info
-  case 'c':
-    draw_message("Character info");
-    return PLAYER_MOVE_MENU;
-  // Monster list
-  case 'm':
-    draw_monster_list(d, c);
-    return PLAYER_MOVE_MENU;
-
-  //// debug
-  // toggle fow
-  case 'f':
-    return PLAYER_TOGGLE_FOG;
-    break;
   // tp (goto)
   case 'g':
     draw_message("teleport");
@@ -189,36 +145,9 @@ int move_player(Dungeon *d, Character *c, int move) {
     move_to(d, c, p);
     teleport = false;
     return PLAYER_MOVE_ACTION;
-  // default terrain map
-  case 's':
-    draw_message("terrain map");
-    return PLAYER_MOVE_MENU;
-  // hardness map
-  case 'H':
-    draw_message("hardness map");
-    return PLAYER_MOVE_MENU;
-  // non-tunneling dist map
-  case 'D':
-    draw_message("non-tunneling dist map");
-    return PLAYER_MOVE_MENU;
-  // tunneling dist map
-  case 'T':
-    draw_message("tunneling dist map");
-    return PLAYER_MOVE_MENU;
-  // look Monster
-  case 'L':
-    draw_message("look Monster");
-    return PLAYER_MOVE_MENU;
-
-  //// quit game
-  case 'Q':
-    draw_message("Quitting game...");
-    refresh();
-    return PLAYER_MOVE_QUIT;
 
   default:
-    draw_message("Invalid key press: %c", move);
-    return PLAYER_MOVE_INVALID;
+    return interact(d, c, move);
   };
 
   return 0;
