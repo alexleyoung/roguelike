@@ -1,5 +1,5 @@
 #include "character.hpp"
-#include "types.hpp"
+#include <ncurses.h>
 #include <ui.hpp>
 
 // helpers
@@ -107,7 +107,7 @@ void draw_message(const char *fmt, ...) {
   va_list args;
   va_start(args, fmt);
 
-  move(0, 0);
+  move(STATUS_LINE, 0);
   clrtoeol();
   vw_printw(stdscr, fmt, args);
 
@@ -157,7 +157,7 @@ void draw_monster_list(Dungeon *d, Character *c) {
     if (inp == KEY_UP && page > 1) {
       draw_monster_page(monsters, num_monsters, --page, pages, c);
     }
-  } while ((inp = getch()) != 27); // 27 = esc
+  } while ((inp = getch()) != KEY_ESC); // 27 = esc
 
   free(monsters);
 }
@@ -310,4 +310,40 @@ void draw_monster_page(Character **monsters, int num_monsters, int page,
   }
 
   mvprintw(23, 0, "Page %d/%d", page, pages);
+}
+
+void draw_carry_items(Player *p) {
+  int menu_width = 50; // 50 arbitrary menu width
+  char horizontal_border_char = ' ';
+  char vertical_border_char = ' ';
+
+  int start_line = (DUNGEON_HEIGHT - NUM_CARRY_SLOTS) / 2 + DUNGEON_TOP;
+  int start_col = (SCREEN_WIDTH - menu_width) / 2;
+
+  std::string spaces(menu_width, ' ');
+  std::string horizontal_border(menu_width, horizontal_border_char);
+
+  int i;
+  for (i = 0; i < NUM_CARRY_SLOTS; i++) {
+    // draw vertical borders
+    mvaddch(start_line + i, start_col - 1, vertical_border_char);
+    mvaddch(start_line + i, start_col + menu_width, vertical_border_char);
+
+    // get item info and print slot
+    const char *item_name;
+    p->carry[i] ? item_name = p->carry[i]->name.c_str() : item_name = "";
+    mvprintw(start_line + i, start_col, spaces.c_str());
+    mvprintw(start_line + i, start_col, "slot %d: %s", i, item_name);
+  }
+
+  // draw horizontal border
+  mvprintw(start_line - 1, start_col, "%s", horizontal_border.c_str());
+  mvprintw(start_line + NUM_CARRY_SLOTS, start_col, "%s",
+           horizontal_border.c_str());
+  // fill corners
+  mvaddch(start_line - 1, start_col - 1, horizontal_border_char);
+  mvaddch(start_line - 1, start_col + menu_width, horizontal_border_char);
+  mvaddch(start_line + NUM_CARRY_SLOTS, start_col - 1, horizontal_border_char);
+  mvaddch(start_line + NUM_CARRY_SLOTS, start_col + menu_width,
+          horizontal_border_char);
 }

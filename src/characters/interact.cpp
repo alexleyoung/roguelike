@@ -3,37 +3,17 @@
 #include <movement.hpp>
 #include <ui.hpp>
 
+static PLAYER_ACTION pickup_item(Dungeon *d, Player *p);
+static PLAYER_ACTION drop_item(Dungeon *d, Player *p);
+
 int interact(Dungeon *d, Player *p, int move) {
   //// actions
   // drop item
   switch (move) {
   case ',':
-    if (!d->object_map[p->pos.r][p->pos.c]) {
-      draw_message("No item to pickup!");
-      return PLAYER_MOVE_INVALID;
-    }
-
-    // try to find open carry slot
-    int i;
-    for (i = 0; p->carry[i]; i++) {
-    }
-
-    // Check if carry inventory full
-    if (i == NUM_CARRY_SLOTS) {
-      draw_message("Can't carry anymore items!");
-      return PLAYER_MOVE_INVALID;
-    }
-
-    // Put item in carry slot and remove from map
-    draw_message("Picked up %s",
-                 d->object_map[p->pos.r][p->pos.c]->name.c_str());
-    p->carry[i] = d->object_map[p->pos.r][p->pos.c];
-    d->object_map[p->pos.r][p->pos.c] = NULL;
-
-    return PLAYER_MOVE_ACTION;
+    return pickup_item(d, p);
   case 'd':
-    draw_message("drop item");
-    return PLAYER_MOVE_ACTION;
+    return drop_item(d, p);
   // take off item
   case 't':
     draw_message("take off item");
@@ -105,4 +85,61 @@ int interact(Dungeon *d, Player *p, int move) {
   }
 
   return PLAYER_MOVE_INVALID;
+}
+
+PLAYER_ACTION pickup_item(Dungeon *d, Player *p) {
+  if (!d->object_map[p->pos.r][p->pos.c]) {
+    draw_message("No item to pickup!");
+    return PLAYER_MOVE_INVALID;
+  }
+
+  // try to find open carry slot
+  int i;
+  for (i = 0; p->carry[i]; i++) {
+  }
+
+  // Check if carry inventory full
+  if (i == NUM_CARRY_SLOTS) {
+    draw_message("Can't carry anymore items!");
+    return PLAYER_MOVE_INVALID;
+  }
+
+  // Put item in carry slot and remove from map
+  p->carry[i] = d->object_map[p->pos.r][p->pos.c];
+  draw_message("Picked up %s", d->object_map[p->pos.r][p->pos.c]->name.c_str());
+  d->object_map[p->pos.r][p->pos.c] = NULL;
+  return PLAYER_MOVE_ACTION;
+}
+
+PLAYER_ACTION drop_item(Dungeon *d, Player *p) {
+  Point ppos = p->pos;
+  if (d->object_map[ppos.r][ppos.c]) {
+    // TODO: add stacks in the future
+    draw_message("Can't drop item on another item!");
+    return PLAYER_MOVE_INVALID;
+  }
+
+  // prompt player which item
+  int selected;
+  draw_carry_items(p);
+  draw_message("Press (0-9) to drop item");
+  do {
+    selected = getch();
+    if (selected == KEY_ESC || selected == 'q') {
+      return PLAYER_MOVE_ACTION;
+    }
+  } while (selected < '0' || selected > '9');
+  selected = selected - '0';
+
+  // break if dropping no item
+  if (!p->carry[selected]) {
+    draw_message("Dropped nothing. (slot: %d)", selected);
+    return PLAYER_MOVE_INVALID;
+  }
+
+  // put item on map, remove from inventory
+  d->object_map[p->pos.r][p->pos.c] = p->carry[selected];
+  p->carry[selected] = NULL;
+
+  return PLAYER_MOVE_ACTION;
 }

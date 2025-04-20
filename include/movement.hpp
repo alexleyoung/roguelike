@@ -11,7 +11,7 @@
 #include <ui.hpp>
 #include <utils.hpp>
 
-enum {
+enum PLAYER_ACTION {
   PLAYER_MOVE,
   PLAYER_MOVE_ACTION,
   PLAYER_MOVE_INVALID,
