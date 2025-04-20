@@ -1,9 +1,10 @@
-
 #include <cstdlib>
 #include <string>
 
 #include "dice.hpp"
 #include "utils.hpp"
+
+// CREDIT @ JEREMY SHEAFFER
 
 int32_t Dice::roll(void) const {
   int32_t total;

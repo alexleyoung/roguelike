@@ -1,3 +1,4 @@
+#include "utils.hpp"
 #include <fstream>
 #include <iostream>
 #include <ostream>
@@ -223,11 +224,40 @@ bool Monster_Description::is_unique() {
 }
 
 Monster *Monster_Description::generate(int id) {
-  int abilities;
+  int abilities = 0;
 
   for (int i = 0; i < NUM_ABILITIES; i++) {
-    if (abil[i] != INVALID_ABILITY)
-      abilities = abilities | abil[i];
+    switch (abil[i]) {
+    case SMART:
+      abilities = abilities | ATTRIBUTE_INTELLIGENT;
+      break;
+    case TELE:
+      abilities = abilities | ATTRIBUTE_TELEPATHIC;
+      break;
+    case TUNNEL:
+      abilities = abilities | ATTRIBUTE_TUNNELING;
+      break;
+    case ERRATIC:
+      abilities = abilities | ATTRIBUTE_ERRATIC;
+      break;
+    case PASS:
+      abilities = abilities | ATTRIBUTE_PASS;
+      break;
+    case PICKUP:
+      abilities = abilities | ATTRIBUTE_PICKUP;
+      break;
+    case DESTROY:
+      abilities = abilities | ATTRIBUTE_DESTROY;
+      break;
+    case UNIQ:
+      abilities = abilities | ATTRIBUTE_UNIQ;
+      break;
+    case BOSS:
+      abilities = abilities | ATTRIBUTE_BOSS;
+      break;
+    case INVALID_ABILITY:
+      break;
+    }
   }
   return new Monster(id, name, desc, color[0], speed.roll(), abilities,
                      hp.roll(), dam, symb, rrty);

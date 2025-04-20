@@ -585,6 +585,25 @@ void draw_object_info(Object *item) {
   mvprintw(i++, 0, ("rrty: " + std::to_string(item->rrty)).c_str());
 }
 
+void draw_player_info(Player *p) {
+  clear();
+  refresh();
+
+  int i = 1;
+  mvprintw(i++, 0, ("name: " + p->name).c_str());
+  std::stringstream ss(p->desc);
+  std::string line;
+  for (; std::getline(ss, line); i++) {
+    if (line == "")
+      continue;
+    if (i == 2)
+      mvprintw(i, 0, ("desc: " + line).c_str());
+    else
+      mvprintw(i, 0, line.c_str());
+  }
+  mvprintw(i++, 0, ("hp: " + std::to_string(p->hp)).c_str());
+}
+
 void draw_monster_info(Monster *monster) {
   clear();
   refresh();

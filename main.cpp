@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <bitset>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -13,6 +14,7 @@
 #include <ncurses.h>
 #include <saves.hpp>
 #include <ui.hpp>
+#include <utils.hpp>
 
 void print_hardness(Dungeon *dungeon);
 void print_dists(Dungeon *dungeon, int dists[DUNGEON_HEIGHT][DUNGEON_WIDTH]);
@@ -83,15 +85,18 @@ int main(int argc, char **argv) {
   /*printf("hardness:\n");*/
   /*print_hardness(dungeon);*/
 
-  start_game(&g);
+  /*start_game(&g);*/
 
-  /*std::vector<Monster_Description> vec =*/
-  /*    load_monster_descriptions("monster_desc.txt");*/
-  /*for (Monster_Description md : vec) {*/
-  /*  md.print_info();*/
-  /*  std::cout << std::endl;*/
-  /*}*/
-  /*load_object_descriptions("object_desc.txt");*/
+  std::vector<Monster_Description> vec =
+      load_monster_descriptions("monster_desc.txt");
+  Monster *m;
+  int i = 0;
+  for (Monster_Description md : vec) {
+    m = md.generate(i++);
+    std::bitset<32> trait_bits(m->traits);
+    std::cout << m->name << std::endl;
+    std::cout << trait_bits << std::endl;
+  }
 
   return 0;
 }

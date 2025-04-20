@@ -1,6 +1,8 @@
 #ifndef DICE_HPP
 #define DICE_HPP
 
+// CREDIT @ JEREMY SHEAFFER
+
 #include <iostream>
 #include <stdint.h>
 

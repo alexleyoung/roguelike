@@ -29,7 +29,7 @@ enum COLOR {
 #define min(x, y) (x < y ? x : y)
 #define CEIL(x, y) (((x) + (y) - 1) / (y))
 #define C_IS(c, attr) (c->traits & ATTRIBUTE_##attr)
-#define abs(x) (x < 0 ? x * -1 : x)
+/*#define abs(x) (x < 0 ? x * -1 : x)*/
 #define rand_range(min, max) ((min) + rand() % ((max) - (min) + 1))
 #define COPY_2D_ARRAY(dest, src, rows, cols)                                   \
   do {                                                                         \

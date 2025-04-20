@@ -361,7 +361,7 @@ int handle_collision(Dungeon *d, Character *atk, Character *def) {
         ? damage += p_atk->equipment[WEAPON_SLOT]->dam.roll()
         : damage += p_atk->dam.roll();
 
-    for (int i = 0; i < NUM_EQUIPMENT_SLOTS; i++) {
+    for (int i = 1 /* SKIP WEP */; i < NUM_EQUIPMENT_SLOTS; i++) {
       if (!p_atk->equipment[i])
         continue;
       damage += p_atk->equipment[i]->dam.roll();
@@ -369,9 +369,7 @@ int handle_collision(Dungeon *d, Character *atk, Character *def) {
 
     m_def->hp -= damage;
     if (m_def->hp <= 0) {
-      if (C_IS(m_def, BOSS)) {
-        // end game
-      }
+      d->character_map[m_def->pos.r][m_def->pos.c] = NULL;
       m_def->alive = 0;
     }
     return 0;

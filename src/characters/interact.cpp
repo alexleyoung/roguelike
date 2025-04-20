@@ -51,7 +51,8 @@ int interact(Dungeon *d, Player *p, int move) {
     return inspect_item(p);
   // Player info
   case 'c':
-    draw_message("Character info");
+    draw_player_info(p);
+    getch();
     return PLAYER_MOVE_MENU;
   // Monster list
   case 'm':

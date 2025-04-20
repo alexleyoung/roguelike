@@ -56,12 +56,21 @@ int start_game(game *g) {
 
     if (!e.character->alive) {
       if (p) {
+        clear();
+        refresh();
         printf("game over. pc died!\n");
         delete p;
         return 0;
       }
 
-      map.character_map[m->pos.r][m->pos.c] = NULL;
+      if (C_IS(m, BOSS)) {
+        clear();
+        refresh();
+        printf("you win!\n");
+        delete m;
+        return 0;
+      }
+
       delete m;
       continue;
     }

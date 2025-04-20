@@ -33,6 +33,7 @@ void draw_look_cursor(Dungeon *d, Player *p, Point *target);
 void draw_inventory(Player *p);
 void draw_equipment(Player *p);
 void draw_object_info(Object *);
+void draw_player_info(Player *);
 void draw_monster_info(Monster *);
 
 #endif
