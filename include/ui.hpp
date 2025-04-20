@@ -29,6 +29,7 @@ void draw_player_dungeon(Dungeon *d, Player *p);
 void draw_message(const char *fmt, ...);
 void draw_monster_list(Dungeon *d, Character *c);
 void draw_player_teleport(Dungeon *d, Player *pl, Point *p);
-void draw_carry_items(Player *p);
+void draw_inventory(Player *p);
+void draw_equipment(Player *p);
 
 #endif

@@ -312,38 +312,119 @@ void draw_monster_page(Character **monsters, int num_monsters, int page,
   mvprintw(23, 0, "Page %d/%d", page, pages);
 }
 
-void draw_carry_items(Player *p) {
-  int menu_width = 50; // 50 arbitrary menu width
+void draw_inventory(Player *p) {
+  int menu_width = 30; // 50 arbitrary menu width
   char horizontal_border_char = ' ';
   char vertical_border_char = ' ';
 
-  int start_line = (DUNGEON_HEIGHT - NUM_CARRY_SLOTS) / 2 + DUNGEON_TOP;
+  int start_line = (DUNGEON_HEIGHT - NUM_INVENTORY_SLOTS) / 2 + DUNGEON_TOP;
   int start_col = (SCREEN_WIDTH - menu_width) / 2;
 
   std::string spaces(menu_width, ' ');
   std::string horizontal_border(menu_width, horizontal_border_char);
 
   int i;
-  for (i = 0; i < NUM_CARRY_SLOTS; i++) {
+  for (i = 0; i < NUM_INVENTORY_SLOTS; i++) {
     // draw vertical borders
     mvaddch(start_line + i, start_col - 1, vertical_border_char);
     mvaddch(start_line + i, start_col + menu_width, vertical_border_char);
 
     // get item info and print slot
     const char *item_name;
-    p->carry[i] ? item_name = p->carry[i]->name.c_str() : item_name = "";
+    p->inventory[i] ? item_name = p->inventory[i]->name.c_str()
+                    : item_name = "";
     mvprintw(start_line + i, start_col, spaces.c_str());
     mvprintw(start_line + i, start_col, "slot %d: %s", i, item_name);
   }
 
   // draw horizontal border
   mvprintw(start_line - 1, start_col, "%s", horizontal_border.c_str());
-  mvprintw(start_line + NUM_CARRY_SLOTS, start_col, "%s",
+  mvprintw(start_line + NUM_INVENTORY_SLOTS, start_col, "%s",
            horizontal_border.c_str());
   // fill corners
   mvaddch(start_line - 1, start_col - 1, horizontal_border_char);
   mvaddch(start_line - 1, start_col + menu_width, horizontal_border_char);
-  mvaddch(start_line + NUM_CARRY_SLOTS, start_col - 1, horizontal_border_char);
-  mvaddch(start_line + NUM_CARRY_SLOTS, start_col + menu_width,
+  mvaddch(start_line + NUM_INVENTORY_SLOTS, start_col - 1,
+          horizontal_border_char);
+  mvaddch(start_line + NUM_INVENTORY_SLOTS, start_col + menu_width,
+          horizontal_border_char);
+}
+
+void draw_equipment(Player *p) {
+  int menu_width = 30; // 50 arbitrary menu width
+  char horizontal_border_char = ' ';
+  char vertical_border_char = ' ';
+
+  int start_line = (DUNGEON_HEIGHT - NUM_EQUIPMENT_SLOTS) / 2 + DUNGEON_TOP;
+  int start_col = (SCREEN_WIDTH - menu_width) / 2;
+
+  std::string spaces(menu_width, ' ');
+  std::string horizontal_border(menu_width, horizontal_border_char);
+
+  int i;
+  for (i = 0; i < NUM_EQUIPMENT_SLOTS; i++) {
+    // draw vertical borders
+    mvaddch(start_line + i, start_col - 1, vertical_border_char);
+    mvaddch(start_line + i, start_col + menu_width, vertical_border_char);
+
+    // get slot and item info
+    const char *item_name;
+    const char *slot_name;
+    p->equipment[i] ? item_name = p->equipment[i]->name.c_str()
+                    : item_name = "";
+    switch (i) {
+    case WEAPON_SLOT:
+      slot_name = "weapon (a)";
+      break;
+    case OFFHAND_SLOT:
+      slot_name = "offhand (b)";
+      break;
+    case RANGED_SLOT:
+      slot_name = "ranged (c)";
+      break;
+    case ARMOR_SLOT:
+      slot_name = "armor (d)";
+      break;
+    case HELMET_SLOT:
+      slot_name = "helmet (e)";
+      break;
+    case CLOAK_SLOT:
+      slot_name = "cloak (f)";
+      break;
+    case GLOVES_SLOT:
+      slot_name = "gloves (g)";
+      break;
+    case BOOTS_SLOT:
+      slot_name = "boots (h)";
+      break;
+    case AMULET_SLOT:
+      slot_name = "amulet (i)";
+      break;
+    case LIGHT_SLOT:
+      slot_name = "light (j)";
+      break;
+    case RING1_SLOT:
+      slot_name = "ring1 (k)";
+      break;
+    case RING2_SLOT:
+      slot_name = "ring2 (l)";
+      break;
+    }
+
+    // print slot and item
+    mvprintw(start_line + i, start_col, spaces.c_str());
+    mvprintw(start_line + i, start_col, "%s: %s", slot_name, item_name);
+  }
+
+  // draw horizontal border
+  mvprintw(start_line - 1, start_col, "%s", horizontal_border.c_str());
+  mvprintw(start_line + NUM_EQUIPMENT_SLOTS, start_col, "%s",
+           horizontal_border.c_str());
+  // fill corners
+  mvaddch(start_line - 1, start_col - 1, horizontal_border_char);
+  mvaddch(start_line - 1, start_col + menu_width, horizontal_border_char);
+  mvaddch(start_line + NUM_EQUIPMENT_SLOTS, start_col - 1,
+          horizontal_border_char);
+  mvaddch(start_line + NUM_EQUIPMENT_SLOTS, start_col + menu_width,
           horizontal_border_char);
 }

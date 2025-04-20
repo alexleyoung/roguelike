@@ -10,7 +10,7 @@
 
 class Monster_Description;
 
-#define NUM_CARRY_SLOTS 10
+#define NUM_INVENTORY_SLOTS 10
 
 #define NUM_ABILITIES 9
 enum ABILITY {
@@ -34,11 +34,11 @@ enum EQUIPMENT_SLOTS {
   OFFHAND_SLOT,
   RANGED_SLOT,
   ARMOR_SLOT,
-  HELEMET_SLOT,
+  HELMET_SLOT,
   CLOAK_SLOT,
   GLOVES_SLOT,
   BOOTS_SLOT,
-  AMUELT_SLOT,
+  AMULET_SLOT,
   LIGHT_SLOT,
   RING1_SLOT,
   RING2_SLOT
@@ -68,7 +68,7 @@ public:
   Character *characters[DUNGEON_HEIGHT][DUNGEON_WIDTH] = {};
 
   Object *equipment[NUM_EQUIPMENT_SLOTS] = {};
-  Object *carry[NUM_CARRY_SLOTS] = {};
+  Object *inventory[NUM_INVENTORY_SLOTS] = {};
 
   Player(Point p);
 };
