@@ -118,5 +118,8 @@ public:
 
 std::vector<Monster_Description> load_monster_descriptions(const char *);
 std::vector<Object_Description> load_object_descriptions(const char *);
+const char *to_string(COLOR c);
+const char *to_string(OBJECT_TYPE c);
+const char *to_string(ABILITY c);
 
 #endif

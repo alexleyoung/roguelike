@@ -26,6 +26,7 @@ public:
   inline int32_t get_base() const { return base; }
   inline int32_t get_number() const { return number; }
   inline int32_t get_sides() const { return sides; }
+  std::string to_string();
 };
 
 std::ostream &operator<<(std::ostream &o, Dice &d);

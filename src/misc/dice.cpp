@@ -1,5 +1,6 @@
 
 #include <cstdlib>
+#include <string>
 
 #include "dice.hpp"
 #include "utils.hpp"
@@ -17,6 +18,11 @@ int32_t Dice::roll(void) const {
   }
 
   return total;
+}
+
+std::string Dice::to_string() {
+  return std::to_string(base) + "+" + std::to_string(number) + "d" +
+         std::to_string(sides);
 }
 
 std::ostream &Dice::print(std::ostream &o) {

@@ -1,7 +1,11 @@
-#include "object.hpp"
+#include <ncurses.h>
+#include <sstream>
+
 #include <character.hpp>
+#include <descriptions.hpp>
 #include <dungeon.hpp>
 #include <movement.hpp>
+#include <object.hpp>
 #include <ui.hpp>
 
 #define SELECT_FAIL -1
@@ -13,6 +17,7 @@ static PLAYER_ACTION drop_item(Dungeon *d, Player *p);
 static PLAYER_ACTION take_off_item(Player *p);
 static PLAYER_ACTION wear_item(Player *p);
 static PLAYER_ACTION expunge_item(Player *p);
+static PLAYER_ACTION inspect_item(Player *p);
 
 int interact(Dungeon *d, Player *p, int move) {
   //// actions
@@ -42,9 +47,8 @@ int interact(Dungeon *d, Player *p, int move) {
     getch();
     return PLAYER_MOVE_MENU;
   // inspect item
-  case 'E':
-    draw_message("inspect item");
-    return PLAYER_MOVE_MENU;
+  case 'I':
+    return inspect_item(p);
   // Player info
   case 'c':
     draw_message("Character info");
@@ -276,4 +280,41 @@ PLAYER_ACTION expunge_item(Player *p) {
   p->inventory[selected] = NULL;
 
   return PLAYER_MOVE_ACTION;
+}
+
+PLAYER_ACTION inspect_item(Player *p) {
+  int selected = select_item(p);
+  if (selected == SELECT_FAIL || !p->inventory[selected])
+    return PLAYER_MOVE_INVALID;
+
+  clear();
+  refresh();
+  Object *item = p->inventory[selected];
+
+  int i = 0;
+  mvprintw(i++, 0, ("name: " + item->name).c_str());
+  std::stringstream ss(item->desc);
+  std::string line;
+  for (; std::getline(ss, line); i++) {
+    if (line == "")
+      continue;
+    if (i == 1)
+      mvprintw(i, 0, ("desc: " + line).c_str());
+    else
+      mvprintw(i, 0, line.c_str());
+  }
+  mvprintw(i++, 0, ("type: " + std::string(to_string(item->type))).c_str());
+  mvprintw(i++, 0, ("dam: " + item->dam.to_string()).c_str());
+  mvprintw(i++, 0, ("dodge: " + std::to_string(item->dodge)).c_str());
+  mvprintw(i++, 0, ("def: " + std::to_string(item->def)).c_str());
+  mvprintw(i++, 0, ("weight: " + std::to_string(item->weight)).c_str());
+  mvprintw(i++, 0, ("speed: " + std::to_string(item->speed)).c_str());
+  mvprintw(i++, 0, ("val: " + std::to_string(item->val)).c_str());
+  item->art ? line = "false" : line = "true";
+  mvprintw(i++, 0, ("art: " + line).c_str());
+  mvprintw(i++, 0, ("rrty: " + std::to_string(item->rrty)).c_str());
+
+  int action = getch();
+
+  return PLAYER_MOVE_MENU;
 }
