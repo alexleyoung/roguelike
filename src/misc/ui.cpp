@@ -1,4 +1,7 @@
-#include "character.hpp"
+#include <sstream>
+
+#include <character.hpp>
+#include <descriptions.hpp>
 #include <ncurses.h>
 #include <ui.hpp>
 
@@ -278,6 +281,121 @@ void draw_player_teleport(Dungeon *d, Player *p, Point *target) {
   }
 }
 
+void draw_look_cursor(Dungeon *d, Player *p, Point *target) {
+  point old = p->pos;
+  *target = p->pos;
+
+  while (true) {
+    switch (getch()) {
+    //// movement
+    // up left
+    case KEY_HOME:
+    case '7':
+    case 'y':
+      old = *target;
+      target->r = target->r - 1;
+      target->c = target->c - 1;
+      if (!IN_BOUNDS(target->r, target->c)) {
+        draw_message("Can't move out of bounds!");
+        *target = old;
+      }
+      break;
+    // up
+    case KEY_UP:
+    case '8':
+    case 'k':
+      old = *target;
+      target->r = target->r - 1;
+      if (!IN_BOUNDS(target->r, target->c)) {
+        draw_message("Can't move out of bounds!");
+        *target = old;
+      }
+      break;
+    // up right
+    case KEY_PPAGE:
+    case '9':
+    case 'u':
+      old = *target;
+      target->r = target->r - 1;
+      target->c = target->c + 1;
+      if (!IN_BOUNDS(target->r, target->c)) {
+        draw_message("Can't move out of bounds!");
+        *target = old;
+      }
+      break;
+    // right
+    case KEY_RIGHT:
+    case '6':
+    case 'l':
+      old = *target;
+      target->c = target->c + 1;
+      if (!IN_BOUNDS(target->r, target->c)) {
+        draw_message("Can't move out of bounds!");
+        *target = old;
+      }
+      break;
+    // down right
+    case KEY_NPAGE:
+    case '3':
+    case 'n':
+      old = *target;
+      target->r = target->r + 1;
+      target->c = target->c + 1;
+      if (!IN_BOUNDS(target->r, target->c)) {
+        draw_message("Can't move out of bounds!");
+        *target = old;
+      }
+      break;
+    // down
+    case KEY_DOWN:
+    case '2':
+    case 'j':
+      old = *target;
+      target->r = target->r + 1;
+      if (!IN_BOUNDS(target->r, target->c)) {
+        draw_message("Can't move out of bounds!");
+        *target = old;
+      }
+      break;
+    // down left
+    case KEY_END:
+    case '1':
+    case 'b':
+      old = *target;
+      target->r = target->r + 1;
+      target->c = target->c - 1;
+      if (!IN_BOUNDS(target->r, target->c)) {
+        draw_message("Can't move out of bounds!");
+        *target = old;
+      }
+      break;
+    // left
+    case KEY_LEFT:
+    case '4':
+    case 'h':
+      old = *target;
+      target->c = target->c - 1;
+      if (!IN_BOUNDS(target->r, target->c)) {
+        draw_message("Can't move out of bounds!");
+        *target = old;
+      }
+      break;
+    // quit
+    case KEY_ESC:
+      target->r = 0;
+      target->c = 0;
+      return;
+    // select r
+    case 't':
+      return;
+    }
+    char old_sprite = d->character_map[old.r][old.c]
+                          ? d->character_map[old.r][old.c]->sprite
+                          : d->tiles[old.r][old.c].sprite;
+    mvprintw(old.r + 1, old.c, "%c", old_sprite);
+    mvprintw(target->r + 1, target->c, "%c", '*');
+  }
+}
 // helper to draw single formatted monster line
 void draw_formatted_monster_line(int line, Character *p, Character *m) {
   // print formatted info: sprite   d:rr d:cc
@@ -427,4 +545,55 @@ void draw_equipment(Player *p) {
           horizontal_border_char);
   mvaddch(start_line + NUM_EQUIPMENT_SLOTS, start_col + menu_width,
           horizontal_border_char);
+}
+
+void draw_object_info(Object *item) {
+  clear();
+  refresh();
+
+  int i = 1;
+  mvprintw(i++, 0, ("name: " + item->name).c_str());
+  std::stringstream ss(item->desc);
+  std::string line;
+  for (; std::getline(ss, line); i++) {
+    if (line == "")
+      continue;
+    if (i == 2)
+      mvprintw(i, 0, ("desc: " + line).c_str());
+    else
+      mvprintw(i, 0, line.c_str());
+  }
+  mvprintw(i++, 0, ("type: " + std::string(to_string(item->type))).c_str());
+  mvprintw(i++, 0, ("dam: " + item->dam.to_string()).c_str());
+  mvprintw(i++, 0, ("dodge: " + std::to_string(item->dodge)).c_str());
+  mvprintw(i++, 0, ("def: " + std::to_string(item->def)).c_str());
+  mvprintw(i++, 0, ("weight: " + std::to_string(item->weight)).c_str());
+  mvprintw(i++, 0, ("speed: " + std::to_string(item->speed)).c_str());
+  mvprintw(i++, 0, ("val: " + std::to_string(item->val)).c_str());
+  item->art ? line = "false" : line = "true";
+  mvprintw(i++, 0, ("art: " + line).c_str());
+  mvprintw(i++, 0, ("rrty: " + std::to_string(item->rrty)).c_str());
+}
+
+void draw_monster_info(Monster *monster) {
+  clear();
+  refresh();
+
+  int i = 1;
+  mvprintw(i++, 0, ("name: " + monster->name).c_str());
+  std::stringstream ss(monster->desc);
+  std::string line;
+  for (; std::getline(ss, line); i++) {
+    if (line == "")
+      continue;
+    if (i == 2)
+      mvprintw(i, 0, ("desc: " + line).c_str());
+    else
+      mvprintw(i, 0, line.c_str());
+  }
+  mvprintw(i++, 0, ("hp: " + std::to_string(monster->hp)).c_str());
+  mvprintw(i++, 0, ("dam: " + monster->dam.to_string()).c_str());
+  mvprintw(i++, 0, ("speed: " + std::to_string(monster->speed)).c_str());
+  mvprintw(i++, 0, ("rrty: " + std::to_string(monster->rrty)).c_str());
+  mvprintw(i++, 0, ("speed: " + std::to_string(monster->speed)).c_str());
 }

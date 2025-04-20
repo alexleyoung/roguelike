@@ -1,5 +1,4 @@
 #include <ncurses.h>
-#include <sstream>
 
 #include <character.hpp>
 #include <descriptions.hpp>
@@ -18,6 +17,7 @@ static PLAYER_ACTION take_off_item(Player *p);
 static PLAYER_ACTION wear_item(Player *p);
 static PLAYER_ACTION expunge_item(Player *p);
 static PLAYER_ACTION inspect_item(Player *p);
+static PLAYER_ACTION look_monster(Dungeon *d, Player *p);
 
 int interact(Dungeon *d, Player *p, int move) {
   //// actions
@@ -57,6 +57,9 @@ int interact(Dungeon *d, Player *p, int move) {
   case 'm':
     draw_monster_list(d, p);
     return PLAYER_MOVE_MENU;
+  // look Monster
+  case 'L':
+    return look_monster(d, p);
 
   //// debug
   // toggle fow
@@ -78,10 +81,6 @@ int interact(Dungeon *d, Player *p, int move) {
   // tunneling dist map
   case 'T':
     draw_message("tunneling dist map");
-    return PLAYER_MOVE_MENU;
-  // look Monster
-  case 'L':
-    draw_message("look Monster");
     return PLAYER_MOVE_MENU;
 
   //// quit game
@@ -287,32 +286,25 @@ PLAYER_ACTION inspect_item(Player *p) {
   if (selected == SELECT_FAIL || !p->inventory[selected])
     return PLAYER_MOVE_INVALID;
 
-  clear();
-  refresh();
-  Object *item = p->inventory[selected];
+  draw_object_info(p->inventory[selected]);
 
-  int i = 0;
-  mvprintw(i++, 0, ("name: " + item->name).c_str());
-  std::stringstream ss(item->desc);
-  std::string line;
-  for (; std::getline(ss, line); i++) {
-    if (line == "")
-      continue;
-    if (i == 1)
-      mvprintw(i, 0, ("desc: " + line).c_str());
-    else
-      mvprintw(i, 0, line.c_str());
-  }
-  mvprintw(i++, 0, ("type: " + std::string(to_string(item->type))).c_str());
-  mvprintw(i++, 0, ("dam: " + item->dam.to_string()).c_str());
-  mvprintw(i++, 0, ("dodge: " + std::to_string(item->dodge)).c_str());
-  mvprintw(i++, 0, ("def: " + std::to_string(item->def)).c_str());
-  mvprintw(i++, 0, ("weight: " + std::to_string(item->weight)).c_str());
-  mvprintw(i++, 0, ("speed: " + std::to_string(item->speed)).c_str());
-  mvprintw(i++, 0, ("val: " + std::to_string(item->val)).c_str());
-  item->art ? line = "false" : line = "true";
-  mvprintw(i++, 0, ("art: " + line).c_str());
-  mvprintw(i++, 0, ("rrty: " + std::to_string(item->rrty)).c_str());
+  int action = getch();
+
+  return PLAYER_MOVE_MENU;
+}
+
+PLAYER_ACTION look_monster(Dungeon *d, Player *p) {
+  draw_message("Move cursor to monster and press (t) to inspect");
+
+  Point target = p->pos;
+  draw_look_cursor(d, p, &target);
+
+  Character *c = d->character_map[target.r][target.c];
+  if (!c || !(c->type == MONSTER))
+    return PLAYER_MOVE_INVALID;
+  Monster *m = static_cast<Monster *>(c);
+
+  draw_monster_info(m);
 
   int action = getch();
 
