@@ -9,6 +9,7 @@
 void draw_formatted_monster_line(int offset, Character *p, Character *m);
 void draw_monster_page(Character **monsters, int num_monsters, int page,
                        int pages, Character *p);
+void draw_hud(Dungeon *, Player *);
 
 void ui_init() {
   // init ncurses and clear
@@ -76,7 +77,7 @@ void draw_player_dungeon(Dungeon *d, Player *p) {
   int r, c;
   for (r = 0; r < DUNGEON_HEIGHT; r++) {
     for (c = 0; c < DUNGEON_WIDTH; c++) {
-      if (!p->terrain[r][c]) {
+      if (!d->player_map[r][c]) {
         mvaddch(r + 1, c, ' ');
         continue;
       }
@@ -98,6 +99,15 @@ void draw_player_dungeon(Dungeon *d, Player *p) {
       }
     }
   }
+
+  draw_hud(d, p);
+}
+
+void draw_hud(Dungeon *d, Player *p) {
+  move(INFO_START, 0);
+  clrtoeol();
+
+  mvprintw(INFO_START, 0, "HP: %d", p->hp);
 }
 
 /*

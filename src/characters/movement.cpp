@@ -3,17 +3,19 @@
 #include <movement.hpp>
 #include <types.hpp>
 #include <ui.hpp>
+#include <utils.hpp>
 
 #define ATTRIBUTE_INTELLIGENT 0x1
 #define ATTRIBUTE_TELEPATHIC 0x2
 #define ATTRIBUTE_TUNNELING 0x4
 #define ATTRIBUTE_ERRATIC 0x8
 
-int move_random(Dungeon *d, Character *c);
-int move_to(Dungeon *d, Character *c, point p);
-int check_los(Dungeon *d, Character *c);
-int check_horizontal(Dungeon *d, Character *c);
-int check_vertical(Dungeon *d, Character *c);
+static int move_random(Dungeon *d, Character *c);
+static int move_to(Dungeon *d, Character *c, point p);
+static int check_los(Dungeon *d, Character *c);
+static int check_horizontal(Dungeon *d, Character *c);
+static int check_vertical(Dungeon *d, Character *c);
+static int handle_collision(Dungeon *d, Character *atk, Character *def);
 
 bool teleport = false;
 
@@ -285,13 +287,9 @@ int move_to(Dungeon *d, Character *c, point p) {
   }
 
   // check collision
-  if (d->character_map[p.r][p.c]) {
-    // if Player killed, end game
-    if (d->character_map[p.r][p.c]->type == PLAYER)
-      return 1;
-
-    d->character_map[p.r][p.c]->alive = 0;
-    d->character_map[p.r][p.c] = NULL;
+  if (d->character_map[p.r][p.c] && d->character_map[p.r][p.c]->alive) {
+    handle_collision(d, c, d->character_map[p.r][p.c]);
+    return 0;
   }
 
   // if Player, update Dungeon and vision
@@ -305,28 +303,111 @@ int move_to(Dungeon *d, Character *c, point p) {
   d->character_map[p.r][p.c] = c;
   c->pos = p;
 
-  if (pl) {
+  if (pl)
     update_player_vision(d, pl);
-  }
 
   return 0;
 }
 
 int update_player_vision(Dungeon *d, Player *p) {
-  /*memset(p->characters, 0,*/
-  /*       sizeof(*p->characters) * DUNGEON_HEIGHT * DUNGEON_WIDTH);*/
-
   for (int r = p->pos.r - 2; r <= p->pos.r + 2; r++) {
     for (int c = p->pos.c - 2; c <= p->pos.c + 2; c++) {
       if (!IN_BOUNDS(r, c) || (r == p->pos.r && c == p->pos.c))
         continue;
 
-      /*p->characters[r][c] = d->character_map[r][c];*/
-      p->terrain[r][c] = d->tiles[r][c].sprite;
+      d->player_map[r][c] = d->tiles[r][c].sprite;
     }
   }
 
   return 0;
+}
+
+int handle_collision(Dungeon *d, Character *atk, Character *def) {
+  // both monsters -> no attack
+  if (atk->type == def->type) {
+    for (int r = def->pos.r - 1; r <= def->pos.r + 1; r++) {
+      for (int c = def->pos.c - 1; r <= def->pos.c + 1; c++) {
+        if (r == def->pos.r && c == def->pos.c)
+          continue;
+
+        if (!d->character_map[r][c]) {
+          d->character_map[atk->pos.r][atk->pos.c] = NULL;
+          d->character_map[r][c] = atk;
+          atk->pos.r = r;
+          atk->pos.c = c;
+          return 0;
+        }
+      }
+    }
+    // no available spot, swap
+    Character *tmp = atk;
+    d->character_map[def->pos.r][def->pos.c] = atk;
+    atk->pos.r = def->pos.r;
+    atk->pos.c = def->pos.c;
+    d->character_map[tmp->pos.r][tmp->pos.c] = def;
+    def->pos.r = tmp->pos.r;
+    def->pos.c = tmp->pos.c;
+    return 0;
+  }
+
+  // player offensive combat
+  if (atk->type == PLAYER) {
+    Player *p_atk = static_cast<Player *>(atk);
+    Monster *m_def = static_cast<Monster *>(def);
+
+    // calc (short for calculator, just using slang) damage
+    int damage = 0;
+    p_atk->equipment[WEAPON_SLOT]
+        ? damage += p_atk->equipment[WEAPON_SLOT]->dam.roll()
+        : damage += p_atk->dam.roll();
+
+    for (int i = 0; i < NUM_EQUIPMENT_SLOTS; i++) {
+      if (!p_atk->equipment[i])
+        continue;
+      damage += p_atk->equipment[i]->dam.roll();
+    }
+
+    m_def->hp -= damage;
+    if (m_def->hp <= 0) {
+      if (C_IS(m_def, BOSS)) {
+        // end game
+      }
+      m_def->alive = 0;
+    }
+    return 0;
+  }
+
+  else /* monster offensive */ {
+    Player *p_def = static_cast<Player *>(def);
+    Monster *m_atk = static_cast<Monster *>(atk);
+
+    int dodge_chance = 0;
+
+    int damage = m_atk->dam.roll();
+    // calc dodge + damage
+    for (int i = 0; i < NUM_EQUIPMENT_SLOTS; i++) {
+      if (!p_def->equipment[i])
+        continue;
+      damage -= p_def->equipment[i]->def;
+      dodge_chance += p_def->equipment[i]->dodge;
+    }
+
+    int dodge_roll = rand_range(0, 100);
+    if (dodge_roll < dodge_chance) {
+      // dodge attack
+      return 0;
+    }
+
+    /*mvprintw(STATUS_LINE, 0, "atk: %s, def: %s", atk->name.c_str(),*/
+    /*         def->name.c_str());*/
+    mvprintw(STATUS_LINE, 0, "damage to be taken: %d", damage);
+    p_def->hp -= damage;
+    if (p_def->hp <= 0) {
+      // game lost
+      p_def->alive = 0;
+    }
+    return 0;
+  }
 }
 
 // bresenham's line drawing alg

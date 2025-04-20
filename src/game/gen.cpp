@@ -1,5 +1,6 @@
 #include <descriptions.hpp>
 #include <gen.hpp>
+#include <heap.hpp>
 #include <movement.hpp>
 #include <utils.hpp>
 
@@ -60,12 +61,21 @@ int stair_type: connector Stair type
 
 Returns 0 on success, non-zero on failure.
 */
-int generate_linked_dungeon(Dungeon *d, int num_rooms, int num_monsters,
-                            int num_objects, int link_id, int stair_type) {
+int generate_linked_dungeon(Dungeon *d, Player *p, int num_rooms,
+                            int num_monsters, int num_objects, int link_id,
+                            int stair_type) {
   int err;
 
   // generate new Dungeon
   err = generate_dungeon(d, num_rooms, num_monsters, num_objects);
+  // replace generated pc with current pc (KIND OF SCUFFED)
+  delete d->character_map[d->player_pos.r][d->player_pos.c];
+  d->character_map[d->player_pos.r][d->player_pos.c] = p;
+  p->pos = d->player_pos;
+  update_player_vision(d, p);
+  // rebuild heap
+  heap_destroy(&d->events);
+  init_heap(d);
 
   // resize Stair arr
   Stair *tmp;
@@ -77,10 +87,6 @@ int generate_linked_dungeon(Dungeon *d, int num_rooms, int num_monsters,
 
   // make new connected Stair
   Stair s = {.p = d->player_pos, .type = stair_type, .d = link_id};
-  /*Stair s;*/
-  /*s.p = d->player_pos;*/
-  /*s.type = stair_type;*/
-  /*s.d = link_id;*/
   d->stairs[d->num_stairs - 1] = s;
   d->tiles[s.p.r][s.p.c].sprite = stair_type == UP_STAIR ? '<' : '>';
 

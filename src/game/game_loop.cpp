@@ -5,7 +5,7 @@
 
 // create additional maps within the game with correct IDs
 // for eventual stair continuity (hopefully)
-static int add_dungeon(game *g, int link_id, int stair_type) {
+static int add_dungeon(game *g, Player *p, int link_id, int stair_type) {
   Dungeon *tmp =
       (Dungeon *)(realloc(g->maps, sizeof(*g->maps) * ++g->num_maps));
 
@@ -15,7 +15,7 @@ static int add_dungeon(game *g, int link_id, int stair_type) {
   g->maps = tmp;
 
   generate_linked_dungeon(
-      &g->maps[g->num_maps - 1], DEFAULT_ROOM_COUNT + rand() % 4,
+      &g->maps[g->num_maps - 1], p, DEFAULT_ROOM_COUNT + rand() % 4,
       DEFAULT_MOB_COUNT + rand() % 11, DEFAULT_OBJECT_COUNT + rand() % 5,
       link_id, stair_type);
   g->maps[g->num_maps - 1].id = g->num_maps - 1;
@@ -57,10 +57,12 @@ int start_game(game *g) {
     if (!e.character->alive) {
       if (p) {
         printf("game over. pc died!\n");
+        delete p;
         return 0;
       }
 
-      free(e.character);
+      map.character_map[m->pos.r][m->pos.c] = NULL;
+      delete m;
       continue;
     }
 
@@ -106,9 +108,10 @@ int start_game(game *g) {
         // go to new Dungeon or make one if necessary
         if (s->d != UNLINKED) {
           g->current_map = s->d;
+          p->pos = g->maps[g->current_map].player_pos;
         } else {
           // create Dungeon linked to the stair
-          add_dungeon(g, g->current_map,
+          add_dungeon(g, p, g->current_map,
                       s->type == UP_STAIR ? DOWN_STAIR : UP_STAIR);
           g->current_map = g->num_maps - 1;
           s->d = g->current_map; // link original stair to new map

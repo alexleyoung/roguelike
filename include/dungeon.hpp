@@ -51,6 +51,7 @@ public:
 
   int dists[DUNGEON_HEIGHT][DUNGEON_WIDTH];
   int tunnel_dists[DUNGEON_HEIGHT][DUNGEON_WIDTH];
+  char player_map[DUNGEON_HEIGHT][DUNGEON_WIDTH] = {};
 
   Point player_pos;
 

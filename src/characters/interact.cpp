@@ -13,8 +13,8 @@ static int select_equipment(Player *p);
 
 static PLAYER_ACTION pickup_item(Dungeon *d, Player *p);
 static PLAYER_ACTION drop_item(Dungeon *d, Player *p);
-static PLAYER_ACTION take_off_item(Player *p);
-static PLAYER_ACTION wear_item(Player *p);
+static PLAYER_ACTION unequip_item(Player *p);
+static PLAYER_ACTION equip_item(Player *p);
 static PLAYER_ACTION expunge_item(Player *p);
 static PLAYER_ACTION inspect_item(Player *p);
 static PLAYER_ACTION look_monster(Dungeon *d, Player *p);
@@ -29,10 +29,10 @@ int interact(Dungeon *d, Player *p, int move) {
     return drop_item(d, p);
   // take off item
   case 't':
-    return take_off_item(p);
+    return unequip_item(p);
   // wear item
   case 'w':
-    return wear_item(p);
+    return equip_item(p);
   // expunge item
   case 'x':
     return expunge_item(p);
@@ -168,7 +168,7 @@ PLAYER_ACTION drop_item(Dungeon *d, Player *p) {
   return PLAYER_MOVE_ACTION;
 }
 
-PLAYER_ACTION take_off_item(Player *p) {
+PLAYER_ACTION unequip_item(Player *p) {
   int selected = select_equipment(p);
   if (selected == SELECT_FAIL)
     return PLAYER_MOVE_INVALID;
@@ -196,7 +196,7 @@ PLAYER_ACTION take_off_item(Player *p) {
   return PLAYER_MOVE_ACTION;
 }
 
-PLAYER_ACTION wear_item(Player *p) {
+PLAYER_ACTION equip_item(Player *p) {
   int selected = select_item(p);
   if (selected == SELECT_FAIL)
     return PLAYER_MOVE_INVALID;
@@ -259,7 +259,7 @@ PLAYER_ACTION wear_item(Player *p) {
     p->equipment[equipment_slot] = p->inventory[selected];
     p->inventory[selected] = NULL;
   }
-  draw_message("Equipped %s.", p->equipment[equipment_slot]);
+  draw_message("Equipped %s.", p->equipment[equipment_slot]->name.c_str());
 
   return PLAYER_MOVE_ACTION;
 }

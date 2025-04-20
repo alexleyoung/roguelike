@@ -64,8 +64,8 @@ public:
 
 class Player : public Character {
 public:
-  char terrain[DUNGEON_HEIGHT][DUNGEON_WIDTH] = {};
-  Character *characters[DUNGEON_HEIGHT][DUNGEON_WIDTH] = {};
+  /*char terrain[DUNGEON_HEIGHT][DUNGEON_WIDTH] = {};*/
+  /*Character *characters[DUNGEON_HEIGHT][DUNGEON_WIDTH] = {};*/
 
   Object *equipment[NUM_EQUIPMENT_SLOTS] = {};
   Object *inventory[NUM_INVENTORY_SLOTS] = {};
