@@ -188,8 +188,11 @@ PLAYER_ACTION unequip_item(Player *p) {
     return PLAYER_MOVE_INVALID;
   }
 
-  // take off item and put in inventory
+  // take off item, put in inventory, and update speed
   draw_message("Took off %s", p->equipment[selected]->name.c_str());
+  if (p->equipment[selected]->speed > 0) {
+    p->speed -= p->equipment[selected]->speed;
+  }
   p->inventory[inv_slot] = p->equipment[selected];
   p->equipment[selected] = NULL;
 
@@ -250,14 +253,19 @@ PLAYER_ACTION equip_item(Player *p) {
     return PLAYER_MOVE_INVALID;
   }
 
-  // SWAP items
   if (p->equipment[equipment_slot]) {
+    // SWAP
     Object *tmp = p->equipment[equipment_slot];
     p->equipment[equipment_slot] = p->inventory[selected];
     p->inventory[selected] = tmp;
-  } else /* equip normally */ {
+  } else {
+    // Equip normlly
     p->equipment[equipment_slot] = p->inventory[selected];
     p->inventory[selected] = NULL;
+  }
+  // update speed
+  if (p->equipment[selected]->speed > 0) {
+    p->speed += p->equipment[selected]->speed;
   }
   draw_message("Equipped %s.", p->equipment[equipment_slot]->name.c_str());
 
