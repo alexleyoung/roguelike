@@ -1,3 +1,4 @@
+#include "pathfinding.hpp"
 #include <descriptions.hpp>
 #include <gen.hpp>
 #include <heap.hpp>
@@ -73,6 +74,8 @@ int generate_linked_dungeon(Dungeon *d, Player *p, int num_rooms,
   d->character_map[d->player_pos.r][d->player_pos.c] = p;
   p->pos = d->player_pos;
   update_player_vision(d, p);
+  calc_dists(d, d->dists, p->pos, 0);
+  calc_dists(d, d->tunnel_dists, p->pos, 1);
   // rebuild heap
   heap_destroy(&d->events);
   init_heap(d);
@@ -582,6 +585,8 @@ int spawn_player(Dungeon *dungeon) {
   Player *p = new Player((point){r, c});
 
   dungeon->character_map[r][c] = (Character *)p;
+  calc_dists(dungeon, dungeon->dists, p->pos, 0);
+  calc_dists(dungeon, dungeon->tunnel_dists, p->pos, 1);
 
   // init vision
   update_player_vision(dungeon, p);
@@ -614,12 +619,13 @@ int spawn_monsters(Dungeon *dungeon, int n) {
 
     // pick random spot
     bool wall_spawn =
-        C_IS(mob, TUNNELING) && C_IS(mob, TELEPATHIC) ? true : false;
+        (C_IS(mob, TUNNELING) || C_IS(mob, PASS)) && C_IS(mob, TELEPATHIC)
+            ? true
+            : false;
     do {
       p.r = rand() % DUNGEON_HEIGHT;
       p.c = rand() % DUNGEON_WIDTH;
-    } while (!IN_BOUNDS(p.r, p.c) &&
-             (dungeon->tiles[p.r][p.c].sprite != '.' && !wall_spawn));
+    } while ((dungeon->tiles[p.r][p.c].sprite != '.' && !wall_spawn));
 
     mob->pos = p;
 

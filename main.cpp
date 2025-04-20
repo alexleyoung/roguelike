@@ -26,54 +26,49 @@ void test_save_load();
 int main(int argc, char **argv) {
   game g;
   init_game(&g);
-  /*int err = 0;*/
-  /**/
-  /*switch (argc) {*/
-  /*case 2: // load dungeon from file*/
-  /*  // check arg*/
-  /*  if (strcmp(argv[1], "--save") == 0) {*/
-  /*    if ((err = save_dungeon(&g.maps[g.current_map], "dungeon"))) {*/
-  /*      printf("Error: Failed to save dungeon\n");*/
-  /*    }; // default name for assignment*/
-  /*    g.maps[0].id = 0;*/
-  /*  } else if (strcmp(argv[1], "--load") == 0) {*/
-  /*    if ((err = load_dungeon(&g.maps[g.current_map], "dungeon"))) {*/
-  /*      printf("Error: Failed to load dungeon\n");*/
-  /*    }*/
-  /*  }*/
-  /*  break;*/
-  /*case 3: // load and save dungeon to file*/
-  /*  if ((strcmp(argv[1], "--load") == 0 && strcmp(argv[2], "--save") == 0)
-   * ||*/
-  /*      (strcmp(argv[1], "--save") == 0 && strcmp(argv[2], "--load") == 0))
-   * {*/
-  /*    if ((err = load_dungeon(&g.maps[0], "dungeon"))) {*/
-  /*      printf("Error: Failed to load dungeon\n");*/
-  /*    };*/
-  /*    g.maps[0].id = 0;*/
-  /*    if ((err = save_dungeon(&g.maps[0], "dungeon"))) {*/
-  /*      printf("Error: Failed to save dungeon\n");*/
-  /*    };*/
-  /*  } else if (strcmp(argv[1], "--load") == 0) {*/
-  /*    // load custom save*/
-  /*    if ((err = load_dungeon(&g.maps[0], argv[2]))) {*/
-  /*      printf("Error: Failed to load dungeon\n");*/
-  /*    };*/
-  /*  } else if (strcmp(argv[1], "--nummon") == 0) {*/
-  /*    generate_dungeon(&g.maps[g.current_map], 6, atoi(argv[2]));*/
-  /*  }*/
-  /*  break;*/
-  /*}*/
-  /**/
-  /*if (err) {*/
-  /*  return err;*/
-  /*}*/
+  int err = 0;
+
+  switch (argc) {
+  case 2: // load dungeon from file
+    // check arg
+    if (strcmp(argv[1], "--save") == 0) {
+      if ((err = save_dungeon(&g.maps[g.current_map], "dungeon"))) {
+        printf("Error: Failed to save dungeon\n");
+      }; // default name for assignment
+      g.maps[0].id = 0;
+    } else if (strcmp(argv[1], "--load") == 0) {
+      if ((err = load_dungeon(&g.maps[g.current_map], "dungeon"))) {
+        printf("Error: Failed to load dungeon\n");
+      }
+    }
+    break;
+  case 3: // load and save dungeon to file*/
+    if ((strcmp(argv[1], "--load") == 0 && strcmp(argv[2], "--save") == 0) ||
+        (strcmp(argv[1], "--save") == 0 && strcmp(argv[2], "--load") == 0)) {
+      if ((err = load_dungeon(&g.maps[0], "dungeon"))) {
+        printf("Error: Failed to load dungeon\n");
+      };
+      g.maps[0].id = 0;
+      if ((err = save_dungeon(&g.maps[0], "dungeon"))) {
+        printf("Error: Failed to save dungeon\n");
+      };
+    } else if (strcmp(argv[1], "--load") == 0) {
+      // load custom save
+      if ((err = load_dungeon(&g.maps[0], argv[2]))) {
+        printf("Error: Failed to load dungeon\n");
+      };
+    } else if (strcmp(argv[1], "--nummon") == 0) {
+      generate_dungeon(&g.maps[g.current_map], 6, atoi(argv[2]), 10);
+    }
+    break;
+  }
+
+  if (err) {
+    return err;
+  }
 
   // test pathfinding outputs
-  /*dungeon *dungeon = &g.maps[g.current_map];*/
-  /*printf("Dungeon:\n");*/
-  /*print_dungeon(dungeon);*/
-  /**/
+  /*Dungeon *dungeon = &g.maps[g.current_map];*/
   /*printf("Distances:\n");*/
   /*calc_dists(dungeon, dungeon->dists, dungeon->player_pos, 0);*/
   /*print_dists(dungeon, dungeon->dists);*/
@@ -85,18 +80,19 @@ int main(int argc, char **argv) {
   /*printf("hardness:\n");*/
   /*print_hardness(dungeon);*/
 
-  /*start_game(&g);*/
+  start_game(&g);
 
-  std::vector<Monster_Description> vec =
-      load_monster_descriptions("monster_desc.txt");
-  Monster *m;
-  int i = 0;
-  for (Monster_Description md : vec) {
-    m = md.generate(i++);
-    std::bitset<32> trait_bits(m->traits);
-    std::cout << m->name << std::endl;
-    std::cout << trait_bits << std::endl;
-  }
+  /*std::vector<Monster_Description> vec =*/
+  /*    load_monster_descriptions("monster_desc.txt");*/
+  /*Monster *m;*/
+  /*int i = 0;*/
+  /*for (Monster_Description md : vec) {*/
+  /*  m = md.generate(i++);*/
+  /*  std::bitset<32> trait_bits(m->traits);*/
+  /*  std::cout << m->name << std::endl;*/
+  /*  std::cout << "unique:" << md.is_unique() << std::endl;*/
+  /*  std::cout << trait_bits << std::endl;*/
+  /*}*/
 
   return 0;
 }

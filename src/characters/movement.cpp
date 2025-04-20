@@ -1,6 +1,7 @@
 #include <character.hpp>
 #include <interact.hpp>
 #include <movement.hpp>
+#include <ncurses.h>
 #include <types.hpp>
 #include <ui.hpp>
 #include <utils.hpp>
@@ -18,6 +19,8 @@ static int check_vertical(Dungeon *d, Character *c);
 static int handle_collision(Dungeon *d, Character *atk, Character *def);
 
 bool teleport = false;
+
+static int attacked = 0;
 
 int move_player(Dungeon *d, Player *c, int move) {
   point p;
@@ -195,6 +198,9 @@ int move_character(Dungeon *d, Character *c) {
           p = (point){i, j};
           shortest = m->dist_to_player[i][j];
         }
+        if (d->character_map[i][j] && d->character_map[i][j]->type == PLAYER) {
+          return (move_to(d, c, (Point){(uint8_t)i, (uint8_t)j}));
+        }
       }
     }
   } else { // move in straight line path toward Player
@@ -330,23 +336,19 @@ int handle_collision(Dungeon *d, Character *atk, Character *def) {
         if (r == def->pos.r && c == def->pos.c)
           continue;
 
-        if (!d->character_map[r][c]) {
-          d->character_map[atk->pos.r][atk->pos.c] = NULL;
-          d->character_map[r][c] = atk;
-          atk->pos.r = r;
-          atk->pos.c = c;
-          return 0;
+        if (!d->tiles[r][c].hardness && !d->character_map[r][c]) {
+          return move_to(d, atk, (Point){(uint8_t)r, (uint8_t)c});
         }
       }
     }
     // no available spot, swap
-    Character *tmp = atk;
-    d->character_map[def->pos.r][def->pos.c] = atk;
-    atk->pos.r = def->pos.r;
-    atk->pos.c = def->pos.c;
-    d->character_map[tmp->pos.r][tmp->pos.c] = def;
-    def->pos.r = tmp->pos.r;
-    def->pos.c = tmp->pos.c;
+    /*Character tmp = *atk;*/
+    /*d->character_map[def->pos.r][def->pos.c] = atk;*/
+    /*atk->pos.r = def->pos.r;*/
+    /*atk->pos.c = def->pos.c;*/
+    /*d->character_map[tmp.pos.r][tmp.pos.c] = def;*/
+    /*def->pos.r = tmp.pos.r;*/
+    /*def->pos.c = tmp.pos.c;*/
     return 0;
   }
 
@@ -379,9 +381,8 @@ int handle_collision(Dungeon *d, Character *atk, Character *def) {
     Player *p_def = static_cast<Player *>(def);
     Monster *m_atk = static_cast<Monster *>(atk);
 
-    int dodge_chance = 0;
-
     int damage = m_atk->dam.roll();
+    int dodge_chance = 0;
     // calc dodge + damage
     for (int i = 0; i < NUM_EQUIPMENT_SLOTS; i++) {
       if (!p_def->equipment[i])
@@ -396,9 +397,6 @@ int handle_collision(Dungeon *d, Character *atk, Character *def) {
       return 0;
     }
 
-    /*mvprintw(STATUS_LINE, 0, "atk: %s, def: %s", atk->name.c_str(),*/
-    /*         def->name.c_str());*/
-    mvprintw(STATUS_LINE, 0, "damage to be taken: %d", damage);
     p_def->hp -= damage;
     if (p_def->hp <= 0) {
       // game lost
