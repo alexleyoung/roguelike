@@ -337,18 +337,21 @@ int handle_collision(Dungeon *d, Character *atk, Character *def) {
           continue;
 
         if (!d->tiles[r][c].hardness && !d->character_map[r][c]) {
-          return move_to(d, atk, (Point){(uint8_t)r, (uint8_t)c});
+          return 0;
+          /*return move_to(d, atk, (Point){(uint8_t)r, (uint8_t)c});*/
         }
       }
     }
     // no available spot, swap
-    /*Character tmp = *atk;*/
-    /*d->character_map[def->pos.r][def->pos.c] = atk;*/
-    /*atk->pos.r = def->pos.r;*/
-    /*atk->pos.c = def->pos.c;*/
-    /*d->character_map[tmp.pos.r][tmp.pos.c] = def;*/
-    /*def->pos.r = tmp.pos.r;*/
-    /*def->pos.c = tmp.pos.c;*/
+    Point tmp_pos = atk->pos;
+
+    // swap in character map
+    d->character_map[atk->pos.r][atk->pos.c] = def;
+    d->character_map[def->pos.r][def->pos.c] = atk;
+
+    // swap internal positions
+    atk->pos = def->pos;
+    def->pos = tmp_pos;
     return 0;
   }
 

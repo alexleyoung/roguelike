@@ -264,11 +264,12 @@ PLAYER_ACTION equip_item(Player *p) {
     p->equipment[equipment_slot] = p->inventory[selected];
     p->inventory[selected] = NULL;
   }
+
   // update speed
-  if (p->equipment[selected]->speed > 0) {
-    p->speed += p->equipment[selected]->speed;
-  }
   draw_message("Equipped %s.", p->equipment[equipment_slot]->name.c_str());
+  if (p->equipment[equipment_slot]->speed > 0) {
+    p->speed += p->equipment[equipment_slot]->speed;
+  }
 
   return PLAYER_MOVE_ACTION;
 }

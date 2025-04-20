@@ -63,7 +63,6 @@ int start_game(game *g) {
         return 0;
       }
 
-      mvprintw(40, 0, "is_boss: %d", C_IS(m, BOSS));
       if (C_IS(m, BOSS)) {
         clear();
         refresh();
