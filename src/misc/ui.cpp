@@ -42,11 +42,11 @@ void ui_init() {
  * d: current dungeon
  */
 void draw_dungeon(Dungeon *d) {
-  /*clear();*/
-
   int r, c;
   Character *character;
   Object *object;
+  Player *p =
+      static_cast<Player *>(d->character_map[d->player_pos.r][d->player_pos.c]);
   for (r = 0; r < DUNGEON_HEIGHT; r++) {
     for (c = 0; c < DUNGEON_WIDTH; c++) {
 
@@ -61,8 +61,11 @@ void draw_dungeon(Dungeon *d) {
       } else {
         mvaddch(r + 1, c, d->tiles[r][c].sprite);
       }
+      clrtoeol();
     }
   }
+
+  draw_hud(d, p);
 }
 
 /*
@@ -72,8 +75,6 @@ void draw_dungeon(Dungeon *d) {
  * d: current dungeon
  */
 void draw_player_dungeon(Dungeon *d, Player *p) {
-  /*clear();*/
-
   int r, c;
   for (r = 0; r < DUNGEON_HEIGHT; r++) {
     for (c = 0; c < DUNGEON_WIDTH; c++) {
@@ -97,6 +98,7 @@ void draw_player_dungeon(Dungeon *d, Player *p) {
       } else {
         mvaddch(r + 1, c, d->tiles[r][c].sprite);
       }
+      clrtoeol();
     }
   }
 

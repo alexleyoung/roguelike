@@ -81,6 +81,7 @@ int main(int argc, char **argv) {
   /*print_hardness(dungeon);*/
 
   start_game(&g);
+  std::cout << std::endl;
 
   /*std::vector<Monster_Description> vec =*/
   /*    load_monster_descriptions("monster_desc.txt");*/

@@ -1,7 +1,23 @@
-default: game
+CXX := g++
+CXXFLAGS := -std=c++11 -Iinclude
+LDFLAGS := -Llib -lcurses
+BUILD_DIR := build
+SRC_DIRS := src
+SRCS := main.cpp $(wildcard $(SRC_DIRS)/*/*.cpp)
+OBJS := $(patsubst %.cpp, $(BUILD_DIR)/%.o, $(SRCS))
 
-game: main.cpp $(wildcard src/*/*.cpp)
-	g++ -std=c++11 main.cpp src/*/*.cpp -Iinclude -Llib -lcurses -o out
+
+# Convert src/foo/bar.cpp -> build/src/foo/bar.o
+$(BUILD_DIR)/%.o: %.cpp
+	@mkdir -p $(dir $@)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+.PHONY: all clean
+
+all: game
+
+game: $(OBJS)
+	$(CXX) $(OBJS) $(CXXFLAGS) $(LDFLAGS) -o out
 
 debug: main.cpp $(wildcard src/*/*.cpp)
 	g++ -std=c++11 main.cpp src/*/*.cpp -Iinclude -Llib -lcurses -g -o debug
@@ -12,5 +28,4 @@ copy: clean # create copy of project to be turned into tarball
 	mv ./copy ./young_alex.assignment-1.0
 
 clean:
-	rm -f *.o out debug *.tar.gz log.txt 
-	rm -rf ./young_alex.assignment* ./debug.dSYM
+	rm -rf $(BUILD_DIR) out debug *.tar.gz log.txt ./young_alex.assignment* ./debug.dSYM

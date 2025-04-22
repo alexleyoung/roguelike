@@ -42,21 +42,21 @@ public:
   int id;
   heap events;
 
-  Tile tiles[DUNGEON_HEIGHT][DUNGEON_WIDTH];
+  Tile tiles[DUNGEON_HEIGHT][DUNGEON_WIDTH] = {};
 
   Room *rooms;
   uint16_t num_rooms;
   Stair *stairs;
   uint16_t num_stairs;
 
-  int dists[DUNGEON_HEIGHT][DUNGEON_WIDTH];
-  int tunnel_dists[DUNGEON_HEIGHT][DUNGEON_WIDTH];
+  int dists[DUNGEON_HEIGHT][DUNGEON_WIDTH] = {};
+  int tunnel_dists[DUNGEON_HEIGHT][DUNGEON_WIDTH] = {};
   char player_map[DUNGEON_HEIGHT][DUNGEON_WIDTH] = {};
 
   Point player_pos;
 
-  Character *character_map[DUNGEON_HEIGHT][DUNGEON_WIDTH];
-  Object *object_map[DUNGEON_HEIGHT][DUNGEON_WIDTH];
+  Character *character_map[DUNGEON_HEIGHT][DUNGEON_WIDTH] = {};
+  Object *object_map[DUNGEON_HEIGHT][DUNGEON_WIDTH] = {};
 };
 
 #endif

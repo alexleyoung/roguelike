@@ -2,6 +2,7 @@
 #include "movement.hpp"
 #include "ui.hpp"
 #include <game_loop.hpp>
+#include <ncurses.h>
 
 // create additional maps within the game with correct IDs
 // for eventual stair continuity (hopefully)
@@ -125,7 +126,7 @@ int start_game(game *g) {
           g->current_map = g->num_maps - 1;
           s->d = g->current_map; // link original stair to new map
         }
-
+        clear();
         draw_message("Going to floor: %d", s->d);
         continue;
       }

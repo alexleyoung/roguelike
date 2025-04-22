@@ -377,6 +377,7 @@ int handle_collision(Dungeon *d, Character *atk, Character *def) {
       d->character_map[m_def->pos.r][m_def->pos.c] = NULL;
       m_def->alive = 0;
     }
+    draw_message("PC hits %s for %d", m_def->name.c_str(), damage);
     return 0;
   }
 
@@ -405,6 +406,7 @@ int handle_collision(Dungeon *d, Character *atk, Character *def) {
       // game lost
       p_def->alive = 0;
     }
+    draw_message("%s hits PC for %d", m_atk->name.c_str(), damage);
     return 0;
   }
 }
