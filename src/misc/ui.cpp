@@ -106,10 +106,10 @@ void draw_player_dungeon(Dungeon *d, Player *p) {
 }
 
 void draw_hud(Dungeon *d, Player *p) {
-  move(INFO_START, 0);
+  move(STATUS_LINE, 0);
   clrtoeol();
 
-  mvprintw(INFO_START, 0, "HP: %d", p->hp);
+  printw("HP: %d", p->hp);
 }
 
 /*
@@ -122,7 +122,7 @@ void draw_message(const char *fmt, ...) {
   va_list args;
   va_start(args, fmt);
 
-  move(STATUS_LINE, 0);
+  move(INFO_START, 0);
   clrtoeol();
   vw_printw(stdscr, fmt, args);
 

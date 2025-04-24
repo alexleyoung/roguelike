@@ -377,7 +377,10 @@ int handle_collision(Dungeon *d, Character *atk, Character *def) {
       d->character_map[m_def->pos.r][m_def->pos.c] = NULL;
       m_def->alive = 0;
     }
-    draw_message("PC hits %s for %d", m_def->name.c_str(), damage);
+
+    move(INFO_END, 0);
+    clrtoeol();
+    printw("PC hits %s for %d", m_def->name.c_str(), damage);
     return 0;
   }
 
@@ -398,6 +401,9 @@ int handle_collision(Dungeon *d, Character *atk, Character *def) {
     int dodge_roll = rand_range(0, 100);
     if (dodge_roll < dodge_chance) {
       // dodge attack
+      move(INFO_START, 0);
+      clrtoeol();
+      printw("PC dodges hit from %s!", m_atk->name.c_str());
       return 0;
     }
 
@@ -406,7 +412,9 @@ int handle_collision(Dungeon *d, Character *atk, Character *def) {
       // game lost
       p_def->alive = 0;
     }
-    draw_message("%s hits PC for %d", m_atk->name.c_str(), damage);
+    move(INFO_START, 0);
+    clrtoeol();
+    printw("%s hits PC for %d", m_atk->name.c_str(), damage);
     return 0;
   }
 }

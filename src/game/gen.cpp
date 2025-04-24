@@ -605,17 +605,20 @@ int spawn_monsters(Dungeon *dungeon, int n) {
     // randomly pick from descriptions
 
     int type, rare;
-    Monster_Description md;
+    Monster_Description *md;
     do {
       type = rand_range(0, descriptions.size() - 1);
       rare = rand_range(0, 99);
-      md = descriptions[type];
-    } while (rare >= md.get_rrty() || !md.spawnable);
+      md = &descriptions[type];
+    } while (rare >= md->get_rrty());
 
-    if (md.is_unique())
-      md.spawnable = false;
+    if (!md->spawnable)
+      continue;
 
-    Monster *mob = md.generate(i);
+    if (md->is_unique())
+      md->spawnable = false;
+
+    Monster *mob = md->generate(i);
 
     // pick random spot
     bool wall_spawn =
